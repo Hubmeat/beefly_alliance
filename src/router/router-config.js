@@ -136,7 +136,7 @@ export default [
                 component: applyaccount
             },
             {
-                path: '/index/applysubmitted',
+                path: '/index/applysubmitted/:id',
                 name: '申请结算(结算状态)',
                 component: applysubmitted
             },

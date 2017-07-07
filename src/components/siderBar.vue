@@ -22,7 +22,7 @@
           <template slot="title">
             <i class="iconfont my_icon_class">&#xe6e0;</i>营收记录</template>
           <el-menu-item-group>
-            <el-menu-item index="/index/earningsDetail">收益明细</el-menu-item>
+            <el-menu-item index="/index/earningsDetail?type=getAllRevenue">收益明细</el-menu-item>
             <el-menu-item index="/index/settlementRecord">结算记录</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
