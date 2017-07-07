@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="addaccount_form">
+		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">修改密码
               <span>
                 <a href="/index/memberCenter">
@@ -141,6 +141,7 @@ export default {
       }
     }
     return {
+      loading: false,
       ruleForm: {
         oldPassword: '',
         pass: '',
@@ -167,21 +168,24 @@ export default {
             type: 'warning'
           })
         .then(() => {
-          this.$loading({customClass: 'loading_class', text: '正在为您处理中，请稍后...'})
+          that.loading = true
           setTimeout(() => {
             request.post('http://192.168.3.52:7099/franchisee/userCenter/modifyPwd')
               .send({franchiseeId: '123456', userId: 'admin', oldPwd: this.ruleForm.pass, newPwd: this.ruleForm.checkPass})
               .end((err, res) => {
                 if (err) {
                   console.log(err)
+                  that.loading = false
+                  that.$message.error('sorry,服务器请求超时，请稍候再试！')
+                  that.$router.push('./')
                 } else {
                   var status = Number(JSON.parse(res.text).code)
                   if (status !== 0) {
-                    that.$loading({customClass: 'loading_class'}).close()
+                    that.loading = false
                     this.$message.error('sorry,密码修改失败,请重新修改')
                   } else {
-                    that.$loading({customClass: 'loading_class'}).close()
-                    this.$message({
+                    that.loading = false
+                    that.$message({
                       message: '恭喜你，密码修改成功',
                       type: 'success'
                     })
