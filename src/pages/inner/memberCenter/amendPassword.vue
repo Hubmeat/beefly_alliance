@@ -1,0 +1,207 @@
+<template>
+	<div>
+		<div id="addaccount_form">
+						<h1 id="addaccount_title">修改密码
+              <span>
+                <a href="/index/memberCenter">
+                  <i class="el-icon-close">
+                  </i>
+                </a>
+              </span>
+            </h1>
+					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+							<el-form-item label="原始密码" prop="oldPassword">
+								<el-input type="password" v-model="ruleForm.oldPassword" placeholder='请输入原密码'></el-input>
+							</el-form-item>
+							<el-form-item label="新密码" prop="pass">
+								<el-input type="password" v-model="ruleForm.pass" placeholder='密码为6-20位字符，可包含字母、数字、下划线'></el-input>
+							</el-form-item>
+							<el-form-item label="确认密码" prop="checkPass">
+								<el-input type='password' v-model="ruleForm.checkPass" placeholder='确认密码'></el-input>
+							</el-form-item>
+							<el-form-item>
+								<el-button class='addaccount_button' type="primary" @click="modifyPass">立刻修改</el-button>
+								<el-button class='addaccount_button' @click="$router.push({path:'/index/memberCenter'})">取消</el-button>
+							</el-form-item>
+					</el-form>
+			</div>
+	</div>
+</template>
+<style scoped>
+
+  @media screen and (min-width:1367px) {
+    #addaccount_form {
+      /*  适配好的样式 */
+      height: 50%;
+      /*overflow-y: scroll; 
+      overflow-x: hidden;*/
+      width: 50%;
+      box-shadow: 0 5px 15px rgba(0,0,0,.5);
+      position: fixed;
+      display: block;
+      top:62%;
+      left:50%;
+      margin-left:-28%;
+      margin-top:-25%;  
+      padding: 70px 80px 0 50px;
+      margin-right: 20px;
+      border: 1px solid #ccc;
+      background: #fff;
+      border-radius: 6px;
+    }
+  }
+
+  @media screen and (max-width:1367px) {
+    #addaccount_form {
+      height: 50%;
+      width: 50%;
+      box-shadow: 0 5px 15px rgba(0,0,0,.5);
+      position: fixed;
+      display: block;
+      top: 62%;
+      left: 50%;
+      /*overflow-y: scroll;*/
+      margin-left: -34%;
+      margin-top: -24%;
+      padding: 80px 150px 60px 144px;
+      margin-right: 20px;
+      border: 1px solid #ccc;
+      background: #fff;
+      border-radius: 6px;
+    }
+  }
+
+  .loading_class {
+    background: rgba(68,68,68,0.4);
+  }
+
+	.addaccount_button:nth-of-type(1) {
+		background: #f87e2b;
+		border: none;
+	}
+
+	.addaccount_button:nth-of-type(1):hover {
+		background: rgba(248,126,43,0.9);
+	}
+
+
+	.addaccount_button:nth-of-type(2):hover {
+		border: 1px solid rgb(248,126,43);
+		color: rgb(248,126,43);
+	}
+
+	.addaccount_button {
+		width: 120px;
+		height: 50px;
+	}
+
+	#addaccount_title {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding-left: 20px;
+    width: 98%;
+    height: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    overflow-x: hidden;
+    line-height: 40px;
+    color: #444;
+    border-bottom: 1px solid #eee;
+	}
+
+  #addaccount_title span {
+		float: right;
+		margin-right: 14px;
+		cursor: pointer;
+	}
+</style>
+      
+<script>
+import request from 'superagent'
+export default {
+  data () {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    var validateCheckPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      ruleForm: {
+        oldPassword: '',
+        pass: '',
+        checkPass: ''
+      },
+      rules: {
+        pass: [
+            { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validateCheckPass, trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  methods: {
+    modifyPass () {
+      var that = this
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          this.$confirm('确认修改吗?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '信息有误',
+            type: 'warning'
+          })
+        .then(() => {
+          this.$loading({customClass: 'loading_class', text: '正在为您处理中，请稍后...'})
+          setTimeout(() => {
+            request.post('http://192.168.3.52:7099/franchisee/userCenter/modifyPwd')
+              .send({franchiseeId: '123456', userId: 'admin', oldPwd: this.ruleForm.pass, newPwd: this.ruleForm.checkPass})
+              .end((err, res) => {
+                if (err) {
+                  console.log(err)
+                } else {
+                  var status = Number(JSON.parse(res.text).code)
+                  if (status !== 0) {
+                    that.$loading({customClass: 'loading_class'}).close()
+                    this.$message.error('sorry,密码修改失败,请重新修改')
+                  } else {
+                    that.$loading({customClass: 'loading_class'}).close()
+                    this.$message({
+                      message: '恭喜你，密码修改成功',
+                      type: 'success'
+                    })
+                    that.$router.push('./')
+                  }
+                }
+              })
+          }, 1000)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '修改已取消！'
+          })
+        })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    }
+  }
+}
+</script>
