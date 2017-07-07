@@ -21,23 +21,64 @@
   
       <!-- 表单 -->
       <el-table :data="tableData" style="width: 100%; font-size:13px;">
-        <el-table-column prop="user" label="用户名" min-width="140"></el-table-column>
-        <el-table-column prop="tel" label="手机号" min-width="140"></el-table-column>
+        <el-table-column prop="userId" label="用户名" min-width="140"></el-table-column>
+        <el-table-column prop="phoneNo" label="手机号" min-width="140"></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="170"></el-table-column>
         <el-table-column prop="name" label="姓名" min-width="100"></el-table-column>
-        <el-table-column prop="type" label="类别" min-width="120"></el-table-column>
-        <el-table-column prop="status" label="状态" min-width="120" style="font-size:12px;">
-          <template scope="scoped">
-            <el-switch v-model='tableData[0].status' on-color="#13ce66" on-text="开启" off-text="冻结" off-color="#ff4949" myIndex='tableData.index' >
+        <el-table-column prop="role" label="类别" min-width="120">
+          <template scope="scope">
+            <span v-if="scope.row.role==0">管理员</span>
+            <span v-else>普通人</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态" min-width="120" style="font-size:12px;">
+          <template scope="scope">
+            <el-switch v-if="scope.row.state==0" v-model="scope.row.state" on-color="#13ce66" on-text="开启" off-text="冻结" off-color="#ff4949">
+            </el-switch>
+            <el-switch v-else on-text="冻结" v-model="scope.row.state" on-color="#ff4949" off-color="#13ce66" off-text="开启" >
             </el-switch>
           </template>
         </el-table-column>
         <el-table-column prop="del" label="操作">
           <template scope="scope">
             <a href="javascript:;"></a>
-            <i class="el-icon-edit" style="margin-right:10px;"></i>
+            <i class="el-icon-edit" @click="openEdit(scope.row)" title="修改" style="margin-right:10px;"></i>
             </a>
-            <i class="el-icon-close"></i>
+            <i class="el-icon-close" title="删除"></i>
+             <el-dialog title="账号信息" :visible.sync="dialogVisible" :modal="true"
+              :modal-append-to-body="false">
+              <el-form :model="form">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
+                  <el-input v-model="form.userId" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" :label-width="formLabelWidth">
+                  <el-input v-model="form.phoneNo"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" :label-width="formLabelWidth">
+                  <el-input v-model="form.email" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" :label-width="formLabelWidth">
+                  <el-input v-model="form.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="类别" :label-width="formLabelWidth">
+                  <el-select v-model="form.role" placeholder="请选择类别">
+                    <el-option label="管理员" value="0"></el-option>
+                    <el-option label="普通人" value="1"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="状态" :label-width="formLabelWidth">
+                  <el-radio-group v-model="form.state">
+                    <el-radio label="冻结"></el-radio>
+                    <el-radio label="开启"></el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+              </div>
+            </el-dialog>
           </template>
         </el-table-column>
       </el-table>
@@ -47,7 +88,6 @@
       <div class="M-box">
       </div>
     </div>
-
       <!--<div v-show='router_show' >-->
         <router-view id="account_router"></router-view>
       <!--</div>-->
@@ -58,105 +98,133 @@
 import $ from 'jquery'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import {checkPositiveNumber} from '../../../../utils/index.js'
+import request from 'superagent'
 export default {
   data () {
     return {
       input: '',
-      currentPage: 3,
-      tableData: [{
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true,
-        index: 0
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: false,
-        index: 1
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true,
-        index: 2
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: false
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: false
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true
-      }, {
-        user: '老司机',
-        tel: '15642657777',
-        email: 'wangqqiuaw@163.com',
-        name: '胡经华',
-        type: '管理员',
-        status: true
-      }],
-      router_show: false
+      currentPage: 1,
+      tableData: [],
+      router_show: false,
+      dialogVisible: false,
+      totalPage: '',
+      form: {
+        userId: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      formLabelWidth: '60px',
+      editAccount: {
+        userId: '',
+        phoneNo: '',
+        email: '',
+        name: '',
+        role: '',
+        state: ''
+      }
     }
   },
   methods: {
     change () {
-      console.log('this is entry')
       this.$router.push('/index/accountManager/addaccount')
       this.router_show = true
+    },
+    openEdit (item) {
+      this.dialogVisible = true
+      console.log(item)
     }
   },
   mounted () {
-    $('.M-box').pagination({
-      pageCount: 50,
-      jump: true,
-      coping: true,
-      homePage: '首页',
-      endPage: '尾页',
-      prevContent: '«',
-      nextContent: '»'
+    var that = this
+    request.post('http://192.168.3.52:7099/franchisee/account/getAllAccount')
+    .send({
+      franchiseeId: '123456',
+      userId: 'admin'
     })
+    .end(function (err, res) {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log(JSON.parse(res.text).list)
+        that.totalPage = JSON.parse(res.text).totalPage || 20
+        var arr = JSON.parse(res.text).list
+        arr = arr.map((item) => {
+          var obj = {}
+          obj = Object.assign({}, item, {state: !!item.state})
+          return obj
+        })
+        console.log(arr)
+        that.tableData = JSON.parse(res.text).list
+      }
+      $('.M-box').pagination({
+        pageCount: that.totalPage,
+        jump: true,
+        coping: true,
+        homePage: '首页',
+        endPage: '尾页',
+        prevContent: '«',
+        nextContent: '»'
+      })
+      $('.M-box').click(function (e) {
+        if (e.target.getAttribute('class') === 'active') {
+          return false
+        }
+        if (e.target.tagName === 'A') {
+          if (e.target.innerText === '首页') {
+            that.currentPage = 1
+          }
+          if (e.target.innerText === '尾页') {
+            that.currentPage = that.pageSize
+          }
+          if (e.target.innerText === '»') {
+            that.currentPage++
+          }
+          if (e.target.innerText === '«') {
+            that.currentPage--
+          }
+          if (checkPositiveNumber(e.target.innerText)) {
+            that.currentPage = e.target.innerText
+          }
+          if (e.target.innerText === '跳转') {
+            e.preventDefault()
+            var jumpPageNum = $('.M-box .active').text()
+            that.currentPage = jumpPageNum
+          }
+        }
+      })
+      $(document).keydown(function (e) {
+        if (e.keyCode === 13) {
+          that.currentPage = e.target.value
+          console.log(that.currentPage)
+        }
+      })
+    })
+  },
+  watch: {
+    currentPage: {
+      handler: function (val, oldVal) {
+        var that = this
+        request.post('http://192.168.3.52:7099/franchisee/account/getAllAccount?page=' + this.currentPage)
+          .send({
+            franchiseeId: '123456',
+            userId: 'admin'
+          })
+          .end(function (err, res) {
+            if (err) {
+              console.log(err)
+            } else {
+              that.tableData = JSON.parse(res.text).list
+            }
+          })
+      },
+      deep: true
+    }
   }
 }
 </script>
@@ -345,4 +413,6 @@ color: #bfcbd9;
 }
 
 .el-switch__label, .el-switch__label *{font-size:12px;}
+.el-icon-close, .el-icon-edit{cursor:pointer}
+.el-dialog .dialogModal{background:rgba(0,0,0,.5)}
 </style>
