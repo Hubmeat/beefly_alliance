@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="addaccount_form">
+		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">绑定手机号
               <span>
                 <a href="/index/memberCenter">
@@ -119,6 +119,7 @@
       
 <script>
 import {checkMobile} from '../../../../utils/index.js'
+import request from 'superagent'
 export default {
   data () {
     var validateTel = (rule, value, callback) => {
@@ -135,6 +136,7 @@ export default {
       }, 1000)
     }
     return {
+      loading: false,
       ruleForm: {
         tel: '',
         verificationCode: '',
@@ -165,20 +167,42 @@ export default {
             type: 'warning'
           })
         .then(() => {
-          this.$loading({customClass: 'loading_class', text: '正在为您处理中，请稍后...'})
-          setTimeout(() => {
-            that.$loading({customClass: 'loading_class'}).close()
-            that.$alert('处理成功！', 'Success', {
-              confirmButtonText: '确定',
-              callback: action => {
-                that.$router.push('/index/memberCenter')
-                that.$message({
-                  type: 'Success',
-                  message: '已成功绑定手机号！'
-                })
-              }
-            })
-          }, 1000)
+          that.loading = true
+          that.$alert('我们已经向您的手机发送验证码', '请查收', {
+            confirmButtonText: '确定',
+            callback: function (action) {
+              that.loading = true
+              request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingPhone')
+              .send({franchiseeId: '123456', userId: 'admin', emailphoneNo: that.ruleForm.tel})
+              .end((err, res) => {
+                if (err) {
+                  console.log(err)
+                  that.loading = false
+                  that.$router.push('/index/memberCenter')
+                  that.$message({
+                    message: 'sorry，服务器请求超时，请稍候再试',
+                    type: 'error'
+                  })
+                } else {
+                  var status = JSON.parse(res.text).code
+                  if (status === 0) {
+                    that.loading = false
+                    that.$router.push('/index/memberCenter')
+                    that.$message({
+                      message: '恭喜你，绑定手机成功',
+                      type: 'success'
+                    })
+                  } else {
+                    that.loading = false
+                    that.$message({
+                      message: 'sorry，绑定手机失败',
+                      type: 'error'
+                    })
+                  }
+                }
+              })
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',

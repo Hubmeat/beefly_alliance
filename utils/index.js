@@ -48,3 +48,16 @@ export function checkMobile (s) {
     return false
   }
 }
+/**
+ * 验证非负正整数
+ * @param {*} value
+ */
+export function checkPositiveNumber (value) {
+  if (!isNaN(value)) {
+     // 验证正整数包括0
+    var bool = /^(0|[1-9][0-9]*)$/.test(value)
+    return bool
+  } else {
+    return false
+  }
+}
