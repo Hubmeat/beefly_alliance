@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="addaccount_form">
+		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">绑定邮箱
               <span>
                 <a href="/index/memberCenter">
@@ -137,6 +137,7 @@ export default {
         maiAccount: '',
         account_password: ''
       },
+      loading: false,
       rules: {
         maiAccount: [
           {required: true, trigger: 'blur', validator: validateMail}
@@ -150,51 +151,49 @@ export default {
   },
   methods: {
     handleBindEmail () {
-      /** var that = this
-      this.$refs.formName.validate((valid) => {
+      var that = this
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$confirm('确认绑定吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '信息有误',
             type: 'warning'
-          })
-        .then(() => {
-          this.$loading({customClass: 'loading_class'})
-          setTimeout(() => {
-            that.$loading({customClass: 'loading_class'}).close()
+          }).then(function () {
             that.$alert('我们已经向您的邮箱发送验证码', '申请绑定', {
               confirmButtonText: '确定',
-              callback: action => {
-                that.$router.push('/index/memberCenter')
-                that.$message({
-                  type: 'Success',
-                  message: ''
+              callback: function (action) {
+                that.loading = true
+                request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingEmail2')
+                .send({franchiseeId: '123456', userId: 'admin', email: that.ruleForm.maiAccount, password: that.ruleForm.account_password})
+                .end((err, res) => {
+                  if (err) {
+                    console.log(err)
+                    that.loading = false
+                    that.$router.push('/index/memberCenter')
+                    that.$message({
+                      message: 'sorry，服务器请求超时，请稍候再试',
+                      type: 'error'
+                    })
+                  } else {
+                    var status = JSON.parse(res.text).code
+                    if (status === 0) {
+                      that.loading = false
+                      that.$router.push('/index/memberCenter')
+                      that.$message({
+                        message: '恭喜你，绑定成功',
+                        type: 'success'
+                      })
+                    } else {
+                      that.loading = false
+                      that.$message({
+                        message: 'sorry，绑定失败',
+                        type: 'error'
+                      })
+                    }
+                  }
                 })
               }
             })
-          }, 500)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消绑定操作！'
-          })
-        })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      }) */
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingEmail')
-          .send({franchiseeId: '123456', userId: 'admin', email: this.ruleForm.maiAccount, password: this.ruleForm.account_password})
-          .end((err, res) => {
-            if (err) {
-              console.log(err)
-            } else {
-              var status = JSON.parse(res.text).code
-              console.log(status)
-            }
           })
         } else {
           console.log('error submit')
