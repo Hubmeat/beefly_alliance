@@ -67,13 +67,13 @@
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
-    border-radius: 6px;
+    border-radius: 2px;
     }
   }
 
 @media screen and (max-width:1367px) {
   #addpartner_form {
-    min-height: 78%;
+    height: 78%;
     width: 50%;
     box-shadow: 0 5px 15px rgba(0,0,0,.5);
     position: fixed;
@@ -82,12 +82,12 @@
     top: 62%;
     left: 50%;
     margin-left: -34%;
-    margin-top: -27%;
+    margin-top: -26.5%;
     padding: 70px 150px 0px 144px;
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
-    border-radius: 6px;
+    border-radius: 2px;
   }
 }
 

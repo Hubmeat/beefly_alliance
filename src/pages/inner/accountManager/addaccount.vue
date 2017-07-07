@@ -63,7 +63,7 @@
       margin-right: 20px;
       border: 1px solid #ccc;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
@@ -82,7 +82,7 @@
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
-    border-radius: 6px;
+    border-radius: 2px;
   }
 }
 
