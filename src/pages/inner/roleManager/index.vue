@@ -12,7 +12,7 @@
     <!-- account -->
     <div class="account">
       <h1>
-        <button type="button" @click="change">添加角色</button>
+        <button type="button" @click="change">添加角色WANGSHICHENG</button>
       </h1>
   
       <!-- 表单 -->

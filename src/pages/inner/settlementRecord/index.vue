@@ -16,10 +16,13 @@
 	<div id="settleRed_table">
 		<el-table
       :data="tableData"
-      style="width: 100%">
+      style="width: 100%"
+			@cell-click='goDetail'>
       <el-table-column
         prop="settled_time"
-        label="结算金额"
+        label="结算月份"
+				myId="withdrawalCode"
+				myAdmin='id'
         min-width="100">
       </el-table-column>
       <el-table-column
@@ -29,7 +32,7 @@
       </el-table-column>
       <el-table-column
         prop="apply_time"
-        label="计算时间"
+        label="结算时间"
         min-width="120">
       </el-table-column>
       <el-table-column
@@ -161,85 +164,128 @@
 
 <script>
 import $ from 'jquery'
+import request from 'superagent'
+import moment from 'moment'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
 export default {
   data () {
     return {
-      tableData: [{
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '已结算',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '已结算',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '已结算',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '已结算',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }, {
-        settled_time: '2017-01',
-        amount: '100.00',
-        apply_time: '2017-01-01 10:01:01',
-        status: '审核中',
-        remark: '这里是备注'
-      }],
-      currentPage: 3
+      tableData: [],
+      totalPage: ''
     }
   },
   mounted () {
-    $('.M-box').pagination({
-      pageCount: 50,
-      jump: true,
-      coping: true,
-      homePage: '首页',
-      endPage: '尾页',
-      prevContent: '«',
-      nextContent: '»'
+    request
+      .post('http://192.168.3.52:7099/franchisee/withdrawal/getAllWithdrawal')
+      .send({
+        'franchiseeId': '123456',
+        'userId': 'admin'
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log('err:' + err)
+        } else {
+          console.log(JSON.parse(res.text).list)
+          var newArr = JSON.parse(res.text).list
+          var pageNumber = JSON.parse(res.text).totalPage
+          this.totalPage = pageNumber
+          var arr2 = this.tableDataDel(newArr)
+          this.$store.dispatch('settlementDate_action', { arr2 })
+          this.tableData = this.$store.state.settlementDate.arr2
+          $('.M-box').pagination({
+            pageCount: pageNumber,
+            jump: true,
+            coping: true,
+            homePage: '首页',
+            endPage: '尾页',
+            prevContent: '«',
+            nextContent: '»'
+          })
+        }
+      })
+  },
+  beforeUpdate () {
+    var that = this
+    $('.M-box').click('a', function (e) {
+      // console.log(e)
+      that.pageUpdate(e)
     })
+  },
+  methods: {
+    tableDataDel (arr) {
+      var arrDeled = []
+      for (var i = 0; i < arr.length; i++) {
+        var obj = {}
+        obj.settled_time = arr[i].month
+        obj.amount = arr[i].money
+        obj.apply_time = moment(arr[i].applyEndTime).format('YYYY-MM-DD')
+				obj.myId = arr[i].withdrawalCode
+				obj.myAdmin = arr[i].id
+        if (arr[i].state === 1) {
+          obj.status = '审核中'
+        } else {
+          obj.status = '已结算'
+        }
+        if (obj.des === '') {
+          obj.remark = '未添加备注'
+        } else {
+          obj.remark = arr[i].des
+        }
+        arrDeled.push(obj)
+      }
+
+      // console.log('arrDeled:', arrDeled)
+      return arrDeled
+    },
+		goDetail (row, column, cell) {
+			console.log(cell)
+			if (column.label === '结算月份') {
+				this.$router.push('/index/applysubmitted/' + row.myId)
+			} else {
+				return
+			}
+		},
+    pageUpdate (e) {
+      var that = this
+      clearTimeout(this.timer)
+      if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
+        if (e.target.innerHTML === '首页') {
+          e.target.innerHTML = 1
+        } else if (e.target.innerHTML === '尾页') {
+          e.target.innerHTML = this.totalPage
+        } else if (e.target.innerHTML === '«') {
+          e.target.innerHTML = Number($('.M-box span.active')[0].innerHTML) - 1
+        } else if (e.target.innerHTML === '»') {
+          console.log($('.M-box span.active')[0].innerHTML)
+          e.target.innerHTML = Number($('.M-box span.active')[0].innerHTML) + 1
+        } else if (e.target.innerHTML === '...') {
+          return
+        }
+      } else {
+        return
+      }
+      var type = this.$route.query.type
+      this.timer = setTimeout(function () {
+        request
+          .post('http://192.168.3.52:7099/franchisee/withdrawal/getAllWithdrawal?page=' + e.target.innerHTML)
+          .send({
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              console.log(JSON.parse(res.text))
+              var pagedata = (JSON.parse(res.text)).list
+              var arr2 = that.tableDataDel(pagedata)
+							that.$store.dispatch('settlementDate_action', { arr2 })
+							that.tableData = that.$store.state.settlementDate.arr2
+            }
+          })
+      }, 200)
+    }
   }
 }
 </script>
