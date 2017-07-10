@@ -61,3 +61,13 @@ export function checkPositiveNumber (value) {
     return false
   }
 }
+
+/**
+ * 用户名 验证 英文字母开头+ 数字组合
+ */
+export function checkUserName (string) {
+  if (string !== '') {
+    var reg = /^[a-zA-Z][\w]{0,}$/
+    return reg.test(string)
+  }
+}
