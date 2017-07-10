@@ -20,7 +20,7 @@
       </h1>
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;">
+      <el-table :data="tableData" style="width: 100%; font-size:13px;" @cell-click="changeState">
         <el-table-column prop="userId" label="用户名" min-width="140"></el-table-column>
         <el-table-column prop="phoneNo" label="手机号" min-width="140"></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="170"></el-table-column>
@@ -33,9 +33,9 @@
         </el-table-column>
         <el-table-column label="状态" min-width="120" style="font-size:12px;">
           <template scope="scope">
-            <el-switch v-if="scope.row.state==0" v-model="scope.row.state" on-color="#13ce66" on-text="开启" off-text="冻结" off-color="#ff4949">
+            <el-switch v-if="scope.row.state==true" v-bind:model="scope.row.state" on-color="#13ce66" on-text="开启" off-text="冻结" off-color="#ff4949">
             </el-switch>
-            <el-switch v-else on-text="冻结" v-model="scope.row.state" on-color="#ff4949" off-color="#13ce66" off-text="开启" >
+            <el-switch v-else on-text="冻结" v-bind:model="scope.row.state" on-color="#ff4949" off-color="#13ce66" off-text="开启" >
             </el-switch>
           </template>
         </el-table-column>
@@ -138,6 +138,17 @@ export default {
     openEdit (item) {
       this.dialogVisible = true
       console.log(item)
+    },
+    changeState (row, column, cell) {
+      var res = this.tableData.map((item) => {
+        var obj = {}
+        if (item.id === row.id) {
+          obj = Object.assign({}, item, {state: !item.state})
+        }
+        return obj
+      })
+      console.log(row, res)
+      // this.tableData = res
     }
   },
   mounted () {
@@ -151,59 +162,59 @@ export default {
       if (err) {
         console.log(err)
       } else {
-        console.log(JSON.parse(res.text).list)
         that.totalPage = JSON.parse(res.text).totalPage || 20
         var arr = JSON.parse(res.text).list
         arr = arr.map((item) => {
           var obj = {}
-          obj = Object.assign({}, item, {state: !!item.state})
+          obj = Object.assign({}, item, {state: !item.state})
           return obj
         })
-        console.log(arr)
-        that.tableData = JSON.parse(res.text).list
+        that.tableData = arr
+        if (that.totalPage != null) {
+          $('.M-box').pagination({
+            pageCount: that.totalPage,
+            jump: true,
+            coping: true,
+            homePage: '首页',
+            endPage: '尾页',
+            prevContent: '«',
+            nextContent: '»'
+          })
+          $('.M-box').click(function (e) {
+            if (e.target.getAttribute('class') === 'active') {
+              return false
+            }
+            if (e.target.tagName === 'A') {
+              if (e.target.innerText === '首页') {
+                that.currentPage = 1
+              }
+              if (e.target.innerText === '尾页') {
+                that.currentPage = that.pageSize
+              }
+              if (e.target.innerText === '»') {
+                that.currentPage++
+              }
+              if (e.target.innerText === '«') {
+                that.currentPage--
+              }
+              if (checkPositiveNumber(e.target.innerText)) {
+                that.currentPage = e.target.innerText
+              }
+              if (e.target.innerText === '跳转') {
+                e.preventDefault()
+                var jumpPageNum = $('.M-box .active').text()
+                that.currentPage = jumpPageNum
+              }
+            }
+          })
+          $(document).keydown(function (e) {
+            if (e.keyCode === 13) {
+              that.currentPage = e.target.value
+              console.log(that.currentPage)
+            }
+          })
+        }
       }
-      $('.M-box').pagination({
-        pageCount: that.totalPage,
-        jump: true,
-        coping: true,
-        homePage: '首页',
-        endPage: '尾页',
-        prevContent: '«',
-        nextContent: '»'
-      })
-      $('.M-box').click(function (e) {
-        if (e.target.getAttribute('class') === 'active') {
-          return false
-        }
-        if (e.target.tagName === 'A') {
-          if (e.target.innerText === '首页') {
-            that.currentPage = 1
-          }
-          if (e.target.innerText === '尾页') {
-            that.currentPage = that.pageSize
-          }
-          if (e.target.innerText === '»') {
-            that.currentPage++
-          }
-          if (e.target.innerText === '«') {
-            that.currentPage--
-          }
-          if (checkPositiveNumber(e.target.innerText)) {
-            that.currentPage = e.target.innerText
-          }
-          if (e.target.innerText === '跳转') {
-            e.preventDefault()
-            var jumpPageNum = $('.M-box .active').text()
-            that.currentPage = jumpPageNum
-          }
-        }
-      })
-      $(document).keydown(function (e) {
-        if (e.keyCode === 13) {
-          that.currentPage = e.target.value
-          console.log(that.currentPage)
-        }
-      })
     })
   },
   watch: {
