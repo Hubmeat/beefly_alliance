@@ -10,11 +10,11 @@
               </span>
             </h1>
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-							<el-form-item label="用户名" prop="username">
-								<el-input v-model="ruleForm.username" placeholder='请输入用户名'></el-input>
+							<el-form-item label="用户名" prop="userId">
+								<el-input v-model="ruleForm.userId" placeholder='请输入用户名'></el-input>
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
-								<el-input v-model="ruleForm.password" placeholder='请输入密码'></el-input>
+								<el-input type="password" v-model="ruleForm.password" placeholder='请输入密码'></el-input>
 							</el-form-item>
 							<el-form-item label="所属角色" prop="role">
 								<el-select v-model="ruleForm.role" placeholder="选择角色类型">
@@ -26,14 +26,14 @@
 							<el-form-item label="姓名" prop="name">
 								<el-input v-model="ruleForm.name" placeholder='请输入姓名'></el-input>
 							</el-form-item>
-							<el-form-item label="手机号" prop="tel">
-								<el-input v-model="ruleForm.tel" placeholder='请输入手机号'></el-input>
+							<el-form-item label="手机号" prop="phoneNo">
+								<el-input v-model="ruleForm.phoneNo" placeholder='请输入手机号'></el-input>
 							</el-form-item>
 							<el-form-item label="邮箱" prop="eamil">
 								<el-input v-model="ruleForm.eamil" placeholder='请输入邮箱'></el-input>
 							</el-form-item>
 							<el-form-item label="备注">
-								<el-input type="textarea"></el-input>
+								<el-input type="textarea" v-model="ruleForm.textarea"></el-input>
 							</el-form-item>
 							<el-form-item>
 								<el-button class='addaccount_button' type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -63,7 +63,7 @@
       margin-right: 20px;
       border: 1px solid #ccc;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
@@ -82,7 +82,7 @@
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
-    border-radius: 6px;
+    border-radius: 2px;
   }
 }
 
@@ -129,39 +129,63 @@
 </style>
       
 <script>
+import request from 'superagent'
+import {checkUserName, checkMobile, isEmail} from '../../../../utils/index.js'
 export default {
   data () {
+    var validateUserId = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入用户名'))
+      }else if (!checkUserName(value)) {
+        callback('用户名格式：必须英文字母开头 不可以为汉字')
+      }else {
+        callback()
+      }
+    }
+    var validatePhoneNo = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入手机号'))
+      } else if(!checkMobile(value)) {
+        callback(new Error('手机号格式不正确'))
+      } else {
+        callback()
+      }
+    }
+     var validateEmail = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入邮箱'))
+      } else if(!isEmail(value)) {
+        callback(new Error('邮箱格式不正确'))
+      } else {
+        callback()
+      }
+    }
     return {
       ruleForm: {
-        username: '',
-        password: '',
+        id: '',
+        emailBinding: '',
+        franchiseeId: '',
+        loginAuth: '',
+        phoneNoBinding: '',
         role: '',
-        name: '',
-        tel: '',
-        eamil: ''
+        state: '',
+        userId: '',
+        password: '',
+        phoneNo: '',
+        email: '' ,
+        textarea: ''
       },
       rules: {
-        username: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-        ],
+        userId: [{ validator: validateUserId, trigger: 'blur' }],
         password: [
           { required: true, message: '请填写密码', trigger: 'blur' },
           { min: 6, message: '密码应不少于6位', trigger: 'blur' }
         ],
-        role: [
-          { required: true, message: '请选择角色类型', trigger: 'change' }
-        ],
         name: [
           { message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 5, message: '请输入正确的姓名', trigger: 'blur' }
         ],
-        tel: [
-          { message: '请填写手机号', trigger: 'blur' }
-        ],
-        eamil: [
-          { message: '请填写正确邮箱', trigger: 'blur' }
-        ]
+        phoneNo: [{ validator: validatePhoneNo, trigger: 'blur' }],
+        eamil: [{ validator: validateEmail, trigger: 'blur' }]
       }
     }
   },
@@ -175,10 +199,56 @@ export default {
             type: 'warning'
           })
         .then(() => {
-          this.$router.push('/index/accountManager')
-          this.$message({
-            type: 'success',
-            message: '添加成功'
+          if (this.ruleForm.role === '管理员') {
+            this.ruleForm.role = 0
+          } else if (this.ruleForm.role === '加盟商') {
+            this.ruleForm.role = 1
+          } else {
+            this.ruleForm.role = 2
+          }
+          request.post('http://192.168.3.52:7099/franchisee/account/addAccount')
+           .send({
+              curAcc: {
+                id: 0,
+                emailBinding: 0,
+                franchiseeId: '123456',
+                loginAuth: 0,
+                phoneNoBinding: 0,
+                role: 0,
+                state: 0,
+                userId: '123'
+              },
+              newAcc: {
+                emailBinding: 0,
+                franchiseeId: '123456',
+                loginAuth: 0,
+                phoneNoBinding: 0,
+                role: this.ruleForm.role,
+                state: 0,
+                name: this.ruleForm.name,
+                userId: this.ruleForm.userId
+              }
+            })
+          .end( (err, res)=>{
+            if (err) {
+              console.log(err)
+            } else {
+              console.log(JSON.parse(res.text))
+              var code = JSON.parse(res.text).code
+              if (code === 1) {
+                 this.$router.push('/index/accountManager')
+                 this.$message({
+                  type: 'error',
+                  message: '对不起，您没有权限'
+                })
+              } else {
+                  this.$router.push('/index/accountManager')
+                  this.$message({
+                    type: 'success',
+                    message: '添加成功'
+                  })
+              }
+            }
           })
         }).catch(() => {
           this.$message({

@@ -16,69 +16,80 @@
     <!-- account -->
     <div class="account">
       <h1>
-        <button type="button" @click="change">添加新账号</button>
+        <button type="button" @click="addAccount">添加新账号</button>
       </h1>
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;" @cell-click="changeState">
+      <el-table :data="tableData" style="width: 100%; font-size:13px;" v-loading="loading" element-loading-text="正在删除中">
         <el-table-column prop="userId" label="用户名" min-width="140"></el-table-column>
         <el-table-column prop="phoneNo" label="手机号" min-width="140"></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="170"></el-table-column>
         <el-table-column prop="name" label="姓名" min-width="100"></el-table-column>
         <el-table-column prop="role" label="类别" min-width="120">
           <template scope="scope">
-            <span v-if="scope.row.role==0">管理员</span>
-            <span v-else>普通人</span>
+            <span>{{scope.row.role==0? '管理员': '普通人'}}</span>
           </template>
         </el-table-column>
         <el-table-column label="状态" min-width="120" style="font-size:12px;">
           <template scope="scope">
-            <el-switch v-if="scope.row.state==true" v-bind:model="scope.row.state" on-color="#13ce66" on-text="开启" off-text="冻结" off-color="#ff4949">
-            </el-switch>
-            <el-switch v-else on-text="冻结" v-bind:model="scope.row.state" on-color="#ff4949" off-color="#13ce66" off-text="开启" >
+            <el-switch
+                v-on:change="changeState(scope)"
+                v-model="scope.row.state" 
+                on-text="开启" 
+                off-text="关闭" 
+                on-color="#13ce66"
+                off-color="#ff4949"
+            >
             </el-switch>
           </template>
         </el-table-column>
         <el-table-column prop="del" label="操作">
           <template scope="scope">
             <a href="javascript:;"></a>
-            <i class="el-icon-edit" @click="openEdit(scope.row)" title="修改" style="margin-right:10px;"></i>
+            <i class="el-icon-edit" @click="openEdit(scope)" title="修改" style="margin-right:10px;"></i>
             </a>
-            <i class="el-icon-close" title="删除"></i>
+            <i class="el-icon-close" title="删除" @click="openDelete(scope)"></i>
+            <!--dialog 弹窗开始-->
              <el-dialog title="账号信息" :visible.sync="dialogVisible" :modal="true"
               :modal-append-to-body="false">
-              <el-form :model="form">
+              <el-form :model="editAccount">
                 <el-form-item label="用户名" :label-width="formLabelWidth">
-                  <el-input v-model="form.userId" auto-complete="off"></el-input>
+                  <el-input v-model="editAccount.userId" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="手机号" :label-width="formLabelWidth">
-                  <el-input v-model="form.phoneNo"></el-input>
+                  <el-input v-model="editAccount.phoneNo"></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱" :label-width="formLabelWidth">
-                  <el-input v-model="form.email" auto-complete="off"></el-input>
+                  <el-input v-model="editAccount.email" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="姓名" :label-width="formLabelWidth">
-                  <el-input v-model="form.name" auto-complete="off"></el-input>
+                  <el-input v-model="editAccount.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="类别" :label-width="formLabelWidth">
-                  <el-select v-model="form.role" placeholder="请选择类别">
-                    <el-option label="管理员" value="0"></el-option>
-                    <el-option label="普通人" value="1"></el-option>
+                  <el-select v-model="editAccount.role" placeholder="请选择类别">
+                    <el-option
+                      label="管理"
+                      value="管理">
+                    </el-option>
+                    <el-option
+                      label="普通人"
+                      value="普通人">
+                    </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="状态" :label-width="formLabelWidth">
-                  <el-radio-group v-model="form.state">
-                    <el-radio label="冻结"></el-radio>
-                    <el-radio label="开启"></el-radio>
+                  <el-radio-group v-model="editAccount.state">
+                    <el-radio v-bind:label="true">开启</el-radio>
+                    <el-radio v-bind:label="false">关闭</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                
               </el-form>
               <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+                <el-button type="primary" @click="handleEditAccount">确 定</el-button>
               </div>
             </el-dialog>
+            <!--dialog 弹窗结束-->
           </template>
         </el-table-column>
       </el-table>
@@ -119,6 +130,7 @@ export default {
         resource: '',
         desc: ''
       },
+      loading: false,
       formLabelWidth: '60px',
       editAccount: {
         userId: '',
@@ -126,29 +138,109 @@ export default {
         email: '',
         name: '',
         role: '',
-        state: ''
+        state: '',
+        value: '',
+        index:''
       }
     }
   },
   methods: {
-    change () {
+    addAccount () {
       this.$router.push('/index/accountManager/addaccount')
       this.router_show = true
     },
-    openEdit (item) {
+    openEdit (scope) {
       this.dialogVisible = true
-      console.log(item)
+      this.editAccount.userId = scope.row.userId
+      this.editAccount.email = scope.row.email
+      this.editAccount.phoneNo = scope.row.phoneNo
+      this.editAccount.name = scope.row.name
+      this.editAccount.role = scope.row.role === 0? '管理':'普通人'
+      this.editAccount.state = scope.row.state
+      this.editAccount.index= scope.$index
     },
-    changeState (row, column, cell) {
-      var res = this.tableData.map((item) => {
-        var obj = {}
-        if (item.id === row.id) {
-          obj = Object.assign({}, item, {state: !item.state})
-        }
-        return obj
-      })
-      console.log(row, res)
-      // this.tableData = res
+    handleEditAccount () {
+      this.dialogVisible = false
+      var newAccountInfo = {}
+      newAccountInfo.userId = this.editAccount.userId
+      newAccountInfo.email = this.editAccount.email
+      newAccountInfo.phoneNo = this.editAccount.phoneNo
+      newAccountInfo.name = this.editAccount.name
+      newAccountInfo.role = this.editAccount.role === '管理'?0:1
+      newAccountInfo.state = this.editAccount.state
+      var index = this.editAccount.index
+      this.tableData.splice(index,1,newAccountInfo)
+    },
+    openDelete (scope) {
+      var that = this
+      this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+          that.loading = true
+          request.post('http://192.168.3.52:7099/franchisee/account/delAccount')
+            .send({
+              curAcc: {
+                id: 0,
+                emailBinding: 0,
+                franchiseeId: '123456',
+                loginAuth: 0,
+                phoneNoBinding: 0,
+                role: 0,
+                state: 0,
+                userId: '123'
+              },
+              newAcc: {
+                id: scope.row.id,
+                emailBinding: 0,
+                franchiseeId: '123456',
+                loginAuth: 0,
+                phoneNoBinding: 0,
+                role: scope.row.role,
+                state: scope.row.state?0:1,
+                userId: scope.row.userId
+              }
+            })
+            .end((err, res) => {
+              if (err) {
+                console.log(err)
+              } else {
+                var code = JSON.parse(res.text).code
+                if (code === 1) {
+                  that.loading = false
+                  that.$message({
+                    type: 'error',
+                    message: '对不起，您没有权限!'
+                  })
+                }else if(code === 0) {
+                  that.loading = false
+                  that.$message({
+                    type: 'success',
+                    message: '恭喜您，删除成功!'
+                  })
+                  that.tableData.splice(scope.$index,1)
+                }
+              }
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })      
+        })
+    },
+    changeState (scope) {
+     var index= scope.$index
+     var obj = Object.assign({},scope.row,{state: !scope.row.state})
+     this.tableData.splice(index,1,obj)
+     if( this.tableData[index].state ) {
+       // 状态为true 发送请求 修改数据库状态
+       console.error('状态为true 发送请求 修改数据库状态')
+     }else {
+       // 状态为false 发送请求 修改数据库状态
+       console.error('false 发送请求 修改数据库状态')
+     }
     }
   },
   mounted () {
@@ -230,7 +322,13 @@ export default {
             if (err) {
               console.log(err)
             } else {
-              that.tableData = JSON.parse(res.text).list
+              var arr = JSON.parse(res.text).list
+              arr = arr.map((item) => {
+                var obj = {}
+                obj = Object.assign({}, item, {state: !item.state})
+                return obj
+              })
+              that.tableData = arr
             }
           })
       },
