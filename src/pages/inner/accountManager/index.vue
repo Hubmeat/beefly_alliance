@@ -17,6 +17,8 @@
     <div class="account">
       <h1>
         <button type="button" @click="addAccount">添加新账号</button>
+        <!--新增数据开始-->
+        <!--新增数据结束-->
       </h1>
   
       <!-- 表单 -->
@@ -262,6 +264,7 @@ export default {
           return obj
         })
         that.tableData = arr
+        that.$store.state.accountMangerTableData = arr
         if (that.totalPage != null) {
           $('.M-box').pagination({
             pageCount: that.totalPage,

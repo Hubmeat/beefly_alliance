@@ -29,8 +29,8 @@
 							<el-form-item label="手机号" prop="phoneNo">
 								<el-input v-model="ruleForm.phoneNo" placeholder='请输入手机号'></el-input>
 							</el-form-item>
-							<el-form-item label="邮箱" prop="eamil">
-								<el-input v-model="ruleForm.eamil" placeholder='请输入邮箱'></el-input>
+							<el-form-item label="邮箱" prop="email">
+								<el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
 							</el-form-item>
 							<el-form-item label="备注">
 								<el-input type="textarea" v-model="ruleForm.textarea"></el-input>
@@ -185,7 +185,7 @@ export default {
           { message: '请输入姓名', trigger: 'blur' },
         ],
         phoneNo: [{ validator: validatePhoneNo, trigger: 'blur' }],
-        eamil: [{ validator: validateEmail, trigger: 'blur' }]
+        email: [{ validator: validateEmail, trigger: 'blur' }]
       }
     }
   },
@@ -226,7 +226,9 @@ export default {
                 role: this.ruleForm.role,
                 state: 0,
                 name: this.ruleForm.name,
-                userId: this.ruleForm.userId
+                userId: this.ruleForm.userId,
+                email: this.ruleForm.email,
+                phoneNo: this.ruleForm.phoneNo
               }
             })
           .end( (err, res)=>{
