@@ -116,6 +116,10 @@
     border: 1px solid rgb(66,66,66);
 	}*/
 
+  .el-table td:nth-of-type(1) .cell {
+    color: #f60;
+  }
+
   div.timeSelectBtn {
     display:block;
     float:left;
@@ -196,6 +200,10 @@
     border-top: none;
 	}
 
+  #earD_body tr.el-table__row div.cell {
+    color: #f60;
+  }
+
 	#earD_page {
     padding: 4px 10px 0 18px;
 		padding-bottom: 100px;
@@ -257,7 +265,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route.query)
+    // console.log(this.$route.query)
     this.$router.push('/index/earningsDetail?type=getAllRevenue')
     request
       .post('http://192.168.3.52:7099/franchisee/revenue/getAllRevenue')
@@ -302,13 +310,13 @@ export default {
   beforeUpdate () {
     var that = this
     $('.M-box').click('a', function (e) {
-      console.log(e)
+      // console.log(e)
       that.pageUpdate(e)
     })
   },
   methods: {
     handleChangeType (e) {
-      console.log(e.currentTarget.innerText)
+      // console.log(e.currentTarget.innerText)
       if (e.currentTarget.innerText === '指定时间段') {
         this.show = true
       } else {

@@ -152,6 +152,11 @@
     border-bottom: none;
 	}
 
+  #settleRed_table .el-table--enable-row-transition .el-table__body tr td:nth-of-type(1) {
+    color: #f60;
+    cursor: pointer;
+  }
+
 	#settleRed_page {
 		padding: 4px 10px 0 18px;
 		padding-bottom: 100px;
@@ -239,12 +244,14 @@ export default {
       return arrDeled
     },
 		goDetail (row, column, cell) {
-			console.log(cell)
-			if (column.label === '结算月份') {
-				this.$router.push('/index/applysubmitted/' + row.myId)
+			console.log(row)
+			if (column.label === '结算月份' && row.status === '审核中') {
+				this.$router.push('/index/applysubmitted/' + row.myId + '&1')
+			} else if (column.label === '结算月份' && row.status === '已结算') {
+				this.$router.push('/index/applysubmitted/' + row.myId + '&2')
 			} else {
-				return
-			}
+        return
+      }
 		},
     pageUpdate (e) {
       var that = this
