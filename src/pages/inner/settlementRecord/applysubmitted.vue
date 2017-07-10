@@ -22,7 +22,7 @@
           <li>
             <span>申请结算金额：</span>
             <input type="text" ref="my_val" id="apply_money" readonly>
-            <button>已结算</button>
+            <button class="status">{{status}}</button>
           </li>
         </ul>
     </div>
@@ -68,12 +68,25 @@ export default {
       }],
       router_show: false,
       dialogVisible: false,
-      apply_money_data: '2017-01'
+      apply_money_data: '2017-01',
+      status: ''
     }
   },
   mounted () {
-    // console.log(this.$route)
-    var data1 = this.$route.params.id
+    var data1 = this.$route.params.id.split('&')[0]
+
+    if (this.$route.params.id.split('&')[1] === '1') {
+      this.status = '审核中'
+      $('button.status').css({
+        'background':'rgb(255,153,0)',
+        'color': '#fff'
+      })
+    } else {
+      this.status = '已审核'
+      $('button.status').css('background', 'green')
+    }
+
+    // console.log(data1)
     request
       .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail')
       .send({
@@ -134,7 +147,6 @@ export default {
     },
     pageUpdate (e) {
       var that = this
-      console.log(this.pagetotal)
       clearTimeout(this.timer)
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
@@ -152,8 +164,7 @@ export default {
       } else {
         return
       }
-      var type = this.$route.query.type
-      var data1 = this.$route.params.id
+      var data1 = this.$route.params.id.split('&')[0]
       this.timer = setTimeout(function () {
         request
           .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail?page=' + e.target.innerHTML)
@@ -297,17 +308,17 @@ export default {
     height: 40px;
     margin: 10px 0 0 10px;
     border: 1px solid #f9f9f9;
-    background: rgba(255,153,0,0.8);
+    /*background: rgba(255,153,0,0.8);*/
     color: #fff;
     border-radius: 6px;
     display: inline-block;
     outline: none;
   }
 
-  #apply_account_header ul li:nth-of-type(3) button:hover {
+  /*#apply_account_header ul li:nth-of-type(3) button:hover {
     cursor: pointer;
     background: rgb(255,153,0);
-  }
+  }*/
 
   .el-table__body,
   .el-table__footer,
