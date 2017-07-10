@@ -4,21 +4,15 @@
       <el-row class="countTitle">
         <span class="countDimension labelAlign">统计维度</span>
         <div class="timeSelectBtn">
-          <router-link :to="{ query: { type: 'day' }}">
             <el-button class="active" @click="handleChangeType" type="primary">今日</el-button>
-          </router-link>
-          <router-link :to="{ query: { type: 'week' }}">
             <el-button @click="handleChangeType">本周</el-button>
-          </router-link>
-          <router-link :to="{ query: { type: 'month' }}">
             <el-button @click="handleChangeType">本月</el-button>
-          </router-link>
         </div>
         <span class="timePeried labelAlign" >数据时间段</span>
         <el-date-picker :format="form.formatType" v-model='form.data1' :type="form.type" placeholder="选择日期"></el-date-picker>
         <span class="division">至</span>
         <el-date-picker :format="form.formatType" v-model='form.data2' :type="form.type" placeholder="选择日期"></el-date-picker>
-        <el-button class="query" icon="search">查询</el-button>
+        <el-button class="query" icon="search" @click="getDateByTimeLine">查询</el-button>
       </el-row>
       <el-row class="countDetail">
         <router-view></router-view>
@@ -29,6 +23,7 @@
 <script>
 // import $ from 'jquery'
 import { siblings } from '../../../../utils/index.js'
+import moment from 'moment'
 export default {
   data: function () {
     return {
@@ -44,18 +39,21 @@ export default {
   methods: {
     handleChangeType (e) {
       switch (e.target.innerText) {
-        case '日': {
+        case '今日': {
           this.form.type = 'date'
+          this.$router.push({ query: { type:  'day'}})
           this.form.formatType = 'yyyy-MM-dd'
           break
         }
-        case '周': {
+        case '本周': {
           this.form.type = 'week'
+          this.$router.push({ query: { type:  'week'}})
           this.form.formatType = 'yyyy 第 WW 周'
           break
         }
-        case '月': {
+        case '本月': {
           this.form.type = 'month'
+          this.$router.push({ query: { type:  'month'}})
           this.form.formatType = ''
           break
         }
@@ -65,7 +63,21 @@ export default {
         siblingsBtn[i].setAttribute('class', 'el-button el-button--default')
       }
       e.currentTarget.setAttribute('class', 'el-button active el-button--default')
-    }
+    },
+    getDateByTimeLine () {
+      if (this.form.data1 === '' || this.form.data2 === '') {
+        this.$alert('请选择想要查询的日期', 'Warning', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        var timeStart = moment(this.form.data1).format('YYYY-MM-DD')
+        var timeEnd = moment(this.form.data2).format('YYYY-MM-DD')
+        var newObj = {}
+        newObj.time1 = timeStart
+        newObj.time2 = timeEnd
+        this.$store.dispatch('timeline_action', { newObj })
+      }
+    }    
   }
 }
 </script>

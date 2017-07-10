@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const state = {
     consumeData: [],
     earningsDate: [],
-    settlementDate: []
+    settlementDate: [],
+    timeline: []
 }
 
 const mutations = {
@@ -22,6 +23,10 @@ const mutations = {
     settlementDate_detail(state, { arr }) {
         console.log('[[ settlementDate_detail is commited ]]')
         state.settlementDate = arr
+    },
+    setTimeLine(state, { obj }) {
+        console.log('[[ timeline is setted ]]')
+        state.timeline = obj
     }
 }
 
@@ -31,8 +36,12 @@ const actions = {
     //  <=====  end
     // 营收记录 收益明细 结算记录模块 start ====>
     earningsDate_action: ({ commit }, arr) => commit('earningDate_detail', { arr }),
-    settlementDate_action: ({ commit }, arr) => commit('settlementDate_detail', { arr })
-    //  <====== end 
+    settlementDate_action: ({ commit }, arr) => commit('settlementDate_detail', { arr }),
+    //  <====== end
+    // 报表管理时间段传递  start  ====>
+    timeline_action: ({ commit }, obj) => commit('setTimeLine', { obj })
+    // <===== end 
+
 }
 
 const getters = {
