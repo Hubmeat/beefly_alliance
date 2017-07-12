@@ -77,7 +77,7 @@ export default {
         newObj.time2 = timeEnd
         this.$store.dispatch('timeline_action', { newObj })
       }
-    }    
+    }
   }
 }
 </script>

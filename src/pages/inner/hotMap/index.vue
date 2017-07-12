@@ -23,7 +23,22 @@
       </div>
 		</div>
 
-
+    <div style="margin-bottom: -10px;">
+      <el-row class="showTime">
+        <el-col class="dateArrow" ref="dateArrow" v-bind:data-timetype="arrowTimeType">
+          <el-button @click="dateMinus">
+            <i class="el-icon-arrow-left"></i>
+          </el-button>
+          <span class="nowTime">{{nowTime}}</span>
+          <el-button @click="dateAplus">
+            <i class="el-icon-arrow-right"></i>
+          </el-button>
+        </el-col>
+        <el-col>
+          24小时数据走势
+        </el-col>
+      </el-row>
+    </div>
 
 		<div class="gmap">
 		  <div id="map-container"></div>
@@ -127,6 +142,16 @@ div.gmap{
       height:35px;
     }
 
+    div.showTime {
+      margin-top: 20px;
+    }
+
+    div.showTime div.el-col {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+    }
+
     div.timeSelectBtn button.active {
         background: rgb(66,66,66);
         color:#fff
@@ -136,6 +161,8 @@ div.gmap{
 <script>
 import AMap from 'AMap'
 import { siblings } from '../../../../utils/index.js'
+import moment from 'moment'
+import request from 'superagent'
 var map, auto, placeSearch, heatmap, driving, citysearch
 // 输入提示
 var autoOptions = {
@@ -149,6 +176,9 @@ export default {
       endDriving: '',
       city: '北京',
       value4: false,
+      nowTime: '',
+      arrowTimeType: 'day',
+      clickTimes: 0,
       show: false,
       pickerOptions2: {
         shortcuts: [
@@ -185,8 +215,25 @@ export default {
     }
   },
   mounted: function () {
+    // 加载本日热力图
+    request
+      .post('http://192.168.3.52:7099/franchisee/report/hot/day')
+      .send({
+        'franchiseeId': '123456',
+        'userId': 'admin'
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log('err:' + err)
+        } else {
+          console.log(res)
+          console.log(JSON.parse(res.text).list)
+        }
+      })
+
+    this.nowTime = moment().format('YYYY-MM-DD')
     this.init()
-    /** this.showCurrentCity() **/
+    this.showCurrentCity()
   },
   methods: {
     init () {
@@ -485,6 +532,91 @@ export default {
         this.show = true
       } else {
         this.show = false
+      }
+      var nowTime
+      switch (e.currentTarget.innerText) {
+        case '今日': {
+          nowTime = moment().format('YYYY-MM-DD')
+          this.$router.push({ query: { type:  'day'}})
+          this.nowTime = nowTime
+          this.arrowTimeType = 'day'
+          this.clickTimes = 0
+          break
+        }
+        case '本周': {
+          nowTime = moment().format('YYYY年第ww周')
+          this.$router.push({ query: { type:  'week'}})
+          this.nowTime = nowTime
+          this.arrowTimeType = 'week'
+          this.clickTimes = 0
+          break
+        }
+        case '本月': {
+          nowTime = moment().format('YYYY年MM月')
+          this.$router.push({ query: { type:  'month'}})
+          this.nowTime = nowTime
+          this.arrowTimeType = 'month'
+          this.clickTimes = 0
+          break
+        }
+      }
+    },
+    dateMinus () {
+      var dateTimeType = this.$refs.dateArrow.$el.dataset.timetype
+      var nums = null
+      switch (dateTimeType) {
+        case 'day': {
+          nums = --this.clickTimes
+          console.log(nums)
+          var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
+          console.log(moment(lastDay).format('YYYY-MM-DD'))
+          this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          break
+        }
+        case 'week': {
+          nums = --this.clickTimes
+          console.log(nums)
+          var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
+          console.log(moment(lastweek).format('YYYY年第WW周'))
+          this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          break
+        }
+        case 'month': {
+          nums = --this.clickTimes
+          var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
+          console.log(moment(lastmonth).format('YYYY年MM月'))
+          this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          break
+        }
+      }
+    },
+    dateAplus () {
+      var dateTimeType = this.$refs.dateArrow.$el.dataset.timetype
+      var nums = null
+      switch (dateTimeType) {
+        case 'day': {
+          nums = ++this.clickTimes
+          console.log(nums)
+          var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
+          console.log(moment(lastDay).format('YYYY-MM-DD'))
+          this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          break
+        }
+        case 'week': {
+          nums = ++this.clickTimes
+          console.log(nums)
+          var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
+          console.log(moment(lastweek).format('YYYY年第WW周'))
+          this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          break
+        }
+        case 'month': {
+          nums = ++this.clickTimes
+          var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
+          console.log(moment(lastmonth).format('YYYY年MM月'))
+          this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          break
+        }
       }
     }
   }

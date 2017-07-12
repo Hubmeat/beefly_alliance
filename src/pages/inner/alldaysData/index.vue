@@ -6,12 +6,12 @@
           <el-button  class="active" @click='handleChangeType'>今日</el-button>
           <el-button @click='handleChangeType'>本周</el-button>
           <el-button @click='handleChangeType'>本月</el-button>
-          <el-button @click='handleChangeType'>所有日期</el-button>
-          <el-button @click='handleChangeType'>指定时间段</el-button>
+          <el-button @click='handleChangeType'>最近六个月</el-button>
+          <!--<el-button @click='handleChangeType'>指定时间段</el-button>-->
         </div>
-        <el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
+        <!--<el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
         </el-date-picker>
-        <el-button icon="search" class="timeSelect_button">查询</el-button>
+        <el-button icon="search" class="timeSelect_button" @click="getDateByTimeLine">查询</el-button>-->
       </el-col>
     </el-row>
     <el-row class="showTime">
@@ -136,9 +136,11 @@ div.dateArrow span.nowTime {
   margin-left: 5px;
   margin-right: 5px
 }
+
 div.el-date-editor--datetimerange{margin-right: 8px;}
 </style>
 <script>
+import request from 'superagent'
 import highChart from '../../../components/highChart.vue'
 import { siblings } from '../../../../utils/index.js'
 import moment from 'moment'
@@ -177,7 +179,7 @@ export default {
         ]
       },
       value4: '',
-      nowTime: '2017-06-20',
+      nowTime: '',
       show: false,
       clickTimes: 0,
       arrowTimeType: 'day'
@@ -202,6 +204,7 @@ export default {
       switch (e.currentTarget.innerText) {
         case '今日': {
           nowTime = moment().format('YYYY-MM-DD')
+          this.$router.push({ query: { type:  'day'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'day'
           this.clickTimes = 0
@@ -209,6 +212,7 @@ export default {
         }
         case '本周': {
           nowTime = moment().format('YYYY年第ww周')
+          this.$router.push({ query: { type:  'week'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'week'
           this.clickTimes = 0
@@ -216,6 +220,7 @@ export default {
         }
         case '本月': {
           nowTime = moment().format('YYYY年MM月')
+          this.$router.push({ query: { type:  'month'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'month'
           this.clickTimes = 0
@@ -280,7 +285,26 @@ export default {
           break
         }
       }
+    },
+    getDateByTimeLine () {
+      if (this.value4 === '') {
+        this.$alert('请选择想要查询的日期', 'Warning', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        var timeStart = moment(this.value4[0]).format('YYYY-MM-DD ')
+        var timeEnd = moment(this.value4[1]).format('YYYY-MM-DD ')
+        console.log(timeStart, timeEnd)
+        var newObj = {}
+        newObj.time1 = timeStart
+        newObj.time2 = timeEnd
+        this.$store.dispatch('timeline_action', { newObj })
+      }
     }
+  },
+  mounted () {
+    this.nowTime = moment().format('YYYY-MM-DD')
+    this.$router.push({ query: { type:  'day'}})
   }
 }
 </script>

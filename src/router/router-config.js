@@ -115,7 +115,7 @@ export default [
                     name: '添加合伙人',
                     component: addpartner
                 }, {
-                    path: '/index/partnerManager/checkpartner',
+                    path: '/index/partnerManager/checkpartner/:id',
                     name: '查看合伙人信息',
                     component: checkpartner
                 }]

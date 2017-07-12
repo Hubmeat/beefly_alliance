@@ -151,21 +151,48 @@
 	}
 </style>
 <script>
+import request from 'superagent'
 export default {
   data () {
     return {
       form: {
-        name: '胡经华',
-        sex: '女',
-        IDtype: '居名身份证',
-        IDcard: '34324342424334888',
-        tel: '13227892222',
-        car: '186',
-        email: 'jinghua@163.com',
-        address: '大山里'
+        name: '',
+        sex: '',
+        IDtype: '',
+        IDcard: '',
+        tel: '',
+        car: '',
+        email: '',
+        address: ''
       }
     }
   },
+	mounted () {
+		console.log(this.$route)
+		request
+			.post('http://192.168.3.52:7099/franchisee/partner/getPartnerDetail')
+			.send({
+				'franchiseeId': '123456',
+				'userId': 'admin',
+				'id': this.$route.params.id
+			})
+			.end((err, res) => {
+				if (err) {
+					console.log('err:' + err)
+				} else {
+					console.log(res)
+					console.log(JSON.parse(res.text))
+					var arr = JSON.parse(res.text)
+					this.form.name = arr.name
+					this.form.sex = arr.sex
+					this.form.IDcard = arr.IDcard
+					this.form.tel = arr.phoneNo
+					this.form.cars = arr.bikeNum
+					this.form.email = arr.email
+					this.form.address = arr.address
+				}
+			})
+	},
   methods: {
     onSubmit () {
       this.$router.push('/index/partnerManager')
