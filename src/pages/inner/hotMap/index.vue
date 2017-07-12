@@ -249,7 +249,7 @@ export default {
     console.log('11111')
     // 加载本日热力图
     request
-      .post('http://192.168.3.52:7099/franchisee/report/hot/curDay')
+      .post('http://192.168.3.52:7099/franchisee/report/hot/curHour')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin'
@@ -283,8 +283,6 @@ export default {
         map.addControl(new AMap.Driving())
         map.addControl(new AMap.Geolocation())
         map.addControl(new AMap.CitySearch())
-
-        this.showCurrentCity()
         // 热力图数据这里我用的模拟数据（北京部分公园数据）
         var heatmapData = arr
         console.log('heatmapData:', heatmapData)
@@ -378,9 +376,9 @@ export default {
       switch (e.currentTarget.innerText) {
         case '实时': {
           nowTime = moment().format('YYYY-MM-DD')
-          this.$router.push({ query: { type:  'now'}})
+          this.$router.push({ query: { type:  'curHour'}})
           this.nowTime = nowTime
-          this.arrowTimeType = 'now'
+          this.arrowTimeType = 'curHour'
           this.clickTimes = 0
           break
         }
@@ -467,7 +465,63 @@ export default {
           break
         }
       }
+    },
+    dataUpdate () {
+      var flag = true
+      console.log(this.$route.query.type)
+      if (this.$route.query.type === undefined) {
+        return
+      } else if (flag === true) {
+        request
+          .post('http://192.168.3.52:7099/franchisee/report/hot/' + this.$route.query.type)
+          .send({
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          })
+          .end((error, res) => {
+            // console.log('this is entry')
+            if (error) {
+              console.log('error:', error)
+            } else {
+              // console.log(res)
+              // console.log(JSON.parse(res.text).list)
+              var arr = JSON.parse(res.text).list
+              var pageNumber = JSON.parse(res.text).totalPage
+              // 设置data分页
+              this.pageTotal = pageNumber
+              $('.M-box').pagination({
+                pageCount: pageNumber,
+                jump: true,
+                coping: true,
+                homePage: '首页',
+                endPage: '尾页',
+                prevContent: '«',
+                nextContent: '»'
+              })
+              var newArr = []
+              for (var i = 0; i < arr.length; i++) {
+                var obj = {}
+                obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+                obj.totalBill = arr[i].totalBill
+                obj.money = arr[i].money
+                newArr.push(obj)
+              }
+              // console.log(newArr)
+              this.$store.dispatch('consumeData_action', {newArr})
+              this.lists = this.$store.state.consumeData
+              flag = false
+            }
+          })
+      } else {
+        return
+      }
     }
+  },
+  created () {
+    this.dataUpdate()
+  },
+  watch: {
+    '$route': 'dataUpdate'
   }
 }
 </script>
