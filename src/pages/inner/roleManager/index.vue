@@ -12,20 +12,59 @@
     <!-- account -->
     <div class="account">
       <h1>
-        <button type="button" @click="change">添加角色WANGSHICHENG</button>
+        <button type="button" @click="openEditRole">添加角色</button>
+        <el-dialog
+          title="添加角色"
+          :visible.sync="dialogFormVisible"
+          :modal-append-to-body="false"
+          :modal="true"
+        >
+          <el-form v-model="form">
+            <el-form-item label="角色名称" :label-width="formLabelWidth">
+              <el-input v-model="form.roleName" placeholder="请输入角色名称"></el-input>
+            </el-form-item>
+            <el-form-item label="备注" :label-width="formLabelWidth">
+              <el-input type="textarea" v-model="form.des"></el-input>
+            </el-form-item>
+            <el-form-item label="权限列表" :label-width="formLabelWidth">
+              <el-tree
+                :data="form.rolePowerList"
+                show-checkbox
+                ref="tree"
+                node-key="id"
+                :props="defaultProps">
+              </el-tree>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="handleAddRole">确 定</el-button>
+          </div>
+        </el-dialog>
       </h1>
   
       <!-- 表单 -->
       <el-table :data="tableData" style="width: 100%; font-size:13px;">
         <el-table-column prop="roleName" label="角色名称" min-width="160"></el-table-column>
-        <el-table-column prop="remark" label="备注" min-width="160"></el-table-column>
-        <el-table-column prop="include_user" label="包含用户" min-width="170"></el-table-column>
+        <el-table-column prop="des" label="备注" min-width="160"></el-table-column>
+        <el-table-column label="包含用户" min-width="170">
+          <template scope="scope">
+            <ul class="roleList">
+              <el-tag
+                v-for="name in scope.row.names"
+                :key="name"
+                type="gray"
+              >
+                {{name}}
+              </el-tag>
+              <!-- <li :key="name" v-for="name of scope.row.names">{{name}}</li> -->
+            </ul>
+          </template>
+        </el-table-column>
         <el-table-column prop="del" label="操作">
           <template scope="scope">
-            <a href="javascript:;"></a>
-            <i class="el-icon-edit" style="margin-right:10px;"></i>
-            </a>
-            <i class="el-icon-close"></i>
+            <i class="el-icon-edit" style="margin-right:10px;" title="修改"></i>
+            <i class="el-icon-close" title="删除"></i>
           </template>
         </el-table-column>
       </el-table>
@@ -46,72 +85,166 @@
 import $ from 'jquery'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import request from 'superagent'
 export default {
   data () {
     return {
       input: '',
-      currentPage: 3,
+      dialogFormVisible: false,
+      currentPage: 1,
+      totalPage:1,
       tableData: [{
         roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
-      }, {
-        roleName: '管理员',
-        remark: '这里是备注',
-        include_user: 'zhangsan, lisi, wanghu, liuhua'
+        des: '这里是备注',
+        names: []
       }],
-      router_show: false
+      router_show: false,
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      form: {
+        roleName: '',
+        des: '',
+        names: [],
+        rolePowerList: [
+              {
+                id: 2,
+                label: '首页'
+              },
+              {
+                id: 3,
+                label: '车辆管理'
+              },
+              {
+                id: 4,
+                label: '报表管理',
+                children: [
+                  {
+                    id:41,
+                    label: '消费数据'
+                  },
+                  {
+                    id:42,
+                    label: '24小时数据走势'
+                  },
+                  {
+                    id:43,
+                    label: '热力图'
+                  },
+                  {
+                    id:44,
+                    label: '异常数据'
+                  }
+                ]
+              },
+              {
+                id: 5,
+                label: '合伙人管理'
+              },
+              {
+                id: 6,
+                label: '营收管理',
+                children: [
+                  {
+                    id: 61,
+                    label: '收益明细'
+                  },
+                  {
+                    id: 62,
+                    label: '结算记录'
+                  },
+                ]
+              },
+              {
+                id: 6,
+                label: '账号管理'
+              },
+              {
+                id: 7,
+                label: '个人中心'
+              },
+              {
+                id: 8,
+                label: '角色管理'
+              },
+              {
+                id: 9,
+                label: '信息中心'
+              },
+              {
+                id: 10,
+                label: '日志管理',
+                children: [
+                  {
+                    id: 101,
+                    label: '登录日志'
+                  },
+                  {
+                    id: 102,
+                    label: '操作日志'
+                  },
+                ]
+              }
+            ]
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
-    change () {
-      console.log('this is entry')
-      this.$router.push('/index/roleManager/addrole')
-      this.router_show = true
-    }
+    openEditRole () {
+      this.dialogFormVisible = true
+      // this.$router.push('/index/roleManager/addrole')
+      // this.router_show = true
+    },
+    handleAddRole () {
+     this.dialogFormVisible = false
+     var authList = this.getCheckedNodes()
+     var that = this
+     request
+      .post('http://192.168.3.52:7099/franchisee/account/addRole')
+      .send({
+        des: that.form.des,
+        roleName: that.form.roleName,
+        auth: authList,
+        roleType: that.form.roleName === '管理员'?'0':'1'
+      })
+      .end((err, res) => {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log(res)
+        }
+      })
+
+    },
+    getCheckedNodes() {
+        return this.$refs.tree.getCheckedNodes()
+    },
   },
   mounted () {
-    $('.M-box').pagination({
-      pageCount: 50,
-      jump: true,
-      coping: true,
-      homePage: '首页',
-      endPage: '尾页',
-      prevContent: '«',
-      nextContent: '»'
-    })
+    var that = this
+    request
+     .post('http://192.168.3.52:7099/franchisee/account/getRole')
+     .end((err, res) => {
+       if (err) {
+         console.log(err)
+       } else {
+         var result = JSON.parse(res.text).list
+         if (result.length>0 ) {
+            $('.M-box').pagination({
+              pageCount: that.totalPage,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
+         }
+         that.tableData  = result
+       }
+     })
   }
 }
 </script>
@@ -287,5 +420,7 @@ div.account>h1 button:hover {
 }
 
 .el-switch__label, .el-switch__label *{font-size:12px;}
+ul.roleList li {list-style-type: none;float:left;}
+span.el-tag{margin-left:10px;padding:0 10px;}
 </style>
 
