@@ -82,7 +82,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   div.messageCenter table tr th{text-align: left;border-bottom:2px solid #555;padding:15px 0 15px 10px;}
   div.messageCenter table tr td{padding:12px 10px;text-align: left;border-bottom: 1px dotted #555;color:#7b7272;font-size:14px;}
   div.messageCenter table tr td.showAllMessage{max-width:200px;overflow:hidden;font-size:14px;}
-  div.messageCenter table tr td span.open{text-decoration: underline;color:blue;cursor:pointer;}
+  div.messageCenter table tr td span.open{text-decoration: underline;color:#20a0ff;cursor:pointer;}
   div.messageCenter table tr td span.title{color:#7b7272;font-size:14px;}
   button.selectAll{margin-bottom:20px;}
 </style>
