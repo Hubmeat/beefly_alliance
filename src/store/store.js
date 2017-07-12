@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const state = {
     consumeData: [],
     earningsDate: [],
-    settlementDate: []
+    settlementDate: [],
+    accountMangerData: []
 }
 
 const mutations = {
@@ -22,6 +23,9 @@ const mutations = {
     settlementDate_detail(state, { arr }) {
         console.log('[[ settlementDate_detail is commited ]]')
         state.settlementDate = arr
+    },
+    addAcount(state, {obj}) {
+        state.accountMangerData.push(obj)
     }
 }
 

@@ -5,10 +5,10 @@
         <el-col :span='12' class="mounthIncoming">
           <div class="income_title">
             <span class="income_time mounthtime ">本月营收</span>
-            <span class="income_detail">明细>></span>
+            <span class="income_detail">>></span>
           </div>
-          <div class="income_count daycount">
-            $18800000.00
+          <div class="income_count monthcount">
+            ￥18800000.00
           </div>
           <div class="income_diff">
             <span>较上月：+12300.00</span>
@@ -17,10 +17,10 @@
         <el-col :span='12' class="dayIncoming">
           <div class="income_title">
             <span class="income_time daytime ">今日营收</span>
-            <span class="income_detail">明细>></span>
+            <span class="income_detail">>></span>
           </div>
           <div class="income_count daycount">
-            $900000.00
+            ￥900000.00
           </div>
           <div class="income_diff">
             <span>较昨日：+300.00</span>
@@ -49,7 +49,7 @@
           <div class="list">
             <div>
               <ul>
-                <li v-for="statu of status">
+                <li v-bind:key="statu.carNum" v-for="statu of status">
                   <el-row>
                     <el-col :span="6">+{{statu.money}}</el-col>
                     <el-col :span="6">车辆：{{statu.carNum}}</el-col>
@@ -63,18 +63,18 @@
       </el-row>
     </div>
   
-    <div style="padding:20px; background:#fff;">
+    <div style="background:#fff;">
       <div class="settlementInfo module">
         <el-row>
           <el-col :span="8">
-            <span>当前已为您赚到￥18800000.00</span>
+            当前已为您赚到<span class="earn">￥18800000.00</span>
           </el-col>
           <el-col :span="8">
-            <span>已结算￥60000.00</span>
+            已结算<span class="settle">￥60000.00</span>
           </el-col>
           <el-col :span="8">
-            <span>带结算￥300000.00</span>
-            <el-button class="withdrawal">提现</el-button>
+            待结算<span class="wait">￥300000.00</span>
+            <el-button class="withdrawal">结算</el-button>
           </el-col>
         </el-row>
       </div>
@@ -91,7 +91,7 @@
             </el-col>
             <el-col :span="14">
               <el-col :span="6">车辆总数2000辆</el-col>
-              <el-col :span="6">使用中1900辆</el-col>
+              <el-col :span="6" class="using">使用中1900辆</el-col>
               <el-col :span="6">维修中99辆</el-col>
               <el-col :span="6">已报废1辆</el-col>
             </el-col>
@@ -105,15 +105,15 @@
   </div>
 </template>
 <style scoped>
+div.mapHeader{background:#fff;}
 div.module {
-  /*margin-bottom:20px;*/
-  padding: 20px;
-  background: #fff;
+  margin-bottom:20px
 }
 
 div.el-col-12 {
   padding: 10px;
-  width: 49%
+  width:49%;
+  box-sizing: border-box
 }
 
 div.el-col-12:nth-child(1) {
@@ -138,7 +138,10 @@ div.el-col-12 .income_title .income_detail {
 div.el-col-12 .income_count {
   margin-bottom: 5px;
   font-size: 30px;
+  color:rgba(255,153,0,1);
+  padding-left: 50px
 }
+div.el-col-12 .income_count.monthcount{color:rgba(102,102,102,1)}
 
 div.el-col-12 .income_diff {
   text-align: right;
@@ -149,13 +152,13 @@ div.el-col-12 .income_diff span {
 }
 
 div.mounthIncoming {
-  background: #ff4949;
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 div.dayIncoming {
-  background: rgb(167, 234, 94);
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 span.income_time {
@@ -173,10 +176,10 @@ div.status {
 
 div.status_title,
 div.datas_title {
-  background: #4ca28f;
+  background: #fff;
   line-height: 40px;
-  font-weight: normal;
-  color: #fff
+  font-weight: bold;
+  color: #000
 }
 
 div.status_title span,
@@ -186,7 +189,8 @@ div.datas_title span {
 
 div.datas_title span.data_display small {
   margin-left: 5px;
-  color: #a7ea5e;
+  color: rgba(148,148,148,1);
+  font-weight:normal;
 }
 
 div.status_title span.arrow,
@@ -198,12 +202,12 @@ div.datas_title span.arrow {
 
 div.status div.list ul li {
   list-style-type: none;
-  background: #a7ea5e;
-  color: #fff;
+  background: #ffffff;
+  color: #040404;
   line-height: 30px;
   height: 30px;
   padding: 5px 0;
-  border-bottom: 1px dashed #fff;
+  border-bottom: 1px dashed #eadddd;
 }
 
 div.status div.list ul li:nth-last-child(1) {
@@ -230,11 +234,11 @@ div.Histogram {
 }
 
 div.settlementInfo {
-  background: #ff4949;
+  background: #fff;
   line-height: 40px;
   height: 40px;
-  padding: 5px 10px;
-  color: #fff;
+  color: #000;
+  padding:10px;
 }
 
 div.settlementInfo button.withdrawal {
@@ -245,16 +249,21 @@ div.settlementInfo button.withdrawal {
 div.mapWrap {
   width: 100%;
   height: 500px;
+  box-sizing: border-box;
+  padding: 8px;
 }
 
 div.mapTitle {
   line-height: 40px;
   height: 40px;
-  background: #1d90e6;
+  background: #fff;
   padding: 5px 10px;
   margin-bottom: 5px;
-  color: #fff;
+  color: #000;
 }
+span.earn, span.settle {color:rgba(134,134,134,1);font-weight: bold;margin-left:8px;}
+span.wait{color:rgba(255,102,0,1);font-weight: bold;margin-left:8px;}
+div.using{color:rgba(255,102,0,1);}
 </style>
 <script>
 import myCanvas from '../../../components/highChartRectIndex.vue'

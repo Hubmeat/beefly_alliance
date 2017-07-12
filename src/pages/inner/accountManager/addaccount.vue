@@ -151,11 +151,18 @@ export default {
         callback()
       }
     }
-     var validateEmail = function (rule, value, callback) {
+    var validateEmail = function (rule, value, callback) {
       if (value === '') {
         callback(new Error('请输入邮箱'))
       } else if(!isEmail(value)) {
         callback(new Error('邮箱格式不正确'))
+      } else {
+        callback()
+      }
+    }
+    var validateRole = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请选择角色类别'))
       } else {
         callback()
       }
@@ -168,7 +175,7 @@ export default {
         loginAuth: '',
         phoneNoBinding: '',
         role: '',
-        state: '',
+        state: true,
         userId: '',
         password: '',
         phoneNo: '',
@@ -176,13 +183,14 @@ export default {
         textarea: ''
       },
       rules: {
-        userId: [{ validator: validateUserId, trigger: 'blur' }],
+        userId: [{ validator: validateUserId, trigger: 'blur', required: true}],
         password: [
           { required: true, message: '请填写密码', trigger: 'blur' },
           { min: 6, message: '密码应不少于6位', trigger: 'blur' }
         ],
+        role:[{ validator: validateRole, trigger: 'change', required: true}],
         name: [
-          { message: '请输入姓名', trigger: 'blur' },
+          {required: true, message: '请输入姓名', trigger: 'blur' },
         ],
         phoneNo: [{ validator: validatePhoneNo, trigger: 'blur' }],
         email: [{ validator: validateEmail, trigger: 'blur' }]
@@ -191,14 +199,15 @@ export default {
   },
   methods: {
     submitForm (formName) {
+      var that = this
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$confirm('确认添加吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '信息有误',
             type: 'warning'
-          })
-        .then(() => {
+          }
+        ).then(() => {
           if (this.ruleForm.role === '管理员') {
             this.ruleForm.role = 0
           } else if (this.ruleForm.role === '加盟商') {
@@ -235,29 +244,33 @@ export default {
             if (err) {
               console.log(err)
             } else {
-              console.log(JSON.parse(res.text))
               var code = JSON.parse(res.text).code
               if (code === 1) {
                  this.$router.push('/index/accountManager')
                  this.$message({
-                  type: 'error',
-                  message: '对不起，您没有权限'
-                })
+                    type: 'error',
+                    message: '对不起，您没有权限'
+                 })
               } else {
                   this.$router.push('/index/accountManager')
                   this.$message({
                     type: 'success',
                     message: '添加成功'
                   })
+                 this.$store.commit({
+                   type: 'addAcount',
+                   obj: this.ruleForm
+                 })
+                 console.log(this.$store.state.accountMangerData)
               }
             }
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消添加'
+            this.$message({
+              type: 'info',
+              message: '已取消添加'
+            })
           })
-        })
         } else {
           console.log('error submit!!')
           return false
