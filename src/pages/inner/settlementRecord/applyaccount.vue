@@ -212,7 +212,9 @@ export default {
       if ($('#apply_money').val() < 1) {
         that.dialogVisible = true
       } else if ($('#apply_money').val() > that.allMoney[that.currentIndex]) {
-        that.$message('体现金额超过当前可体现最大金额')
+        that.$alert('体现金额超过当前可体现最大金额', 'Warning', {
+          confirmButtonText: '确定'
+        })
       } else {  
         const h = that.$createElement
         that.$msgbox({
@@ -227,16 +229,37 @@ export default {
           beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
               request
-                .send
-              instance.confirmButtonLoading = true
-              instance.confirmButtonText = '申请提交中...'
-              setTimeout(() => {
-                done()
-                that.$refs.my_val.value = ''
-                setTimeout(() => {
-                  instance.confirmButtonLoading = false
-                }, 300)
-              }, 600)
+                .post('http://192.168.3.52:7099/franchisee/withdrawal/applyWithdrawal')
+                .send({
+                  'franchiseeId': '123456',
+                  'userId': 'admin',
+                  'money': $('#apply_money').val(),
+                  'withdrawalCode': that.currentCode
+                })
+                .end((error, res) => {
+                  instance.confirmButtonLoading = true
+                  instance.confirmButtonText = '申请提交中...'
+                  if (error) {
+                    console.log('error:', error)
+                  } else {
+                    console.log(JSON.parse(res.text).code)
+                    // if ( JSON.parse(res.text).code === 0) {
+                      setTimeout(() => {
+                        if (JSON.parse(res.text).code === 0) {
+                          done()
+                          setTimeout(() => {
+                            instance.confirmButtonLoading = false
+                            that.$refs.my_val.value = ''
+                          }, 300)
+                        } else {
+                          that.$message('提交错误')
+                        }
+                      }, 600)
+                    // } else {
+                    //   that.$message('提交错误')
+                    // }
+                  }
+                })
             } else {
               action === 'cancel'
               done()
