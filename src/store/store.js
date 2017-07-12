@@ -7,7 +7,9 @@ const state = {
     consumeData: [],
     earningsDate: [],
     settlementDate: [],
-    timeline: []
+    timeline: [],
+    allData: [],
+    partnerList: []
 }
 
 const mutations = {
@@ -27,6 +29,29 @@ const mutations = {
     setTimeLine(state, { obj }) {
         console.log('[[ timeline is setted ]]')
         state.timeline = obj
+    },
+    setAllData(state, { obj }) {
+        console.log('[[ setAllData is setted ]]')
+        state.allData = obj
+    },
+    setPartnerList(state, { arr }) {
+        console.log('[[ setPartnerList ]]')
+        // console.log(arr.newArr)
+        var arr2 = arr.newArr
+        var arrDeled = []
+        for (var i = 0; i < arr2.length; i++) {
+            var newoObj = {}
+            newoObj.name = arr2[i].name
+            newoObj.sex = arr2[i].sex
+            newoObj.IDcard = arr2[i].idCard
+            newoObj.tel = arr2[i].phoneNo
+            newoObj.email = arr2[i].email
+            newoObj.cars = arr2[i].bikeNum
+            newoObj.partnerId = arr2[i].id
+            arrDeled.push(newoObj)
+        }
+        state.partnerList = arrDeled
+        console.log(arrDeled)
     }
 }
 
@@ -39,8 +64,14 @@ const actions = {
     settlementDate_action: ({ commit }, arr) => commit('settlementDate_detail', { arr }),
     //  <====== end
     // 报表管理时间段传递  start  ====>
-    timeline_action: ({ commit }, obj) => commit('setTimeLine', { obj })
+    timeline_action: ({ commit }, obj) => commit('setTimeLine', { obj }),
+    // <===== end
+    // 报表管理走势图数据  start  ====>
+    alldata_action: ({ commit }, obj) => commit('setAllData', { obj }),
     // <===== end 
+    // 合伙人管理模块 start ====>
+    partner_action: ({ commit }, arr) => commit('setPartnerList', { arr })
+    // <=====
 
 }
 
