@@ -29,7 +29,9 @@
         <el-table-column prop="name" label="姓名" min-width="100"></el-table-column>
         <el-table-column prop="role" label="类别" min-width="120">
           <template scope="scope">
-            <span>{{scope.row.role==0? '管理员': '普通人'}}</span>
+            <span v-if="scope.row.role===0">管理员</span>
+            <span v-else-if="scope.row.role===1">加盟商</span>
+            <span v-else>合伙人</span>
           </template>
         </el-table-column>
         <el-table-column label="状态" min-width="120" style="font-size:12px;">
@@ -70,12 +72,16 @@
                 <el-form-item label="类别" :label-width="formLabelWidth">
                   <el-select v-model="editAccount.role" placeholder="请选择类别">
                     <el-option
-                      label="管理"
-                      value="管理">
+                      label="管理员"
+                      value="管理员">
                     </el-option>
                     <el-option
-                      label="普通人"
-                      value="普通人">
+                      label="合伙人"
+                      value="合伙人">
+                    </el-option>
+                    <el-option
+                      label="加盟商"
+                      value="加盟商">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -122,16 +128,6 @@ export default {
       router_show: false,
       dialogVisible: false,
       totalPage: '',
-      form: {
-        userId: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       loading: false,
       formLabelWidth: '60px',
       editAccount: {
@@ -152,23 +148,35 @@ export default {
       this.router_show = true
     },
     openEdit (scope) {
+      if (scope.row.role === 0) {
+        this.editAccount.role = '管理员'
+      } else if (scope.row.role === 1) {
+        this.editAccount.role = '加盟商'
+      } else {
+        this.editAccount.role = '合伙人'
+      }
       this.dialogVisible = true
       this.editAccount.userId = scope.row.userId
       this.editAccount.email = scope.row.email
       this.editAccount.phoneNo = scope.row.phoneNo
       this.editAccount.name = scope.row.name
-      this.editAccount.role = scope.row.role === 0? '管理':'普通人'
       this.editAccount.state = scope.row.state
       this.editAccount.index= scope.$index
     },
     handleEditAccount () {
       this.dialogVisible = false
       var newAccountInfo = {}
+      if (this.editAccount.role === '管理员') {
+        newAccountInfo.role = 0
+      } else if (this.editAccount.role === '加盟商') {
+        newAccountInfo.role = 1
+      } else {
+        newAccountInfo.role = 2
+      }
       newAccountInfo.userId = this.editAccount.userId
       newAccountInfo.email = this.editAccount.email
       newAccountInfo.phoneNo = this.editAccount.phoneNo
       newAccountInfo.name = this.editAccount.name
-      newAccountInfo.role = this.editAccount.role === '管理'?0:1
       newAccountInfo.state = this.editAccount.state
       var index = this.editAccount.index
       this.tableData.splice(index,1,newAccountInfo)
@@ -260,11 +268,18 @@ export default {
         var arr = JSON.parse(res.text).list
         arr = arr.map((item) => {
           var obj = {}
-          obj = Object.assign({}, item, {state: !item.state})
+          var state = null
+          if (item.state === 0) {
+            state = true
+          } else {
+            state = false
+          }
+          obj = Object.assign({}, item, {state: state})
           return obj
         })
+        console.log(arr)
         that.tableData = arr
-        that.$store.state.accountMangerTableData = arr
+        that.$store.state.accountMangerData = arr
         if (that.totalPage != null) {
           $('.M-box').pagination({
             pageCount: that.totalPage,
@@ -284,7 +299,7 @@ export default {
                 that.currentPage = 1
               }
               if (e.target.innerText === '尾页') {
-                that.currentPage = that.pageSize
+                that.currentPage = that.totalPage
               }
               if (e.target.innerText === '»') {
                 that.currentPage++
@@ -326,12 +341,15 @@ export default {
               console.log(err)
             } else {
               var arr = JSON.parse(res.text).list
+              that.$store.state.accountMangerData = []
               arr = arr.map((item) => {
                 var obj = {}
                 obj = Object.assign({}, item, {state: !item.state})
+                that.$store.state.accountMangerData.push(obj)
                 return obj
               })
-              that.tableData = arr
+              that.tableData = that.$store.state.accountMangerData
+              console.log(that.$store.state.accountMangerData)
             }
           })
       },

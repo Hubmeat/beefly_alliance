@@ -1,30 +1,32 @@
 <template>
   <div style="margin-right:20px;">
     <div id="partner_header">
-      <label>
-        <span>关键字：</span>
-        <input type="text" class="partner_my_input">
-      </label>
-      <label>
-        <span>联系方式：</span>
-        <input type="text" class="partner_my_input">
-      </label>
-      <label>
-        <span>认购车辆数：</span>
-        <el-select v-model="value">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-        <el-input placeholder="数量"></el-input>
-      </label>
-      <el-button icon="search" class="timeSelect_button">查询</el-button>
+      <div class="partner_content">
+        <label>
+          <span>关键字</span>
+          <input type="text" class="partner_my_input">
+        </label>
+        <label>
+          <span>联系方式</span>
+          <input type="text" class="partner_my_input">
+        </label>
+        <label>
+          <span>认购车辆数</span>
+          <el-select v-model="value">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input placeholder="数量"></el-input>
+        </label>
+        <el-button class="my_btn">查询</el-button>
+      </div>
     </div>
   
     <div id="partner_table">
       <div id="partner_add">
         <button @click="$router.push({path:'/index/partnerManager/addpartner'})">添加合伙人</button>
       </div>
-      <el-table :data="tableData" style="width: 100% font-size:13px;">
+      <el-table :data="tableData" style="width: 100% font-size:13px; color: #6c6c6c;">
         <el-table-column prop="name" label="姓名" min-width="80">
         </el-table-column>
         <el-table-column prop="sex" label="性别" min-width="60">
@@ -101,10 +103,16 @@
 }
 
 #partner_header {
-  width: 100%;
+  /*width: 100%;*/
   height: 70px;
   background: #fff;
   border: 1px solid #e7ecf1;
+  /*padding: 20px 30px 20px 30px;*/
+}
+
+#partner_header .partner_content {
+  background: #fff;
+  overflow: hidden;
 }
 
 #partner_header .partner_my_input {
@@ -120,7 +128,7 @@
 
 #partner_header label:nth-of-type(1) {
   height: 70px;
-  width: 24%;
+  width: 19%;
   line-height: 70px;
   margin-left: 30px;
   font-size: 14px;
@@ -134,7 +142,7 @@
 #partner_header label:nth-of-type(2) {
   height: 70px;
   font-size: 14px;
-  width: 26%;
+  width: 20%;
   line-height: 70px;
   /*margin-left: 20px;*/
   float: left;
@@ -189,7 +197,7 @@
 }
 
 
-#partner_header button {
+/*#partner_header button {
   display: inline-block;
   line-height: 1;
   white-space: nowrap;
@@ -206,7 +214,7 @@
 #partner_header button:hover {
   color: #20a0ff;
   border-color: #20a0ff;
-}
+}*/
 
 
 
@@ -253,6 +261,25 @@
   border: 1px solid #e7ecf1;
   border-top: none;
   min-height: 230px;
+}
+
+#partner_header .my_btn {
+    width: 80px;
+    float: right;
+    height: 36px;
+    line-height: 11px;
+    margin-right: 30px;
+    color: #fff;
+    margin-top: 17px;
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);
+}
+
+#partner_header .my_btn:hover {
+    background: rgba(52,52,67, 0.9);
+    color: #fff;
 }
 </style>
 

@@ -125,6 +125,8 @@ export default {
     var validateTel = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('手机号码不能为空'))
+      }else {
+        return callback()
       }
       setTimeout(() => {
         var res = checkMobile(value)

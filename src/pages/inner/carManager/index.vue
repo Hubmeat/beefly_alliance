@@ -7,7 +7,7 @@
             <el-col>
               <el-form-item class="filtercar">
                 <span class="labelAlign">关键字</span>
-                <el-input v-model="terminalNumber" placeholder="车辆号\终端编号\车辆名称"></el-input>
+                <input v-model="terminalNumber" class="carMan_bar" placeholder="车辆号\终端编号\车辆名称">
               </el-form-item>
               <el-form-item class="filtercar">
                 <span class="labelAlign">状态</span>
@@ -24,7 +24,8 @@
                 <el-date-picker v-model='form.data1' type="date" placeholder="选择日期"></el-date-picker>
                <span class="division">至</span>
                 <el-date-picker v-model='form.data2' type="date" placeholder="选择日期"></el-date-picker>
-                <el-button @click='searchByTimeline' icon="search">查询</el-button>
+                <el-button class="my_btn" @click='searchByTimeline'>查询</el-button>
+                <!--<button @click='searchByTimeline'>查询</button>-->
               </el-form-item>
             </el-col>
           </el-row>
@@ -187,15 +188,16 @@ export default {
 <style scoped>
 .carManager_content {
   background: #fff;
-  padding: 20px 30px 20px 30px;
+  padding: 20px 30px 5px 30px;
   margin-bottom: 20px;
   border: 1px solid #e7ecf1;
 }
 
-div.carManager div.queryCarInfo {
-  background: #f1fff1;
+/*div.carManager div.queryCarInfo {
+  background: #f3f0f0;
   padding: 10px 10px 0 10px;
-}
+}*/
+
 div.carManager div.queryCarInfo div.el-form-item {
   margin-bottom: 10px;
 }
@@ -208,14 +210,20 @@ div.carManager div.queryCarInfo div.el-form-item  span.labelAlign{
   font-size: 14px;
   color:#555;
 }
-span.division{font-size:14px;color:#555;}
+span.division{
+font-size: 14px;
+    color: #555;
+    width: 32px;
+    display: inline-block;
+    text-align: center;
+  }
 div.filtercar{display: inline-block;}
 div.line {
   margin-left: 0px;
 }
 
 div.el-input {
-  width: initial
+  width: 200px;
 }
 
 div.showCarInfo {
@@ -227,20 +235,29 @@ div.showCarInfo {
 
 div.showCarInfo table {
   border-collapse: collapse;
-  width: 100%
+  width: 100%;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 div.showCarInfo table tr th {
-  text-align: center;
-  border: 1px solid #dfe6ec;
-  padding: 5px 0;
-  background: #eef1f6;
+  text-align: left;
+  border: 1px solid #eee;
+  height: 40px;
+  font-size: 14px;
+  background: #eee;
+  font-weight: 400;
   color: #444;
 }
 
+div.showCarInfo table tr {
+  border-bottom: 1px solid #eee;
+  text-indent: 2em;
+}
+
 div.showCarInfo table tr td {
-  text-align: center;
-  border: 1px solid #dfe6ec;
+  text-align: left;
+  /*border: 1px solid #dfe6ec;*/
   padding: 10px 0;
   color: #555;
   font-size: 14px;
@@ -258,5 +275,41 @@ div#carManager_page {
     border: 1px solid #e7ecf1;
     border-top: none;
     min-height: 304px;
+}
+
+.carMan_bar {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    width: 440px;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #bfcbd9;
+    box-sizing: border-box;
+    color: #1f2d3d;
+    font-size: inherit;
+    height: 36px;
+    line-height: 1;
+    outline: 0;
+    padding: 3px 10px;
+    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.my_btn {
+    width: 80px;
+    float: right;
+    height: 36px;
+    line-height: 11px;
+    color: #fff;
+    /*margin-top: 10px;*/
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);
+}
+
+.my_btn:hover {
+    background: rgba(52,52,67, 0.9);
 }
 </style>

@@ -9,7 +9,8 @@ const state = {
     settlementDate: [],
     timeline: [],
     allData: [],
-    partnerList: []
+    partnerList: [],
+    accountMangerData: []
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
     settlementDate_detail(state, { arr }) {
         console.log('[[ settlementDate_detail is commited ]]')
         state.settlementDate = arr
+    },
+    addAcount(state, {obj}) {
+        state.accountMangerData.push(obj)
     },
     setTimeLine(state, { obj }) {
         console.log('[[ timeline is setted ]]')

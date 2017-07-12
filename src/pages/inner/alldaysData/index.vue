@@ -50,7 +50,7 @@ div.allDays {
 }
 
 div.allDays div.DatePicker {
-  padding: 20px;
+  padding: 20px 30px 20px 30px;
   background: #fff;
 }
 
@@ -97,7 +97,7 @@ div.allDays div.watchButton i {
   vertical-align: middle;
   font-size: 14px;
 }
-div.timebtn{padding:18px;background:#f1fff1;}
+div.timebtn{background:#fff;}
 div.timeSelectBtn {
   display:block;
   float:left;
@@ -107,18 +107,26 @@ div.timeSelectBtn {
 div.timeSelectBtn button {
   margin-left: 8px;
   display: inline-block;
-  border: none;
+  border: 1px solid #ddd;
   outline: none;
   font-size: 12px;
-  color: #fff;
-  background: rgba(66,66,66, 0.8);
-  transition: all .2s linear 0s;
+  color: #999;
+  /*background: rgba(66, 66, 66, 0.8);*/
+  background: #fff;
+  /*transition: all .2s linear 0s;*/
   box-sizing: border-box;
-  height:35px;
+  height: 35px;
+}
+
+div.timeSelectBtn button:hover {
+  color: #999;
 }
 
 div.timeSelectBtn button.active {
-    background: rgb(66,66,66);
+  /*background: rgb(66, 66, 66);*/
+  background: rgba(	255,140,0, 0.8);
+  color: #fff;
+  border: 1px solid rgba(	255,140,0, 0.5);
 }
 
 
@@ -129,7 +137,7 @@ div.dateArrow {
 }
 
 div.dateArrow button {
-  cursor: pointer
+  cursor: pointer;
 }
 
 div.dateArrow span.nowTime {

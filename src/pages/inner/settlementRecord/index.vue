@@ -2,13 +2,15 @@
 <div style="margin-right:20px;">
 	<div id="settleRed_content">
 		<div id="settleRed_header">
+      <p class="total">*每月结算一次，本月结算的是上月收益的分成；本月的收益分成，次月进行结算。</p>
 			<h2>
-				<p>本次待结算金额：</p><span>10000</span><span>元</span>
+				<p>可结算金额：</p><span>10000</span><span>元</span>
 			</h2>
 			<button @click="$router.push({path:'/index/applyaccount'})">申请结算</button>
-			<span>*每月结算一次</span>
+			<span></span>
 			<h3>
-				<p>合计已结算金额：</p><span>30000</span><span>元</span>
+				<p>合计已结算金额：</p><span>20000</span><span>元</span>
+				<p>合计已结算金额：</p><span>90000</span><span>元</span>
 			</h3>
 		</div>	
 	</div>
@@ -60,26 +62,38 @@
 	}
 
 	#settleRed_content {
-		padding:20px 30px 20px 30px;
+		/*padding:20px 30px 20px 30px;*/
+    padding: 0 30px 0 20px;
 		background:#fff;
-		margin-bottom: 20px; 
+		margin-bottom: 20px;
 		border: 1px solid #e7ecf1;		
 	}
 	#settleRed_header {
 		width: 100%;
-		height: 60px;
+		height: 80px;
 		line-height: 60px;
 		padding: 10px 0;
-		background: #fcfcd3;
+		background: #fff;
+    position: relative;
 	}
 
 	#settleRed_header h2,button,span {
 		float: left;
 	}
 
+  #settleRed_header .total {
+    position: absolute;
+    color: #ddd;
+    font-size: 10px;
+    left: 10px;
+    font-style: italic;
+    top: -4px;
+  }
+
 	#settleRed_header h2 {
 		font-size: 10px;
 		height: 60px;
+    margin-top: 30px;
 	}
 
 	#settleRed_header h2 p {
@@ -99,6 +113,11 @@
 		font-size: 16px;
 	}
 
+	#settleRed_header span:nth-of-type(3) {
+		color: red;
+		font-size: 16px;
+	}
+
 	#settleRed_header button {
 		width: 120px;
 		height: 40px;
@@ -106,6 +125,7 @@
 		border: 1px solid #f9f9f9;
 		background: rgba(255,153,0,0.8);
 		color: #fff;
+    margin-top: 40px;
 		border-radius: 6px;
 		display: inline-block;
 		outline: none;
@@ -126,6 +146,7 @@
 		font-size: 16px;
 		height: 60px;
 		float: right;
+    margin-top: 30px;
 	}
 
 	#settleRed_header h3 p {
@@ -139,7 +160,7 @@
 	}
 
 	#settleRed_header h3 span:nth-of-type(2) {
-		margin-right: 10px;
+    margin-right: 60px;
 	}
 
 	#settleRed_table {
