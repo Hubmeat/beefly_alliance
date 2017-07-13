@@ -703,9 +703,12 @@ div.account>h1 .deleteRoleBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 1
     /* border-radius: 4px; */
     background: rgba(52,52,67, 0.8);}
     button#roleSearchBtn:hover{color:#fff}
-    div.addfooter,div.editfooter{text-align: left;
+    div.editfooter{text-align: left;
     padding-left: 120px;
     margin-top: -43px;}
+    div.addfooter{text-align: left;
+    padding-left: 120px;
+    margin-top: -51px;}
 div.rolename{font-weight:normal;}
 </style>
 
