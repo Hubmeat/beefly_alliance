@@ -2,7 +2,7 @@
   <div class="messageCenter">
     <el-row>
       <el-col>
-        <el-button class="selectAll" type="primary" @click="selectAll">全部设为已读</el-button>
+        <el-button class="selectAll" id="msgCenterBtn" type="primary" @click="selectAll">全部设为已读</el-button>
       </el-col>
       <el-col>
         <!-- <table>
@@ -85,6 +85,11 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   div.messageCenter table tr td span.open{text-decoration: underline;color:#20a0ff;cursor:pointer;}
   div.messageCenter table tr td span.title{color:#7b7272;font-size:14px;}
   button.selectAll{margin-bottom:20px;}
+  button#msgCenterBtn{ color: #fff;
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);}
 </style>
 <script>
   import request from 'superagent'
