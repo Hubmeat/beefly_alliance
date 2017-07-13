@@ -17,7 +17,7 @@
               <el-date-picker type="date" placeholder="选择结束日期" v-model="form_plat.endTime" style="width: 100%;"></el-date-picker>
             </el-col>
            </el-form-item>
-           <el-button type="primary">查询</el-button>
+           <el-button id="operaBtn" type="primary">查询</el-button>
          </el-form>
        </el-row>
        <el-row class="table">
@@ -173,6 +173,16 @@
   div.selectPlace span.active{border:1px solid orange;}
   div.el-form-item__content div.el-input{display:inline-block;width: 192px;}
   div.el-form-item__content span.keyworkds{width: 63px;display: inline-block;text-align: right;margin-right: 10px;}
+  button#operaBtn{width: 80px;
+    /* float: right; */
+    height: 36px;
+    line-height: 11px;
+    margin-right: 30px;
+    color: #fff;
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);}
 </style>
 <script>
   import $ from 'jquery'

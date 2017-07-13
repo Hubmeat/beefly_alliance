@@ -10,7 +10,7 @@
         <input type="text" class="account_my_input">
       </label>
   
-			<el-button icon="search" class="timeSelect_button">查询</el-button>
+			<el-button id="accountSearchBtn" class="timeSelect_button">查询</el-button>
     </div>
   
     <!-- account -->
@@ -573,6 +573,16 @@ color: #bfcbd9;
   width: 120px;
   height: 50px;
 }
-
+button#accountSearchBtn{width: 80px;
+    /* float: right; */
+    height: 36px;
+    line-height: 11px;
+    margin-right: 30px;
+    color: #fff;
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);}
+    button#accountSearchBtn:hover{color:#fff;}
 
 </style>

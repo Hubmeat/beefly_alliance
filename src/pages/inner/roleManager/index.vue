@@ -318,7 +318,6 @@ export default {
       this.dialogFormVisible = true
     },
     openEditRole (scope) {
-      console.log(scope)
       this.dialogEditVisible = true
       this.editForm.roleName = scope.row.roleName
       this.editForm.des = scope.row.des
@@ -433,7 +432,6 @@ export default {
         if (err) {
           console.log(err)
         } else {
-          console.log(res.text)
           var code = JSON.parse(res.text).code
           if(code === 0) {
             that.$message({
@@ -451,7 +449,6 @@ export default {
               message: 'sorry！添加角色失败'
             })
           }
-          console.log(res)
         }
       })
     },
@@ -480,7 +477,6 @@ export default {
             })
          }
         var newArr = result.map(function(item, index) {
-            console.log(item)
             var res = item.auth.split('-')
             var fathCode = []
             var childrenCode = []
@@ -491,11 +487,9 @@ export default {
                 childrenCode.push(Number(res[i]))
               }
             }
-            //console.log(fathCode)
             var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
             return obj
           })
-          console.log(newArr)
          that.tableData  = newArr
        }
      })
