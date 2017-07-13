@@ -237,6 +237,9 @@ export default {
         }
       })
     }
+  },
+  beforeMount () {
+    this.$router.push('/index/partnerManager/addpartner')
   }
 }
 </script>

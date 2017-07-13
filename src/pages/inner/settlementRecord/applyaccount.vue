@@ -325,7 +325,7 @@ body {
 
 #apply_account_header {
   width: 100%;
-  height: 160px;
+  height: 170px;
   background: #fff;
   border: 1px solid #e7ecf1;
   overflow: hidden;
@@ -333,17 +333,16 @@ body {
 }
 
 #apply_account_header>h1 {
-  height: 30px;
+  height: 40px;
   color: #fff;
   font-size: 18px;
-  font-weight: 500;
   width: 100%;
   display: block;
   color: #444;
-  font-weight: 600;
+  font-weight: 400;
   border-bottom: 1px solid #eee;
-  padding: 2px 0px 2px 20px;
-  line-height: 30px;
+  padding: 2px 0px 2px 30px;
+  line-height: 40px;
 }
 
 .account_my_input {
@@ -358,7 +357,7 @@ body {
 #apply_account_header ul {
   width: 100%;
   list-style: none;
-  padding: 2px 20px 2px 20px;
+  padding: 4px 20px 2px 30px;
 }
 
 #apply_account_header ul li {
@@ -409,7 +408,7 @@ body {
   height: 40px;
   margin: 10px 0 0 10px;
   border: 1px solid #f9f9f9;
-  background: rgba(255, 153, 0, 0.8);
+  background: rgba(52,52,67, 0.8);
   color: #fff;
   border-radius: 6px;
   display: inline-block;
@@ -418,7 +417,7 @@ body {
 
 #apply_account_header ul li:nth-of-type(3) button:hover {
   cursor: pointer;
-  background: rgb(255, 153, 0);
+  background: rgba(52,52,67, 1);
 }
 
 .el-table__body,

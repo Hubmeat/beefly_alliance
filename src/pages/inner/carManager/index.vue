@@ -185,7 +185,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 .carManager_content {
   background: #fff;
   padding: 20px 30px 5px 30px;
@@ -282,7 +282,7 @@ div#carManager_page {
     -moz-appearance: none;
     appearance: none;
     background-color: #fff;
-    width: 440px;
+    width: 427px;
     background-image: none;
     border-radius: 4px;
     border: 1px solid #ddd;
@@ -311,5 +311,36 @@ div#carManager_page {
 
 .my_btn:hover {
     background: rgba(52,52,67, 0.9);
+}
+
+.el-input__inner {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #1f2d3d;
+  font-size: inherit;
+  height: 36px;
+  line-height: 1;
+  outline: 0;
+  padding: 3px 10px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.el-input__inner::-webkit-input-placeholder {
+  color: #ddd;
+}
+
+.el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
+  background: black !important;
+  color: #fff !important;
+}
+
+.el-input__inner:hover {
+  border: 1px solid #bbb;
 }
 </style>

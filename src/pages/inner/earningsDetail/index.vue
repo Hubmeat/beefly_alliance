@@ -158,7 +158,7 @@
   /*div.timeSelectBtn button:hover{color:#999;}*/
 
 	#earD_excel {
-    padding: 10px 30px 0px 30px;
+    padding: 0px 30px 0px 30px;
 		background:#fff;
     border: 1px solid #e7ecf1;
     border-bottom: none;
@@ -201,7 +201,7 @@
 	}
 
 	#earD_body {
-    padding: 20px 20px 10px 20px;
+    padding: 10px 20px 10px 20px;
     background: #fff;
     /*margin-top: 20px;*/
     padding-left: 28px;
@@ -342,6 +342,9 @@ export default {
       // console.log(e)
       that.pageUpdate(e)
     })
+  }, 
+  beforeMount () {
+    this.$router.push('/index/earningsDetail?type=getAllRevenue')
   },
   methods: {
     handleChangeType (e) {
