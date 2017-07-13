@@ -6,7 +6,7 @@
         <input type="text" class="account_my_input">
       </label>
   
-      <el-button icon="search">查询</el-button>
+      <el-button id="roleSearchBtn">查询</el-button>
     </div>
   
     <!-- account -->
@@ -14,19 +14,20 @@
       <h1>
         <button type="button" @click="openAddRole">添加角色</button>
          <el-dialog
+          class="addRole"
           title="添加角色"
           :visible.sync="dialogFormVisible"
           :modal-append-to-body="false"
           :modal="true"
         >
           <el-form v-model="form">
-            <el-form-item label="角色名称" :label-width="formLabelWidth">
+            <el-form-item label="角色名称" class="rolename" :label-width="formLabelWidth">
               <el-input v-model="form.roleName" placeholder="请输入角色名称"></el-input>
             </el-form-item>
-            <el-form-item label="备注" :label-width="formLabelWidth">
+            <el-form-item label="备注"  class="rolename":label-width="formLabelWidth">
               <el-input type="textarea" v-model="form.des"></el-input>
             </el-form-item>
-            <el-form-item label="权限列表" :label-width="formLabelWidth">
+            <el-form-item label="权限列表" class="rolename" :label-width="formLabelWidth">
               <el-tree
                 :data="rolePowerList"
                 show-checkbox
@@ -36,16 +37,16 @@
               </el-tree>
             </el-form-item>
           </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="handleAddRole">确 定</el-button>
+          <div slot="footer" class="dialog-footer addfooter">
+            <el-button class="deleteRoleBtn" @click="dialogFormVisible = false">取 消</el-button>
+            <el-button class="deleteRoleBtn" type="primary" @click="handleAddRole">确 定</el-button>
           </div>
         </el-dialog> 
       </h1>
   
       <!-- 表单 -->
       <el-table :data="tableData" style="width: 100%; font-size:13px;" v-loading="loading">
-        <el-table-column prop="roleName" label="角色名称" min-width="160"></el-table-column>
+        <el-table-column prop="roleName" label="角色名称"  min-width="160"></el-table-column>
         <el-table-column prop="des" label="备注" min-width="160"></el-table-column>
         <el-table-column label="包含用户" min-width="170">
           <template scope="scope">
@@ -75,7 +76,7 @@
                 :modal="true"
               >
                 <el-form v-model="editForm">
-                  <el-form-item label="角色名称" :label-width="formLabelWidth">
+                  <el-form-item label="角色名称" class="rolename" :label-width="formLabelWidth">
                     <el-input v-model="editForm.roleName" placeholder="请输入角色名称"></el-input>
                   </el-form-item>
                   <el-form-item label="备注" :label-width="formLabelWidth">
@@ -93,9 +94,9 @@
                     </el-tree>
                   </el-form-item>
                 </el-form>
-                <div slot="footer" class="dialog-footer">
-                  <el-button @click="dialogEditVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="handleEditRole">确 定</el-button>
+                <div slot="footer" class="dialog-footer editfooter">
+                  <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取 消</el-button>
+                  <el-button class="eidtRoleBtn"  @click="handleEditRole">确 定</el-button>
                 </div>
             </el-dialog> 
     </div>
@@ -676,5 +677,41 @@ div.account>h1 button:hover {
 ul.roleList li {list-style-type: none;float:left;}
 span.el-tag{margin-left:10px;padding:0 10px;}
 i.el-icon-edit, i.el-icon-close{cursor:pointer}
+ .eidtRoleBtn {
+    width: 120px;
+    height: 50px;}
+ .eidtRoleBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
+.eidtRoleBtn:nth-of-type(2) {
+    background: #f87e2b;
+    border: none;
+    color: #fff;}
+.eidtRoleBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+.eidtRoleBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
+div.account>h1 .deleteRoleBtn {
+    width: 120px;
+    height: 50px;}
+ div.account>h1 .deleteRoleBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
+div.account>h1 .deleteRoleBtn:nth-of-type(2) {
+    background: #f87e2b;
+    border: none;
+    color: #fff;}
+div.account>h1 .deleteRoleBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+div.account>h1 .deleteRoleBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
+ button#roleSearchBtn{width: 80px;
+    /* float: right; */
+    height: 36px;
+    line-height: 11px;
+    margin-right: 30px;
+    color: #fff;
+    margin-top: 18px;
+    outline: none;
+    border: none;
+    /* border-radius: 4px; */
+    background: rgba(52,52,67, 0.8);}
+    button#roleSearchBtn:hover{color:#fff}
+    div.addfooter,div.editfooter{text-align: left;
+    padding-left: 120px;
+    margin-top: -43px;}
+div.rolename{font-weight:normal;}
 </style>
 
