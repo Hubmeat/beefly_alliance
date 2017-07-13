@@ -285,7 +285,7 @@ div#carManager_page {
     width: 440px;
     background-image: none;
     border-radius: 4px;
-    border: 1px solid #bfcbd9;
+    border: 1px solid #ddd;
     box-sizing: border-box;
     color: #1f2d3d;
     font-size: inherit;

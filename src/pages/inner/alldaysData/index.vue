@@ -63,6 +63,10 @@ div.allDays div.showTime div.el-col {
   background: #fff;
 }
 
+div.allDays div.showTime div.el-col:nth-last-of-type(2) {
+  font-size: 18px;
+}
+
 div.allDays div.watchButton {
   padding: 20px;
   background: #fff;
@@ -80,7 +84,7 @@ div.allDays div.watchButton span {
   height: 0;
   padding: 10px;
   display: inline-block;
-  border: 1px solid #000;
+  border:  none;
 }
 
 div.allDays div.watchButton span.orderNum {
@@ -136,15 +140,30 @@ div.dateArrow {
   background: #fff;
 }
 
+/* div.dateArrow button:nth-of-type(1) {
+  margin-left: 10px;
+}
+
+div.dateArrow button:nth-of-type(2) {
+  margin-left: -10px;
+} */
+
 div.dateArrow button {
   cursor: pointer;
   border: none;
+  padding-left: 2px;
+  padding-right: 2px;
+  /* margin-left: -10px; */
 }
 
-div.dateArrow span.nowTime {
-  margin-left: 5px;
-  margin-right: 5px
+div.dateArrow button:hover {
+  color: #777;
 }
+/* 
+div.dateArrow span.nowTime {
+   margin-left: 5px; 
+   margin-right: 5px 
+} */
 
 div.el-date-editor--datetimerange{margin-right: 8px;}
 </style>

@@ -81,7 +81,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 div.consumeData {
   margin-right: 20px;
 }
@@ -149,12 +149,17 @@ div.timeSelectBtn button {
   border: 1px solid #ddd;
   outline: none;
   font-size: 12px;
-  color: #999;
+  color: #666;
   /*background: rgba(66, 66, 66, 0.8);*/
   background: #fff;
   /*transition: all .2s linear 0s;*/
   box-sizing: border-box;
   height: 35px;
+}
+
+div.timeSelectBtn button:hover {
+  border: 1px solid #bbb;
+  color: #666;
 }
 
 div.timeSelectBtn button.active {
@@ -185,5 +190,36 @@ div.timeSelectBtn button.active {
 .my_btn:hover {
     background: rgba(52,52,67, 0.9);
     color: #fff;
+}
+
+.el-input__inner {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #1f2d3d;
+  font-size: inherit;
+  height: 36px;
+  line-height: 1;
+  outline: 0;
+  padding: 3px 10px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.el-input__inner::-webkit-input-placeholder {
+  color: #ddd;
+}
+
+.el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
+  background: black !important;
+  color: #fff !important;
+}
+
+.el-input__inner:hover {
+  border: 1px solid #bbb;
 }
 </style>

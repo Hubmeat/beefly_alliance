@@ -196,7 +196,8 @@ div.gmap{
     }
 
     div.showTime div.el-col:nth-of-type(2) {
-      margin-left: 9px;
+      margin-top: -10px;
+      text-indent: 0.8em;
     }
 
     div.timeSelectBtn button.active {
