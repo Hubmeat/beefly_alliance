@@ -1,7 +1,7 @@
 <template>
   <div class="queryLists">
     <h3>
-      <el-button @click="handeClick">查看统计图</el-button>
+      <button class="btn_list" @click="handeClick">查看统计图</button>
     </h3>
     <div>
       <table>
@@ -21,24 +21,24 @@
         </tbody>
       </table>
     </div>
+
+		<div id="earD_page">
+			<div class="M-box">
+			</div>
+		</div>
   </div>
 </template>
 <style scoped>
 
 div.queryLists h3 {
   text-align: right;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 div.queryLists {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
-}
-
-div.queryLists h3 {
-  text-align: right;
-  margin-bottom: 20px;
+  padding: 20px 30px 20px 30px;
 }
 
 div.queryLists h3 button {
@@ -47,32 +47,75 @@ div.queryLists h3 button {
 }
 
 div.queryLists table {
-  width: 100%;
   border-collapse: collapse;
+  width: 100%;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 div.queryLists table tr th {
   text-align: left;
-  border: 1px solid #cccfd2;
-  padding: 10px;
-  background: #eef1f6;
+  border: 1px solid #eee;
+  height: 40px;
+  font-size: 14px;
+  background: #eee;
+  font-weight: 400;
   color: #444;
-  font-weight: bold;
+}
+
+div.queryLists table tr {
+  border-bottom: 1px solid #eee;
+  text-indent: 2em;
 }
 
 div.queryLists table tr td {
   text-align: left;
-  border: 1px solid #cccfd2;
-  padding: 10px;
+  /*border: 1px solid #dfe6ec;*/
+  padding: 10px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+#earD_page {
+  padding: 14px 0px 0px 0px;
+  background: #fff;
+  /*border: 1px solid #e7ecf1;*/
+  border-top: none;
+  min-height: 233px;
+  margin-left: -9px;
+}
+
+.btn_list {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #c4c4c4;
+  color: #1f2d3d;
+  font-size: 14px;
+  margin: 0;
+  padding: 10px 15px;
+  outline: none;
+  border-radius: 4px;
+}
+
+.btn_list:hover {
+  color: rgba(255,140,0, 0.8);
+  border: 1px solid rgba(	255,140,0, 0.8);
 }
 </style>
 <script>
+import $ from 'jquery'
 import request from 'superagent'
 import moment from 'moment'
+import '../../../assets/css/pagination.css'
+require('../../../assets/lib/js/jquery.pagination.js')
 export default {
   data () {
     return {
-      lists: []
+      lists: [],
+      pageTotal: ''
     }
   },
   methods: {
@@ -98,6 +141,18 @@ export default {
               // console.log(res)
               // console.log(JSON.parse(res.text).list)
               var arr = JSON.parse(res.text).list
+              var pageNumber = JSON.parse(res.text).totalPage
+              // 设置data分页
+              this.pageTotal = pageNumber
+              $('.M-box').pagination({
+                pageCount: pageNumber,
+                jump: true,
+                coping: true,
+                homePage: '首页',
+                endPage: '尾页',
+                prevContent: '«',
+                nextContent: '»'
+              })
               var newArr = []
               for (var i = 0; i < arr.length; i++) {
                 var obj = {}
@@ -128,8 +183,21 @@ export default {
           if (error) {
             console.log('error:', error)
           } else {
+            console.log(JSON.parse(res.text))
             // console.log(JSON.parse(res.text).list)
             var arr = JSON.parse(res.text).list
+            var pageNumber = JSON.parse(res.text).totalPage
+            // 设置data分页
+            this.pageTotal = pageNumber
+            $('.M-box').pagination({
+              pageCount: pageNumber,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
             var newArr = []
             for (var i = 0; i < arr.length; i++) {
               var obj = {}

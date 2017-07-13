@@ -6,12 +6,12 @@
           <el-button  class="active" @click='handleChangeType'>今日</el-button>
           <el-button @click='handleChangeType'>本周</el-button>
           <el-button @click='handleChangeType'>本月</el-button>
-          <el-button @click='handleChangeType'>所有日期</el-button>
-          <el-button @click='handleChangeType'>指定时间段</el-button>
+          <el-button @click='handleChangeType'>最近六个月</el-button>
+          <!--<el-button @click='handleChangeType'>指定时间段</el-button>-->
         </div>
-        <el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
+        <!--<el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
         </el-date-picker>
-        <el-button icon="search" class="timeSelect_button">查询</el-button>
+        <el-button icon="search" class="timeSelect_button" @click="getDateByTimeLine">查询</el-button>-->
       </el-col>
     </el-row>
     <el-row class="showTime">
@@ -50,7 +50,7 @@ div.allDays {
 }
 
 div.allDays div.DatePicker {
-  padding: 20px;
+  padding: 20px 30px 20px 30px;
   background: #fff;
 }
 
@@ -61,6 +61,10 @@ div.allDays div.showTime {
 div.allDays div.showTime div.el-col {
   text-align: center;
   background: #fff;
+}
+
+div.allDays div.showTime div.el-col:nth-last-of-type(2) {
+  font-size: 18px;
 }
 
 div.allDays div.watchButton {
@@ -80,7 +84,7 @@ div.allDays div.watchButton span {
   height: 0;
   padding: 10px;
   display: inline-block;
-  border: 1px solid #000;
+  border:  none;
 }
 
 div.allDays div.watchButton span.orderNum {
@@ -97,7 +101,7 @@ div.allDays div.watchButton i {
   vertical-align: middle;
   font-size: 14px;
 }
-div.timebtn{padding:18px;background:#f1fff1;}
+div.timebtn{background:#fff;}
 div.timeSelectBtn {
   display:block;
   float:left;
@@ -107,18 +111,26 @@ div.timeSelectBtn {
 div.timeSelectBtn button {
   margin-left: 8px;
   display: inline-block;
-  border: none;
+  border: 1px solid #ddd;
   outline: none;
   font-size: 12px;
-  color: #fff;
-  background: rgba(66,66,66, 0.8);
-  transition: all .2s linear 0s;
+  color: #999;
+  /*background: rgba(66, 66, 66, 0.8);*/
+  background: #fff;
+  /*transition: all .2s linear 0s;*/
   box-sizing: border-box;
-  height:35px;
+  height: 35px;
+}
+
+div.timeSelectBtn button:hover {
+  color: #999;
 }
 
 div.timeSelectBtn button.active {
-    background: rgb(66,66,66);
+  /*background: rgb(66, 66, 66);*/
+  background: rgba(	255,140,0, 0.8);
+  color: #fff;
+  border: 1px solid rgba(	255,140,0, 0.5);
 }
 
 
@@ -128,17 +140,35 @@ div.dateArrow {
   background: #fff;
 }
 
-div.dateArrow button {
-  cursor: pointer
+/* div.dateArrow button:nth-of-type(1) {
+  margin-left: 10px;
 }
 
-div.dateArrow span.nowTime {
-  margin-left: 5px;
-  margin-right: 5px
+div.dateArrow button:nth-of-type(2) {
+  margin-left: -10px;
+} */
+
+div.dateArrow button {
+  cursor: pointer;
+  border: none;
+  padding-left: 2px;
+  padding-right: 2px;
+  /* margin-left: -10px; */
 }
+
+div.dateArrow button:hover {
+  color: #777;
+}
+/* 
+div.dateArrow span.nowTime {
+   margin-left: 5px; 
+   margin-right: 5px 
+} */
+
 div.el-date-editor--datetimerange{margin-right: 8px;}
 </style>
 <script>
+import request from 'superagent'
 import highChart from '../../../components/highChart.vue'
 import { siblings } from '../../../../utils/index.js'
 import moment from 'moment'
@@ -177,7 +207,7 @@ export default {
         ]
       },
       value4: '',
-      nowTime: '2017-06-20',
+      nowTime: '',
       show: false,
       clickTimes: 0,
       arrowTimeType: 'day'
@@ -202,6 +232,7 @@ export default {
       switch (e.currentTarget.innerText) {
         case '今日': {
           nowTime = moment().format('YYYY-MM-DD')
+          this.$router.push({ query: { type:  '0'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'day'
           this.clickTimes = 0
@@ -209,6 +240,7 @@ export default {
         }
         case '本周': {
           nowTime = moment().format('YYYY年第ww周')
+          this.$router.push({ query: { type:  '1'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'week'
           this.clickTimes = 0
@@ -216,9 +248,14 @@ export default {
         }
         case '本月': {
           nowTime = moment().format('YYYY年MM月')
+          this.$router.push({ query: { type:  '2'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'month'
           this.clickTimes = 0
+          break
+        }
+        case '最近六个月': {
+          this.$router.push({ query: { type:  '3'}})
           break
         }
       }
@@ -229,25 +266,23 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = --this.clickTimes
-          console.log(nums)
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: {type:  '0', date: this.nowTime}})
           break
         }
         case 'week': {
           nums = --this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: {type:  '1', date: this.nowTime}})
           break
         }
         case 'month': {
           nums = --this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: {type:  '2', date: this.nowTime}})
           break
         }
       }
@@ -258,29 +293,46 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: {type:  '0', date: this.nowTime}})
           break
         }
         case 'week': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: {type:  '1', date: this.nowTime}})
           break
         }
         case 'month': {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: {type:  '2', date: this.nowTime}})
           break
         }
       }
+    },
+    getDateByTimeLine () {
+      if (this.value4 === '') {
+        this.$alert('请选择想要查询的日期', 'Warning', {
+          confirmButtonText: '确定'
+        })
+      } else {
+        var timeStart = moment(this.value4[0]).format('YYYY-MM-DD ')
+        var timeEnd = moment(this.value4[1]).format('YYYY-MM-DD ')
+        console.log(timeStart, timeEnd)
+        var newObj = {}
+        newObj.time1 = timeStart
+        newObj.time2 = timeEnd
+        this.$store.dispatch('timeline_action', { newObj })
+      }
     }
+  },
+  mounted () {
+    this.nowTime = moment().format('YYYY-MM-DD')
+    this.$router.push({ query: { type:  '0'}})
   }
 }
 </script>

@@ -11,9 +11,9 @@
             <i class="iconfont my_icon_class">&#xe67d;</i>报表管理</template>
           <el-menu-item-group>
             <el-menu-item index="/index/consumeData?type=day">消费数据</el-menu-item>
-            <el-menu-item index="/index/allDaysData">24小时数据走势</el-menu-item>
-            <el-menu-item index="/index/hotMap">热力图</el-menu-item>
-            <el-menu-item index="/index/abnormalData">异常数据</el-menu-item>
+            <el-menu-item index="/index/allDaysData?type=0">24小时数据走势</el-menu-item>
+            <el-menu-item index="/index/hotMap?type=curHour">热力图</el-menu-item>
+            <!-- <el-menu-item index="/index/abnormalData">异常数据</el-menu-item> -->
           </el-menu-item-group>
         </el-submenu>
         <el-menu-item index="/index/partnerManager">

@@ -545,4 +545,34 @@ color: #bfcbd9;
 .el-switch__label, .el-switch__label *{font-size:12px;}
 .el-icon-close, .el-icon-edit{cursor:pointer}
 .el-dialog .dialogModal{background:rgba(0,0,0,.5)}
+
+.one {
+  background: #f87e2b;
+  border: none;
+  width: 120px;
+  height: 50px;
+}
+
+.two {
+  background: #f87e2b;
+  border: none;
+  width: 120px;
+  height: 50px;  
+}
+
+.one:hover {
+  background: rgba(248,126,43,0.9);
+  width: 120px;
+  height: 50px;
+}
+
+
+.two:hover {
+  border: 1px solid rgb(248,126,43);
+  color: rgb(248,126,43);
+  width: 120px;
+  height: 50px;
+}
+
+
 </style>

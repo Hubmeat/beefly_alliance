@@ -1,15 +1,17 @@
 <template>
 	<div style="margin-right:20px;">
 		<div id="earD_header">
-      <div class="timeSelectBtn">
-        <el-button @click='getAllDate' class="active">所有明细</el-button>
-        <el-button @click='getMonthDate'>本月明细</el-button>
-        <el-button @click='getDailyDate'>今日明细</el-button>
-        <el-button @click='handleChangeType'>指定时间段</el-button>
+      <div class="earD_con">
+        <div class="timeSelectBtn">
+          <el-button @click='getAllDate' class="active">所有明细</el-button>
+          <el-button @click='getMonthDate'>本月明细</el-button>
+          <el-button @click='getDailyDate'>今日明细</el-button>
+          <el-button @click='handleChangeType'>指定时间段</el-button>
+        </div>
+        <el-date-picker style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
+        </el-date-picker>
+        <el-button class="my_btn">查询</el-button>        
       </div>
-      <el-date-picker style="vertical-align: middle;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
-      </el-date-picker>
-      <el-button style="vertical-align: middle;" icon="search" class="timeSelect_button">查询</el-button>
 		</div>
 
 		<div id="earD_excel">
@@ -77,13 +79,17 @@
   }
 
 	#earD_header {
-    width: 100%;
-    height: 56px;
-     padding: 4px 0; 
+    /*width: 100%;*/
+    height: 75px;
     line-height: 52px;
     background: #fff;
     border: 1px solid #e7ecf1;
 	}
+
+  /*#earD_header .earD_con {
+    background: #f3f0f0;
+    padding: 10px;
+  }*/
 
 	/*#earD_header button {
 		width: 100px;
@@ -124,27 +130,32 @@
     display:block;
     float:left;
     margin-right: 8px;
+    margin-top: 8px;
     padding-left: 20px;
   }
 
   div.timeSelectBtn button {
     margin-left: 8px;
     display: inline-block;
-    border: none;
+    border: 1px solid #ddd;
     outline: none;
     font-size: 12px;
-    color: #fff;
-    background: rgba(66,66,66, 0.8);
-    transition: all .2s linear 0s;
+    color: #999;
+    /*background: rgba(66, 66, 66, 0.8);*/
+    background: #fff;
+    /*transition: all .2s linear 0s;*/
     box-sizing: border-box;
-    height:35px;
+    height: 35px;
   }
 
   div.timeSelectBtn button.active {
-      background: rgb(66,66,66);
-      color:#fff
+    /*background: rgb(66, 66, 66);*/
+    background: rgba(	255,140,0, 0.8);
+    color: #fff;
+    border: 1px solid rgba(	255,140,0, 0.5);
   }
-  div.timeSelectBtn button:hover{color:#fff}
+
+  /*div.timeSelectBtn button:hover{color:#999;}*/
 
 	#earD_excel {
     padding: 10px 30px 0px 30px;
@@ -213,16 +224,34 @@
 		min-height: 233px;
 	}
 
+  #earD_header .my_btn {
+      width: 80px;
+      /*float: right;*/
+      height: 36px;
+      line-height: 11px;
+      margin-right: 30px;
+      color: #fff;
+      margin-top: 18px;
+      outline: none;
+      border: none;
+      /* border-radius: 4px; */
+      background: rgba(52,52,67, 0.8);
+  }
+
+  #earD_header .my_btn:hover {
+      background: rgba(52,52,67, 0.9);
+      color: #fff;
+  }
 </style>
 
 <script>
 import $ from 'jquery'
 import request from 'superagent'
 import moment from 'moment'
-require('../../../assets/lib/js/jquery.pagination.js')
 // require('../../../assets/lib/js/exportExcel.js')
 require('../../../assets/lib/js/Blob.js')
 import '../../../assets/css/pagination.css'
+require('../../../assets/lib/js/jquery.pagination.js')
 export default {
   data () {
     return {
