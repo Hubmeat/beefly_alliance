@@ -3,7 +3,7 @@
 	<div id="addpartner_form">
 				<h1 id="addpartner_title">查看合伙人
 					<span>
-						<a href="/index/partnerManager">
+						<a @click="go_back">
 							<i class="el-icon-close"></i>
 						</a>
 					</span>
@@ -107,12 +107,12 @@
 	.form li p {
 		color: #aaa;
 		float: left;
-		margin-left: 50px;
+		margin-left: 30px;
 	}
 
 	.addpartner_button:nth-of-type(1) {
 		border: 1px solid #f87e2b;
-		margin-left: 40px;
+		margin-left: 150px;
 		margin-top: 40px;
 		color: #f87e2b;
 		background: #fff;
@@ -138,16 +138,21 @@
     width: 98%;
     height: 60px;
     font-size: 24px;
-    overflow-x: hidden;
     line-height: 60px;
     color: #444;
-     border-bottom: 1px solid #eee; 
+     border-bottom: 1px solid #eee;
+  		overflow: hidden;
 	}
 
 	#addpartner_title span {
 		float: right;
 		margin-right: 14px;
 		cursor: pointer;
+	}
+
+	#addpartner_title span a {
+		margin-right: 20px;
+		font-size: 18px;
 	}
 </style>
 <script>
@@ -196,7 +201,10 @@ export default {
   methods: {
     onSubmit () {
       this.$router.push('/index/partnerManager')
-    }
+    },
+		go_back () {
+			this.$router.push('/index/partnerManager')
+		}
   }
 }
 </script>

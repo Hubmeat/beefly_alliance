@@ -477,19 +477,6 @@ div.account>h1 button:hover {
   text-indent: 8px;
 }
 
-::-webkit-input-placeholder { /* WebKit browsers */ 
-color: #bfcbd9; 
-} 
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */ 
-color: #bfcbd9; 
-} 
-::-moz-placeholder { /* Mozilla Firefox 19+ */ 
-color: #bfcbd9; 
-} 
-:-ms-input-placeholder { /* Internet Explorer 10+ */ 
-color: #bfcbd9; 
-} 
-
 #am_search label {
   /* width: 190px; */
   height: 70px;

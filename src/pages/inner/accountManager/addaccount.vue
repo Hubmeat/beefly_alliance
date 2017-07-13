@@ -69,16 +69,16 @@
 
 @media screen and (max-width:1367px) {
   #addaccount_form {
-    height: 55%;
-    width: 50%;
-    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    min-height: 30%;
+    width: 45%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     position: fixed;
     display: block;
-    top: 62%;
-    left: 50%;
-    margin-left: -34%;
-    margin-top: -28%;
-    padding: 60px 150px 200px 144px;
+    top: 54%;
+    left: 53%;
+    margin-left: -28%;
+    margin-top: -27%;
+    padding: 90px 80px 0px 50px;
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
@@ -114,12 +114,16 @@
     width: 98%;
     height: 40px;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 400;
     overflow-x: hidden;
     line-height: 40px;
     color: #444;
     border-bottom: 1px solid #eee;
 	}
+
+	#addaccount_title>h1 {
+    font-weight: 400;
+  }
 
   #addaccount_title span {
 		float: right;

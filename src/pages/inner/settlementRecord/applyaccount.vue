@@ -1,14 +1,8 @@
 <template>
   <div style="margin-right:20px;">
-    <el-dialog title="提示" :modal=false :visible="dialogVisible" size="tiny">
-      <span>提现金额必须是数字, 需从最后的月份开始提现</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
   
     <div id="apply_account_header">
-      <h1>申请结算</h1>
+      <h1>申请结算 <span @click="$router.push('/index/settlementRecord')">返回</span></h1>
   
       <ul>
         <li>结算月份：
@@ -17,11 +11,11 @@
                   v-bind:class="[(index===0)?'active':'']"
                   :myCode=list.withdrawalCode>{{list.month}}</button>
         </li>
-        <li>本次可结算金额： {{allMoney[currentIndex]}}元
+        <li>可结算金额:     &nbsp;&nbsp;&nbsp;{{allMoney[currentIndex]}}元
           <span>*每月结算一次，结算金额=上个月所有车辆的盈利*80%+以前遗留的未结算金额。</span>
         </li>
         <li>
-          <span>申请结算金额：</span>
+          申请结算金额：
           <input v-model.number="crash" type="number" ref="my_val" id="apply_money">
           <button>确定</button>
         </li>
@@ -62,7 +56,6 @@ export default {
       input: '',
       tableData: [],
       router_show: false,
-      dialogVisible: false,
       apply_money_data: '2017-01',
       monthLists: [],
       totalPage: '',
@@ -210,7 +203,10 @@ export default {
 
     $('#apply_account_header ul li:nth-of-type(3) button').click(function () {
       if ($('#apply_money').val() < 1) {
-        that.dialogVisible = true
+        that.$message({
+          message: '提交现金必须是数字哦！',
+          type: 'warning'
+        })
       } else if ($('#apply_money').val() > that.allMoney[that.currentIndex]) {
         that.$alert('体现金额超过当前可体现最大金额', 'Warning', {
           confirmButtonText: '确定'
@@ -325,7 +321,7 @@ body {
 
 #apply_account_header {
   width: 100%;
-  height: 170px;
+  height: 194px;
   background: #fff;
   border: 1px solid #e7ecf1;
   overflow: hidden;
@@ -345,6 +341,17 @@ body {
   line-height: 40px;
 }
 
+#apply_account_header>h1 span {
+  float: right;
+  margin-right: 60px; 
+  cursor: pointer;
+}
+
+#apply_account_header>h1 span:hover {
+  color: #888;
+  text-decoration: underline;
+}
+
 .account_my_input {
   width: 140px;
   height: 30px;
@@ -361,21 +368,25 @@ body {
 }
 
 #apply_account_header ul li {
-  height: 40px;
-  line-height: 40px;
+  height: 50px;
+  line-height: 50px;
   font-size: 16px;
   font-weight: 500;
 }
 
 #apply_account_header ul li:nth-of-type(1) button {
   width: 100px;
-  height: 30px;
-  margin-left: 14px;
+  height: 35px;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   outline: none;
+  margin-right: 17px; 
   background: #fff;
+}
+
+#apply_account_header ul li:nth-of-type(1) button:nth-last-of-type(2) {
+  margin-left: 20px;
 }
 
 #apply_account_header ul li:nth-of-type(1) button.active {
@@ -398,6 +409,7 @@ body {
   height: 38px;
   border-radius: 6px;
   border: 1px solid #ddd;
+  margin-left: -10px; 
   width: 120px;
   text-indent: 1em;
   outline: none;

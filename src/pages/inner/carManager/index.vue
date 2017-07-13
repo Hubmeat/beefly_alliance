@@ -24,7 +24,7 @@
                 <el-date-picker v-model='form.data1' type="date" placeholder="选择日期"></el-date-picker>
                <span class="division">至</span>
                 <el-date-picker v-model='form.data2' type="date" placeholder="选择日期"></el-date-picker>
-                <el-button class="my_btn" @click='searchByTimeline'>查询</el-button>
+                <el-button class="my_btn" @click="searchByTimeline">查询</el-button>
                 <!--<button @click='searchByTimeline'>查询</button>-->
               </el-form-item>
             </el-col>
@@ -159,27 +159,34 @@ export default {
     })
   },
   methods: {
-    searchByTimeline: function () {
+    searchByTimeline () {
+      console.log('1111')
       if (this.form.data1 === '' || this.form.data2 === '') {
-        this.$message('请选择想要查询的时间段！')
+        this.$message({
+          message: '请输入日期',
+          type: 'warning'
+        })
       } else if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '') {
-        this.$message('请输入想要查询的车辆编号！')
+        this.$message({
+            message: '请输入想要查询的车辆编号！',
+            type: 'warning'
+        })
       } else {
         console.log(this.form.data1)
         console.log(this.form.data2)
-        // request
-        //   .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes?page=')
-        //   .send({
-        //     'franchiseeId': '123456',
-        //     'userId': 'admin'
-        //   })
-        //   .end((error, res) => {
-        //     if (error) {
-        //       console.log('error:', error)
-        //     } else {
-        //       console.log(res)
-        //     }
-        //   })
+        request
+          .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes?page=')
+          .send({
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              console.log(res)
+            }
+          })
       }
     }
   }
@@ -305,15 +312,17 @@ div#carManager_page {
     /*margin-top: 10px;*/
     outline: none;
     border: none;
-    /* border-radius: 4px; */
+    border-radius: 4px; 
+    cursor: pointer;
     background: rgba(52,52,67, 0.8);
 }
 
 .my_btn:hover {
     background: rgba(52,52,67, 0.9);
+    color: #fff !important;
 }
 
-.el-input__inner {
+ .el-input__inner {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -342,5 +351,9 @@ div#carManager_page {
 
 .el-input__inner:hover {
   border: 1px solid #bbb;
+} 
+
+.el-button:focus, .el-button:hover {
+  color: #fff;
 }
 </style>
