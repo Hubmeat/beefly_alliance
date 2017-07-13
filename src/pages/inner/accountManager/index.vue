@@ -92,9 +92,9 @@
                   </el-radio-group>
                 </el-form-item>
               </el-form>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleEditAccount">确 定</el-button>
+              <div slot="footer" class="dialog-footer editfooter">
+                <el-button class="accountMangerBtn" @click="dialogVisible = false">取 消</el-button>
+                <el-button class="accountMangerBtn" type="primary" @click="handleEditAccount">确 定</el-button>
               </div>
             </el-dialog>
             <!--dialog 弹窗结束-->
@@ -584,5 +584,17 @@ button#accountSearchBtn{width: 80px;
     /* border-radius: 4px; */
     background: rgba(52,52,67, 0.8);}
     button#accountSearchBtn:hover{color:#fff;}
-
+.accountMangerBtn {
+    width: 120px;
+    height: 50px;}
+ .accountMangerBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
+.accountMangerBtn:nth-of-type(2) {
+    background: #f87e2b;
+    border: none;
+    color: #fff;}
+.accountMangerBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+.accountMangerBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);}     
+div.addfooter,div.editfooter{text-align: left;
+    padding-left: 60px;
+    margin-top: -43px;}
 </style>
