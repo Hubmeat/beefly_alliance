@@ -81,7 +81,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 div.consumeData {
   margin-right: 20px;
 }

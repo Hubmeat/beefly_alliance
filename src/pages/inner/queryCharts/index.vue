@@ -78,7 +78,7 @@ div.queryCharts div.watchButton span {
   height: 0;
   padding: 10px;
   display: inline-block;
-  border: 1px solid #000;
+  border: none;
 }
 
 div.queryCharts div.watchButton span.orderNum {

@@ -185,10 +185,12 @@ div.gmap{
     div.showTime div.el-col {
       text-align: center;
       background: #fff;
+      font-size: 18px;
     }
 
     div.showTime div.el-col button {
       border: none;
+      padding: 5px 0 10px 0;
     }
 
     div.showTime div.el-col:nth-of-type(1) {
