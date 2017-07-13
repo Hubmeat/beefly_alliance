@@ -317,6 +317,7 @@ export default {
       this.dialogFormVisible = true
     },
     openEditRole (scope) {
+      console.log(scope)
       this.dialogEditVisible = true
       this.editForm.roleName = scope.row.roleName
       this.editForm.des = scope.row.des
@@ -358,7 +359,7 @@ export default {
                   type: 'success',
                   message: '修改成功!'
                 })
-                that.tableData.splice(that.editForm.index,1,{roleName: that.editForm.roleName,des: that.editForm.des})
+                that.tableData.splice(that.editForm.index,1,{roleName: that.editForm.roleName,des: that.editForm.des, id: that.editForm.id})
                 that.dialogEditVisible = false
             } else {
               that.$message({
@@ -478,6 +479,7 @@ export default {
             })
          }
         var newArr = result.map(function(item, index) {
+            console.log(item)
             var res = item.auth.split('-')
             var fathCode = []
             var childrenCode = []
@@ -492,6 +494,7 @@ export default {
             var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
             return obj
           })
+          console.log(newArr)
          that.tableData  = newArr
        }
      })
