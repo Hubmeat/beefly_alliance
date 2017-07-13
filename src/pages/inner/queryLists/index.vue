@@ -96,6 +96,7 @@ div.queryLists table tr td {
   font-size: 14px;
   margin: 0;
   padding: 10px 15px;
+  outline: none;
   border-radius: 4px;
 }
 

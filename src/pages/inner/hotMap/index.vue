@@ -13,7 +13,8 @@
           </div>
           <el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
           </el-date-picker>
-          <!--<el-button icon="search" class="timeSelect_button">查询</el-button>-->
+          <el-button id="btn2" v-show="show2" @click="searchByTimeline">查询</el-button>
+          <!-- <div v-show="show3" id="my_border"></div> -->
         </el-col>
       </el-row>
       <div class="hotmap_search">
@@ -36,7 +37,7 @@
           </el-button>
         </el-col>
         <el-col>
-          24小时数据走势
+          骑行热力展示
         </el-col>
       </el-row>
     </div>
@@ -47,7 +48,7 @@
 
  </div>
 </template>
-<style>
+<style scoped>
 #hotmap_controller {
   padding: 20px 30px 20px 30px;
   background: #fff;
@@ -56,7 +57,7 @@
 
 
 #hotmap_controller .hotmap_search_place {
-    min-width: 457px;
+    min-width: 460px;
     padding-left: 10px;
     border-radius: 4px;
     height: 34px;
@@ -123,7 +124,35 @@ div.gmap{
     div.showCurrentCity{margin-top:10px;}
     div.amap-copyright{display: none!important;}
     .amap-logo img{display:none;}
-    div.timebtn{background:#fff;}
+    div.timebtn {
+      background:#fff;
+    }
+
+    div.timebtn #btn2 {
+      width: 60px;
+      height: 36px;
+      color: #fff;
+      outline: none;
+      text-align: center;
+      border: none;
+      /* border-radius: 4px; */
+      background: rgba(52,52,67, 0.8);  
+    }
+
+   div.timebtn #btn2:hover {
+      background: rgba(52,52,67, 0.9);
+      color: #fff;
+    }
+
+   /* div.timebtn #my_border {
+      border: 1px solid #ccc;
+      height: 30px;
+      width: 100px;
+      display: block;
+      position: absolute;
+      left: 0;
+    } */
+
     div.timeSelectBtn {
       display:block;
       float:left;
@@ -155,8 +184,19 @@ div.gmap{
 
     div.showTime div.el-col {
       text-align: center;
-      padding: 20px;
       background: #fff;
+    }
+
+    div.showTime div.el-col button {
+      border: none;
+    }
+
+    div.showTime div.el-col:nth-of-type(1) {
+      padding: 20px 0 10px 20px
+    }
+
+    div.showTime div.el-col:nth-of-type(2) {
+      margin-left: 9px;
     }
 
     div.timeSelectBtn button.active {
@@ -185,8 +225,8 @@ div.gmap{
     }
 
     .my_btn:hover {
-        background: rgba(52,52,67, 0.9);
-        color: #fff;
+      background: rgba(52,52,67, 0.9);
+      color: #fff;
     }
 </style>
 <script>
@@ -206,11 +246,13 @@ export default {
       startDriving: '',
       endDriving: '',
       city: '北京',
-      value4: false,
+      value4: '',
       nowTime: '',
       arrowTimeType: 'now',
       clickTimes: 0,
       show: false,
+      show2: false,
+      // show3: false,
       pickerOptions2: {
         shortcuts: [
           {
@@ -246,8 +288,8 @@ export default {
     }
   },
   mounted: function () {
-    console.log('11111')
-    // 加载本日热力图
+    this.$router.push({ query: { type:  'curHour'}})
+    // 加载实时热力图
     request
       .post('http://192.168.3.52:7099/franchisee/report/hot/curHour')
       .send({
@@ -258,8 +300,7 @@ export default {
         if (err) {
           console.log('err:' + err)
         } else {
-          // console.log(res)
-          console.log(JSON.parse(res.text))
+          // console.log(JSON.parse(res.text))
           var arr = JSON.parse(res.text)
           this.init(arr)
         }
@@ -285,7 +326,6 @@ export default {
         map.addControl(new AMap.CitySearch())
         // 热力图数据这里我用的模拟数据（北京部分公园数据）
         var heatmapData = arr
-        console.log('heatmapData:', heatmapData)
         // 初始化heatmap对象
         heatmap = new AMap.Heatmap(map, {
           radius: 25, // 给定半径
@@ -369,8 +409,10 @@ export default {
       e.currentTarget.setAttribute('class', 'el-button active el-button--default')
       if (e.currentTarget.innerText === '指定时间段') {
         this.show = true
+        this.show2 = true
       } else {
         this.show = false
+        this.show2 = false
       }
       var nowTime
       switch (e.currentTarget.innerText) {
@@ -378,13 +420,13 @@ export default {
           nowTime = moment().format('YYYY-MM-DD')
           this.$router.push({ query: { type:  'curHour'}})
           this.nowTime = nowTime
-          this.arrowTimeType = 'curHour'
+          this.arrowTimeType = 'now'
           this.clickTimes = 0
           break
         }
         case '今日': {
           nowTime = moment().format('YYYY-MM-DD')
-          this.$router.push({ query: { type:  'day'}})
+          this.$router.push({ query: { type:  'curDay'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'day'
           this.clickTimes = 0
@@ -392,7 +434,7 @@ export default {
         }
         case '本周': {
           nowTime = moment().format('YYYY年第ww周')
-          this.$router.push({ query: { type:  'week'}})
+          this.$router.push({ query: { type:  'curWeek'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'week'
           this.clickTimes = 0
@@ -400,7 +442,7 @@ export default {
         }
         case '本月': {
           nowTime = moment().format('YYYY年MM月')
-          this.$router.push({ query: { type:  'month'}})
+          this.$router.push({ query: { type:  'curMonth'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'month'
           this.clickTimes = 0
@@ -414,25 +456,27 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = --this.clickTimes
-          console.log(nums)
+          console.log('sssssssssss')
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: { type:  'day', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
         case 'week': {
           nums = --this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: { type:  'week', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
         case 'month': {
           nums = --this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: { type:  'month', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
       }
@@ -443,25 +487,26 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: { type:  'day', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
         case 'week': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: { type:  'week', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
         case 'month': {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: { type:  'month', data: this.nowTime}})
+          this.searchByDirType()
           break
         }
       }
@@ -469,52 +514,83 @@ export default {
     dataUpdate () {
       var flag = true
       console.log(this.$route.query.type)
-      if (this.$route.query.type === undefined) {
+      if (this.$route.query.type === 'curHour') {
         return
       } else if (flag === true) {
+        this.requestWay(this.$route.query.type)
+      } else {
+        return
+      }
+    },
+    searchByTimeline () {
+      var startTime, endTime
+      if (this.show2 === true && this.value4 === '') {
+        this.$message({
+          message: '请选择想要查询的时间段！',
+          type: 'warning'
+        })
+      } else {
+        startTime = moment(this.value4[0]).format('YYYY-MMM-DD HH:MM:SS')
+        endTime = moment(this.value4[1]).format('YYYY-MMM-DD HH:MM:SS')
         request
-          .post('http://192.168.3.52:7099/franchisee/report/hot/' + this.$route.query.type)
+          .post('http://192.168.3.52:7099/franchisee/report/hot/defineTime')
           .send({
-            'franchiseeId': '123456',
-            'userId': 'admin'
+            "account": {
+              'franchiseeId': '123456',
+              'userId': 'admin'
+            },
+            "date": {
+              'startDate': startTime,
+              'endDate': endTime
+            }
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              console.log(res)
+              var arr = JSON.parse(res.text)
+              this.init(arr)
+            }
+          })
+      }
+    },
+    searchByDirType () {
+      switch (this.$route.query.type) {
+        case 'day': {
+          this.requestWay(day)
+          break
+        }
+        case 'week': {
+          this.requestWay(week)
+          break
+        }
+        case 'month': {
+          this.requestWay(month)
+          break
+        }
+      }
+    },
+    requestWay (type) {
+        request
+          .post('http://192.168.3.52:7099/franchisee/report/hot/' + type)
+          .send({
+            "account": {
+              'franchiseeId': '123456',
+              'userId': 'admin'
+            },
+            "date": this.$route.query.date
           })
           .end((error, res) => {
             // console.log('this is entry')
             if (error) {
               console.log('error:', error)
             } else {
-              // console.log(res)
               // console.log(JSON.parse(res.text).list)
-              var arr = JSON.parse(res.text).list
-              var pageNumber = JSON.parse(res.text).totalPage
-              // 设置data分页
-              this.pageTotal = pageNumber
-              $('.M-box').pagination({
-                pageCount: pageNumber,
-                jump: true,
-                coping: true,
-                homePage: '首页',
-                endPage: '尾页',
-                prevContent: '«',
-                nextContent: '»'
-              })
-              var newArr = []
-              for (var i = 0; i < arr.length; i++) {
-                var obj = {}
-                obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                obj.totalBill = arr[i].totalBill
-                obj.money = arr[i].money
-                newArr.push(obj)
-              }
-              // console.log(newArr)
-              this.$store.dispatch('consumeData_action', {newArr})
-              this.lists = this.$store.state.consumeData
-              flag = false
+              var arr = JSON.parse(res.text)
+              this.init(arr)
             }
           })
-      } else {
-        return
-      }
     }
   },
   created () {

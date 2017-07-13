@@ -73,8 +73,8 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确 定</el-button>
+                <el-button class="partner_button" @click="dialogVisible = false">取 消</el-button>
+                <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确 定</el-button>
               </div>
             </el-dialog>
             <!--dialog 弹窗结束-->
@@ -91,7 +91,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 #partnerManager_router {
   width: 100%;
   height: 100%;
@@ -280,6 +280,32 @@
 #partner_header .my_btn:hover {
     background: rgba(52,52,67, 0.9);
     color: #fff;
+}
+
+.partner_button:nth-of-type(1) {
+  background: #f87e2b;
+  border: none;
+  color: #fff;
+}
+
+.partner_button:nth-of-type(1):hover {
+  background: rgba(248, 126, 43, 0.9);
+}
+
+.partner_button:nth-of-type(2) {
+  background: #fff;
+  color: #444;
+  border: 1px solid rgba(196,196,196,1);
+}
+
+.partner_button:nth-of-type(2):hover {
+  border: 1px solid rgb(248, 126, 43);
+  color: rgb(248, 126, 43);
+}
+
+.partner_button {
+  width: 120px;
+  height: 50px;
 }
 </style>
 

@@ -116,12 +116,13 @@
   top: 0px;
   padding-left: 20px;
   width: 98%;
-  height: 40px;
+  height: 60px;
   font-size: 20px;
   overflow-x: hidden;
-  line-height: 40px;
+  line-height: 60px;
   color: #444;
-  border-bottom: 1px solid #eee;
+  font-size: 24px;
+    border-bottom: 1px solid #eee;  
 }
 
 #addpartner_title span {

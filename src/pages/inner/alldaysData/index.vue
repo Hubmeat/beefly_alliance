@@ -138,6 +138,7 @@ div.dateArrow {
 
 div.dateArrow button {
   cursor: pointer;
+  border: none;
 }
 
 div.dateArrow span.nowTime {
@@ -212,7 +213,7 @@ export default {
       switch (e.currentTarget.innerText) {
         case '今日': {
           nowTime = moment().format('YYYY-MM-DD')
-          this.$router.push({ query: { type:  'day'}})
+          this.$router.push({ query: { type:  '0'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'day'
           this.clickTimes = 0
@@ -220,7 +221,7 @@ export default {
         }
         case '本周': {
           nowTime = moment().format('YYYY年第ww周')
-          this.$router.push({ query: { type:  'week'}})
+          this.$router.push({ query: { type:  '1'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'week'
           this.clickTimes = 0
@@ -228,10 +229,14 @@ export default {
         }
         case '本月': {
           nowTime = moment().format('YYYY年MM月')
-          this.$router.push({ query: { type:  'month'}})
+          this.$router.push({ query: { type:  '2'}})
           this.nowTime = nowTime
           this.arrowTimeType = 'month'
           this.clickTimes = 0
+          break
+        }
+        case '最近六个月': {
+          this.$router.push({ query: { type:  '3'}})
           break
         }
       }
@@ -242,25 +247,23 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = --this.clickTimes
-          console.log(nums)
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: {type:  '0', date: this.nowTime}})
           break
         }
         case 'week': {
           nums = --this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: {type:  '1', date: this.nowTime}})
           break
         }
         case 'month': {
           nums = --this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: {type:  '2', date: this.nowTime}})
           break
         }
       }
@@ -271,25 +274,23 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
-          console.log(moment(lastDay).format('YYYY-MM-DD'))
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
+          this.$router.push({ query: {type:  '0', date: this.nowTime}})
           break
         }
         case 'week': {
           nums = ++this.clickTimes
-          console.log(nums)
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
-          console.log(moment(lastweek).format('YYYY年第WW周'))
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
+          this.$router.push({ query: {type:  '1', date: this.nowTime}})
           break
         }
         case 'month': {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
-          console.log(moment(lastmonth).format('YYYY年MM月'))
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
+          this.$router.push({ query: {type:  '2', date: this.nowTime}})
           break
         }
       }
@@ -312,7 +313,7 @@ export default {
   },
   mounted () {
     this.nowTime = moment().format('YYYY-MM-DD')
-    this.$router.push({ query: { type:  'day'}})
+    this.$router.push({ query: { type:  '0'}})
   }
 }
 </script>

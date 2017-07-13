@@ -1,7 +1,7 @@
 <template>
   <div class="queryCharts">
     <el-row class="watchLists">
-      <el-button @click="handleClick">查看列表</el-button>
+      <button class="btn_list" @click="handleClick">查看列表</button>
     </el-row>
     <el-row class="watchButton">
       <el-col :span="2">
@@ -82,11 +82,11 @@ div.queryCharts div.watchButton span {
 }
 
 div.queryCharts div.watchButton span.orderNum {
-  background: #74f7af;
+  background: #ccf;
 }
 
 div.queryCharts div.watchButton span.orderMoney {
-  background: #ff4949;
+  background: #ffc;
 }
 
 div.queryCharts div.watchButton i {
@@ -94,6 +94,26 @@ div.queryCharts div.watchButton i {
   margin-left: 5px;
   vertical-align: middle;
   font-size: 14px;
+}
+
+.btn_list {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #c4c4c4;
+  color: #1f2d3d;
+  font-size: 14px;
+  margin: 0;
+  padding: 10px 15px;
+  outline: none;
+  border-radius: 4px;
+}
+
+.btn_list:hover {
+  color: rgba(255,140,0, 0.8);
+  border: 1px solid rgba(	255,140,0, 0.8);
 }
 </style>
 <script>
