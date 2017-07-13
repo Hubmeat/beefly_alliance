@@ -12,8 +12,8 @@
     <!-- account -->
     <div class="account">
       <h1>
-        <button type="button" @click="openEditRole">添加角色</button>
-        <el-dialog
+        <button type="button" @click="openAddRole">添加角色</button>
+         <el-dialog
           title="添加角色"
           :visible.sync="dialogFormVisible"
           :modal-append-to-body="false"
@@ -28,7 +28,7 @@
             </el-form-item>
             <el-form-item label="权限列表" :label-width="formLabelWidth">
               <el-tree
-                :data="form.rolePowerList"
+                :data="rolePowerList"
                 show-checkbox
                 ref="tree"
                 node-key="id"
@@ -40,11 +40,11 @@
             <el-button @click="dialogFormVisible = false">取 消</el-button>
             <el-button type="primary" @click="handleAddRole">确 定</el-button>
           </div>
-        </el-dialog>
+        </el-dialog> 
       </h1>
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;">
+      <el-table :data="tableData" style="width: 100%; font-size:13px;" v-loading="loading">
         <el-table-column prop="roleName" label="角色名称" min-width="160"></el-table-column>
         <el-table-column prop="des" label="备注" min-width="160"></el-table-column>
         <el-table-column label="包含用户" min-width="170">
@@ -63,11 +63,41 @@
         </el-table-column>
         <el-table-column prop="del" label="操作">
           <template scope="scope">
-            <i class="el-icon-edit" style="margin-right:10px;" title="修改"></i>
-            <i class="el-icon-close" title="删除"></i>
+            <i class="el-icon-edit" style="margin-right:10px;" @click="openEditRole(scope)" title="修改"></i>
+            <i class="el-icon-close" title="删除" @click="handleDeleteRole(scope)"></i>
           </template>
         </el-table-column>
       </el-table>
+       <el-dialog v-loading="loading2"
+                title="修改角色"
+                :visible.sync="dialogEditVisible"
+                :modal-append-to-body="false"
+                :modal="true"
+              >
+                <el-form v-model="editForm">
+                  <el-form-item label="角色名称" :label-width="formLabelWidth">
+                    <el-input v-model="editForm.roleName" placeholder="请输入角色名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="备注" :label-width="formLabelWidth">
+                    <el-input type="textarea" v-model="editForm.des"></el-input>
+                  </el-form-item>
+                  <el-form-item label="权限列表" :label-width="formLabelWidth">
+                    <el-tree
+                      :data="editForm.rolePowerList"
+                      show-checkbox
+                      ref="tree"
+                      node-key="id"
+                      :props="defaultProps2"
+                      :default-checked-keys="fathCode"
+                      >
+                    </el-tree>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogEditVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="handleEditRole">确 定</el-button>
+                </div>
+            </el-dialog> 
     </div>
   
     <div id="account_page">
@@ -89,138 +119,343 @@ import request from 'superagent'
 export default {
   data () {
     return {
+      loading: false,
+      loading2: false,
       input: '',
       dialogFormVisible: false,
+      dialogEditVisible: false,
       currentPage: 1,
       totalPage:1,
-      tableData: [{
-        roleName: '管理员',
-        des: '这里是备注',
-        names: []
-      }],
+      tableData: [],
+      fathCode: [],
+      childrenCode: [],
       router_show: false,
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      form: {
-        roleName: '',
-        des: '',
-        names: [],
-        rolePowerList: [
+      defaultProps2: {
+        children: 'children',
+        label: 'label'
+      },
+      rolePowerList: [
               {
-                id: 2,
+                id: 1100,
                 label: '首页'
               },
               {
-                id: 3,
+                id: 1200,
                 label: '车辆管理'
               },
               {
-                id: 4,
+                id: 1300,
                 label: '报表管理',
                 children: [
                   {
-                    id:41,
+                    id: 1301,
                     label: '消费数据'
                   },
                   {
-                    id:42,
+                    id: 1302,
                     label: '24小时数据走势'
                   },
                   {
-                    id:43,
+                    id: 1303,
                     label: '热力图'
                   },
                   {
-                    id:44,
+                    id: 1304,
                     label: '异常数据'
                   }
                 ]
               },
               {
-                id: 5,
+                id: 2000,
                 label: '合伙人管理'
               },
               {
-                id: 6,
+                id: 1400,
                 label: '营收管理',
                 children: [
                   {
-                    id: 61,
+                    id: 1401,
                     label: '收益明细'
                   },
                   {
-                    id: 62,
+                    id: 1402,
                     label: '结算记录'
                   },
                 ]
               },
               {
-                id: 6,
+                id: 1500,
                 label: '账号管理'
               },
               {
-                id: 7,
+                id: 1600,
                 label: '个人中心'
               },
               {
-                id: 8,
+                id: 1700,
                 label: '角色管理'
               },
               {
-                id: 9,
+                id: 1800,
                 label: '信息中心'
               },
               {
-                id: 10,
+                id: 1900,
                 label: '日志管理',
                 children: [
                   {
-                    id: 101,
+                    id: 1901,
                     label: '登录日志'
                   },
                   {
-                    id: 102,
+                    id: 1902,
+                    label: '操作日志'
+                  },
+                ]
+              }
+            ],
+      form: {
+        roleName: '',
+        des: ''
+      },
+      formLabelWidth: '120px',
+      editForm: {
+        roleName: '',
+        des: '',
+        id: '',
+        index: '',
+        roleType: '',
+        rolePowerList: [
+              {
+                id: 1100,
+                label: '首页'
+              },
+              {
+                id: 1200,
+                label: '车辆管理'
+              },
+              {
+                id: 1300,
+                label: '报表管理',
+                children: [
+                  {
+                    id: 1301,
+                    label: '消费数据'
+                  },
+                  {
+                    id: 1302,
+                    label: '24小时数据走势'
+                  },
+                  {
+                    id: 1303,
+                    label: '热力图'
+                  },
+                  {
+                    id: 1304,
+                    label: '异常数据'
+                  }
+                ]
+              },
+              {
+                id: 2000,
+                label: '合伙人管理'
+              },
+              {
+                id: 1400,
+                label: '营收管理',
+                children: [
+                  {
+                    id: 1401,
+                    label: '收益明细'
+                  },
+                  {
+                    id: 1402,
+                    label: '结算记录'
+                  },
+                ]
+              },
+              {
+                id: 1500,
+                label: '账号管理'
+              },
+              {
+                id: 1600,
+                label: '个人中心'
+              },
+              {
+                id: 1700,
+                label: '角色管理'
+              },
+              {
+                id: 1800,
+                label: '信息中心'
+              },
+              {
+                id: 1900,
+                label: '日志管理',
+                children: [
+                  {
+                    id: 1901,
+                    label: '登录日志'
+                  },
+                  {
+                    id: 1902,
                     label: '操作日志'
                   },
                 ]
               }
             ]
-      },
-      formLabelWidth: '120px'
+      }
     }
   },
   methods: {
-    openEditRole () {
+    openAddRole () {
       this.dialogFormVisible = true
-      // this.$router.push('/index/roleManager/addrole')
-      // this.router_show = true
+    },
+    openEditRole (scope) {
+      this.dialogEditVisible = true
+      this.editForm.roleName = scope.row.roleName
+      this.editForm.des = scope.row.des
+      this.editForm.id = scope.row.id
+      this.editForm.index = scope.$index
+      this.editForm.roleType = scope.row.roleType
+      this.fathCode = []
+      this.childrenCode = []
+      // this.fathCode  = scope.row.fathCode
+      // this.childrenCode  = scope.row.childrenCode
+    },
+    handleEditRole () {
+      var that = this
+      var authList = this.getCheckedKeys().map((item)=>{
+        return {code: item}
+      })
+      request
+        .post('http://192.168.3.52:7099/franchisee/account/updateRole')
+        .send({
+          oldRole: {
+            id: that.editForm.id
+          },
+          newRole: {
+            id: that.editForm.id,
+            roleType:  that.editForm.roleType,
+            roleName: that.editForm.roleName,
+            des: that.editForm.des,
+            auths: authList
+          }
+        })
+        .end(function(err,res){
+          if(err){
+            console.log(err)
+          } else {
+            that.loading2 = false
+            var code = JSON.parse(res.text).code
+            if(code === 0) {
+                that.$message({
+                  type: 'success',
+                  message: '修改成功!'
+                })
+                that.tableData.splice(that.editForm.index,1,{roleName: that.editForm.roleName,des: that.editForm.des})
+                that.dialogEditVisible = false
+            } else {
+              that.$message({
+                  type: 'error',
+                  message: '修改失败!'
+              })
+            }
+          }
+        })
+    },
+    handleDeleteRole (scope) {
+      var that = this
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.loading = true
+          request
+            .post('http://192.168.3.52:7099/franchisee/account/delRole')
+            .send({
+              id: scope.row.id,
+              roleType: scope.row.roleType,
+              roleName: scope.row.roleName,
+              auth: scope.row.auth
+            })
+            .end((err, res) => {
+              if(err) {
+                console.log(err)
+              } else {
+                that.loading = false
+                var code = JSON.parse(res.text).code
+                if(code === 0) {
+                   this.$message({
+                      type: 'success',
+                      message: '删除成功!'
+                    })
+                    that.tableData.splice(scope.$index,1)
+                } else {
+                  this.$message({
+                      type: 'error',
+                      message: '删除失败!'
+                  })
+                }
+              }
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })   
+        })
     },
     handleAddRole () {
      this.dialogFormVisible = false
-     var authList = this.getCheckedNodes()
+
+     var authList = this.getCheckedKeys().map((item)=>{
+       return {code: item}
+     })
      var that = this
      request
       .post('http://192.168.3.52:7099/franchisee/account/addRole')
       .send({
         des: that.form.des,
         roleName: that.form.roleName,
-        auth: authList,
+        auths: authList,
         roleType: that.form.roleName === '管理员'?'0':'1'
       })
       .end((err, res) => {
         if (err) {
           console.log(err)
         } else {
+          console.log(res.text)
+          var code = JSON.parse(res.text).code
+          if(code === 0) {
+            that.$message({
+              type: 'success',
+              message: '恭喜您！添加角色成功'
+            })
+            that.tableData.push({
+              roleName: that.form.roleName,
+              des: that.form.des,
+              names: that.from
+            })
+          } else {
+            that.$message({
+              type: 'error',
+              message: 'sorry！添加角色失败'
+            })
+          }
           console.log(res)
         }
       })
-
     },
-    getCheckedNodes() {
-        return this.$refs.tree.getCheckedNodes()
-    },
+    getCheckedKeys () {
+        return this.$refs.tree.getCheckedKeys()
+    }
   },
   mounted () {
     var that = this
@@ -242,7 +477,22 @@ export default {
               nextContent: '»'
             })
          }
-         that.tableData  = result
+        var newArr = result.map(function(item, index) {
+            var res = item.auth.split('-')
+            var fathCode = []
+            var childrenCode = []
+            for(var i=0; i < res.length; i++){
+              if(res[i] % 100 == 0) {
+                fathCode.push(Number(res[i]))
+              } else {
+                childrenCode.push(Number(res[i]))
+              }
+            }
+            //console.log(fathCode)
+            var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+            return obj
+          })
+         that.tableData  = newArr
        }
      })
   }
@@ -422,5 +672,6 @@ div.account>h1 button:hover {
 .el-switch__label, .el-switch__label *{font-size:12px;}
 ul.roleList li {list-style-type: none;float:left;}
 span.el-tag{margin-left:10px;padding:0 10px;}
+i.el-icon-edit, i.el-icon-close{cursor:pointer}
 </style>
 
