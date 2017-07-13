@@ -88,11 +88,12 @@ div.allDays div.watchButton span {
 }
 
 div.allDays div.watchButton span.orderNum {
-  background: #74f7af;
+  background: #996600;
 }
 
 div.allDays div.watchButton span.orderMoney {
-  background: #ff4949;
+  background: #00cdcd;
+  /* ff4949 */
 }
 
 div.allDays div.watchButton i {

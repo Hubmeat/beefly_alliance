@@ -128,7 +128,6 @@
       },
       getChartDate () {
         console.log(this.$store.state.consumeData)
-        console.log('sssss')
         var res = this.$store.state.consumeData.map((item) => {
           return item.time
         })

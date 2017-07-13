@@ -77,7 +77,7 @@
             series: [
               {
                 name: ' ',
-                color: '#74f7af',
+                color: '#996600',
                 data: this.moneyList,
                 tooltip: {
                   valueSuffix: '单',
@@ -90,7 +90,7 @@
               },
               {
                 name: ' ',
-                color: '#ff4949',
+                color: '#00cdcd',
                 data: this.orderlist,
                 tooltip: {
                   valuePrefix: '￥',
