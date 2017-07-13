@@ -3,9 +3,10 @@
 		<div id="earD_header">
       <div class="earD_con">
         <div class="time_earning">
-          <el-button @click='getAllDate' class="active">所有明细</el-button>
-          <el-button @click='getMonthDate'>本月明细</el-button>
-          <el-button @click='getDailyDate'>今日明细</el-button>
+          <el-button @click='getDailyDate' class="active">今日</el-button>
+          <el-button @click='getMonthDate'>本月</el-button>
+          <el-button @click='getWeekDate'>本周</el-button>
+          <el-button @click='getAllDate'>所有日期</el-button>
           <el-button @click='handleChangeType'>指定时间段</el-button>
         </div>
         <el-date-picker style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
@@ -461,6 +462,36 @@ export default {
       this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
       request
         .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurDay')
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((err, res) => {
+          if (err) {
+            console.log('err:' + err)
+          } else {
+            var newArr = JSON.parse(res.text).list
+            var pageNumber = JSON.parse(res.text).totalPage
+            var arr2 = this.tableDataDel(newArr)
+            this.totalPage = pageNumber
+            this.$store.dispatch('earningsDate_action', { arr2 })
+            this.tableData = this.$store.state.earningsDate.arr2
+            $('.M-box').pagination({
+              pageCount: pageNumber,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
+          }
+        })
+    },
+    getWeekDate () {
+      this.$router.push('/index/earningsDetail?type=getRevenueCurWeek')
+      request
+        .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurWeek')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
