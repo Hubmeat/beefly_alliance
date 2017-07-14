@@ -235,7 +235,6 @@
             if (err) {
               console.log(err)
             } else {
-              console.log(JSON.parse(res.text))
               var newArr =  JSON.parse(res.text).list.map((item) => {
                 var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
                 return obj
@@ -284,7 +283,6 @@
                 $(document).keydown(function (e) {
                   if (e.keyCode === 13) {
                     that.plat_currentPage = e.target.value
-                    console.log(that.plat_currentPage)
                   }
                 })
               }
@@ -300,7 +298,6 @@
             if (err) {
               console.log(err)
             } else {
-              console.log(JSON.parse(res.text))
               var newArr =  JSON.parse(res.text).list.map((item) => {
                 var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
                 return obj
@@ -349,7 +346,6 @@
                 $(document).keydown(function (e) {
                   if (e.keyCode === 13) {
                     that.join_currentPage = e.target.value
-                    console.log(that.join_currentPage)
                   }
                 })
               }
@@ -359,8 +355,6 @@
       }
     },
     mounted: function () {
-      // var dom = document.querySelector('div.el-tabs__nav div.is-active')
-      // console.log(dom)
       var that = this
       if(this.tabTitle === '平台') {
          request.post('http://192.168.3.52:7099/franchisee/log/allLog')
@@ -372,7 +366,6 @@
           if (err) {
             console.log(err)
           } else {
-            console.log(JSON.parse(res.text))
             var newArr =  JSON.parse(res.text).list.map((item) => {
               var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
               return obj
@@ -421,7 +414,6 @@
               $(document).keydown(function (e) {
                 if (e.keyCode === 13) {
                   that.plat_currentPage = e.target.value
-                  console.log(that.plat_currentPage)
                 }
               })
             }
