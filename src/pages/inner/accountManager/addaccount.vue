@@ -77,7 +77,7 @@
     top: 54%;
     left: 53%;
     margin-left: -28%;
-    margin-top: -27%;
+    margin-top: -24%;
     padding: 90px 80px 0px 50px;
     margin-right: 20px;
     border: 1px solid #ccc;
@@ -111,13 +111,14 @@
     left: 0px;
     top: 0px;
     padding-left: 20px;
-    width: 98%;
-    height: 40px;
-    font-size: 18px;
-    font-weight: 400;
-    overflow-x: hidden;
-    line-height: 40px;
+    width: 100%;
+    height: 60px;
+    font-size: 24px;
+    font-weight: 500;
+    overflow: hidden;
+    line-height: 60px;
     color: #444;
+    box-sizing: border-box;
     border-bottom: 1px solid #eee;
 	}
 
@@ -128,7 +129,8 @@
   #addaccount_title span {
 		float: right;
 		margin-right: 14px;
-		cursor: pointer;
+    cursor: pointer;
+    font-size:18px;
 	}
 </style>
       

@@ -5,7 +5,7 @@
         <span slot="label"><i class="el-icon-date"></i>平台</span>
        <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_plat">
-           <el-form-item label="关键字：">
+           <el-form-item label="关键字">
              <el-input v-model="form_plat.keyword"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">
@@ -42,7 +42,11 @@
           <div class="hasData" v-show="form_plat.hasPlatData">
             暂无数据
           </div> -->
-          <el-table :data="form_plat.tableData" style="width:100%">
+          <el-table 
+            :data="form_plat.tableData" 
+            style="width:100%"
+            v-loading="loadingdata"
+            element-loading-text="拼命加载中">
             <el-table-column
               prop="userId"
               label="用户名"
@@ -194,6 +198,7 @@
     data: function () {
       return {
         tabTitle: '平台',
+        loadingdata:true,
         form_plat: {
           keyword: '姓名/用户名',
           startTime: moment(),
@@ -235,8 +240,11 @@
             if (err) {
               console.log(err)
             } else {
-              console.log(JSON.parse(res.text))
-              that.form_plat.tableData = JSON.parse(res.text).list
+              var newArr =  JSON.parse(res.text).list.map((item) => {
+                var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
+                return obj
+              })
+              that.form_plat.tableData = newArr
               that.plat_totalPage = JSON.parse(res.text).totalPage || 20
               var len = JSON.parse(res.text).list.length
               if (len>0) {
@@ -280,7 +288,6 @@
                 $(document).keydown(function (e) {
                   if (e.keyCode === 13) {
                     that.plat_currentPage = e.target.value
-                    console.log(that.plat_currentPage)
                   }
                 })
               }
@@ -296,8 +303,11 @@
             if (err) {
               console.log(err)
             } else {
-              console.log(JSON.parse(res.text))
-              that.form_join.tableData = JSON.parse(res.text).list
+              var newArr =  JSON.parse(res.text).list.map((item) => {
+                var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
+                return obj
+              })
+              that.form_join.tableData = newArr
               that.join_totalPage = JSON.parse(res.text).totalPage || 20
               var len = JSON.parse(res.text).list.length
               if (len>0) {
@@ -341,7 +351,6 @@
                 $(document).keydown(function (e) {
                   if (e.keyCode === 13) {
                     that.join_currentPage = e.target.value
-                    console.log(that.join_currentPage)
                   }
                 })
               }
@@ -351,8 +360,6 @@
       }
     },
     mounted: function () {
-      // var dom = document.querySelector('div.el-tabs__nav div.is-active')
-      // console.log(dom)
       var that = this
       if(this.tabTitle === '平台') {
          request.post('http://192.168.3.52:7099/franchisee/log/allLog')
@@ -364,11 +371,15 @@
           if (err) {
             console.log(err)
           } else {
-            console.log(JSON.parse(res.text))
-            that.form_plat.tableData = JSON.parse(res.text).list
+            var newArr =  JSON.parse(res.text).list.map((item) => {
+              var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
+              return obj
+            })
+            that.form_plat.tableData = newArr
             that.plat_totalPage = JSON.parse(res.text).totalPage || 20
             var len = JSON.parse(res.text).list.length
             if (len>0) {
+              that.loadingdata = false,
               that.form_plat.hasPlatData = false
               $('.M-box').eq(0).pagination({
                 pageCount: that.plat_totalPage,
@@ -409,7 +420,6 @@
               $(document).keydown(function (e) {
                 if (e.keyCode === 13) {
                   that.plat_currentPage = e.target.value
-                  console.log(that.plat_currentPage)
                 }
               })
             }

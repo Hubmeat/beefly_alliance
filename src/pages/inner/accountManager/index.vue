@@ -277,7 +277,6 @@ export default {
           obj = Object.assign({}, item, {state: state})
           return obj
         })
-        console.log(arr)
         that.tableData = arr
         that.$store.state.accountMangerData = arr
         if (that.totalPage != null) {
@@ -320,7 +319,6 @@ export default {
           $(document).keydown(function (e) {
             if (e.keyCode === 13) {
               that.currentPage = e.target.value
-              console.log(that.currentPage)
             }
           })
         }
@@ -349,7 +347,6 @@ export default {
                 return obj
               })
               that.tableData = that.$store.state.accountMangerData
-              console.log(that.$store.state.accountMangerData)
             }
           })
       },
