@@ -2,11 +2,11 @@
   <div style="margin-right:20px;">
     <div id="am_search">
       <label>
-        <span>关键字 :</span>
+        <span>关键字</span>
         <input type="text" class="account_my_input">
       </label>
       <label>
-        <span>联系方式 :</span>
+        <span>联系方式</span>
         <input type="text" class="account_my_input">
       </label>
   
@@ -93,8 +93,8 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer editfooter">
-                <el-button class="accountMangerBtn" @click="dialogVisible = false">取 消</el-button>
                 <el-button class="accountMangerBtn" type="primary" @click="handleEditAccount">确 定</el-button>
+                <el-button class="accountMangerBtn" @click="dialogVisible = false">取 消</el-button>
               </div>
             </el-dialog>
             <!--dialog 弹窗结束-->
@@ -504,10 +504,10 @@ color: #bfcbd9;
   font-weight: 400;
   font-size: 14px;
   display: block;
-  margin-right: 20px;
+  margin-right: 10px;
   float: left;
 }
-
+#am_search label:nth-child(2){margin-left:0;}
 #am_search button {
   display: inline-block;
   line-height: 1;
@@ -587,14 +587,15 @@ button#accountSearchBtn{width: 80px;
 .accountMangerBtn {
     width: 120px;
     height: 50px;}
- .accountMangerBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
-.accountMangerBtn:nth-of-type(2) {
+ .accountMangerBtn:nth-of-type(1):hover{background: rgba(248, 126, 43, 0.9);}
+.accountMangerBtn:nth-of-type(1) {
     background: #f87e2b;
     border: none;
     color: #fff;}
-.accountMangerBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
-.accountMangerBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);}     
+.accountMangerBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+.accountMangerBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);}     
 div.addfooter,div.editfooter{text-align: left;
     padding-left: 60px;
     margin-top: -43px;}
+    div.el-input{width:initial}
 </style>

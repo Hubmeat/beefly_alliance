@@ -2,7 +2,7 @@
   <div style="margin-right:20px;">
     <div id="am_search">
       <label>
-        <span>角色查询 :</span>
+        <span>角色查询</span>
         <input type="text" class="account_my_input">
       </label>
   
@@ -20,14 +20,14 @@
           :modal-append-to-body="false"
           :modal="true"
         >
-          <el-form v-model="form">
-            <el-form-item label="角色名称" class="rolename" :label-width="formLabelWidth">
+          <el-form :model="form" :rules="rules" ref="ruleForm">
+            <el-form-item label="角色名称" prop="roleName" class="rolename" :label-width="formLabelWidth">
               <el-input v-model="form.roleName" placeholder="请输入角色名称"></el-input>
             </el-form-item>
-            <el-form-item label="备注"  class="rolename":label-width="formLabelWidth">
+            <el-form-item label="备注" class="rolename"  :label-width="formLabelWidth">
               <el-input type="textarea" v-model="form.des"></el-input>
             </el-form-item>
-            <el-form-item label="权限列表" class="rolename" :label-width="formLabelWidth">
+            <el-form-item label="权限列表" class="rolename"  :label-width="formLabelWidth">
               <el-tree
                 :data="rolePowerList"
                 show-checkbox
@@ -38,8 +38,8 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer addfooter">
-            <el-button class="deleteRoleBtn" @click="dialogFormVisible = false">取 消</el-button>
             <el-button class="deleteRoleBtn" type="primary" @click="handleAddRole">确 定</el-button>
+             <el-button class="deleteRoleBtn" @click="dialogFormVisible = false">取 消</el-button>
           </div>
         </el-dialog> 
       </h1>
@@ -69,7 +69,7 @@
           </template>
         </el-table-column>
       </el-table>
-       <el-dialog v-loading="loading2"
+        <el-dialog v-loading="loading2"
                 title="修改角色"
                 :visible.sync="dialogEditVisible"
                 :modal-append-to-body="false"
@@ -95,10 +95,11 @@
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer editfooter">
-                  <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取 消</el-button>
+                  
                   <el-button class="eidtRoleBtn"  @click="handleEditRole">确 定</el-button>
+                  <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取 消</el-button>
                 </div>
-            </el-dialog> 
+            </el-dialog>  
     </div>
   
     <div id="account_page">
@@ -119,6 +120,13 @@ import '../../../assets/css/pagination.css'
 import request from 'superagent'
 export default {
   data () {
+    var validateRoleName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入角色名'));
+        }else{
+          callback();
+        }
+      }
     return {
       loading: false,
       loading2: false,
@@ -310,7 +318,12 @@ export default {
                 ]
               }
             ]
-      }
+      },
+      rules: {
+          roleName: [
+            { validator: validateRoleName, trigger: 'blur', required: true }
+          ]
+        }
     }
   },
   methods: {
@@ -398,6 +411,9 @@ export default {
                       message: '删除成功!'
                     })
                     that.tableData.splice(scope.$index,1)
+                    if(that.tableData.length===0) {
+                      $('.M-box').html('')
+                    }
                 } else {
                   this.$message({
                       type: 'error',
@@ -414,43 +430,82 @@ export default {
         })
     },
     handleAddRole () {
-     this.dialogFormVisible = false
+        var authList = this.getCheckedKeys().map((item)=>{
+          return {code: item}
+        })
+        var that = this
 
-     var authList = this.getCheckedKeys().map((item)=>{
-       return {code: item}
-     })
-     var that = this
-     request
-      .post('http://192.168.3.52:7099/franchisee/account/addRole')
-      .send({
-        des: that.form.des,
-        roleName: that.form.roleName,
-        auths: authList,
-        roleType: that.form.roleName === '管理员'?'0':'1'
-      })
-      .end((err, res) => {
-        if (err) {
-          console.log(err)
-        } else {
-          var code = JSON.parse(res.text).code
-          if(code === 0) {
-            that.$message({
-              type: 'success',
-              message: '恭喜您！添加角色成功'
-            })
-            that.tableData.push({
-              roleName: that.form.roleName,
-              des: that.form.des,
-              names: that.from
-            })
-          } else {
-            that.$message({
-              type: 'error',
-              message: 'sorry！添加角色失败'
-            })
+        this.$refs.ruleForm.validate((valid) => {
+          alert(valid)
+          if(valid){
+              this.dialogFormVisible = false
+              request
+                .post('http://192.168.3.52:7099/franchisee/account/addRole')
+                .send({
+                  des: that.form.des,
+                  roleName: that.form.roleName,
+                  auths: authList,
+                  roleType: that.form.roleName === '管理员'?'0':'1'
+                })
+                .end((err, res) => {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    var code = JSON.parse(res.text).code
+                    if(code === 0) {
+                      that.$message({
+                        type: 'success',
+                        message: '恭喜您！添加角色成功'
+                      })
+                      // 
+                       request
+                        .post('http://192.168.3.52:7099/franchisee/account/getRole')
+                        .end(function(err,res){
+                          if(err){
+                            console.log(err)
+                          }else  {
+                            var result = JSON.parse(res.text).list
+                            var newArr = result.map(function(item, index) {
+                                var res = item.auth.split('-')
+                                var fathCode = []
+                                var childrenCode = []
+                                for(var i=0; i < res.length; i++){
+                                  if(res[i] % 100 == 0) {
+                                    fathCode.push(Number(res[i]))
+                                  } else {
+                                    childrenCode.push(Number(res[i]))
+                                  }
+                                }
+                                var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+                                return obj
+                              })
+                              if (result.length>0 ) {
+                                $('.M-box').pagination({
+                                  pageCount: that.totalPage,
+                                  jump: true,
+                                  coping: true,
+                                  homePage: '首页',
+                                  endPage: '尾页',
+                                  prevContent: '«',
+                                  nextContent: '»'
+                                })
+                            }
+                            that.tableData  = newArr
+                          }
+                        })
+                    } else {
+                      that.$message({
+                        type: 'error',
+                        message: 'sorry！添加角色失败'
+                      })
+                    }
+                  }
+                })
+          }else {
+            console.log('error submit!!');
+            return false;
           }
-        }
-      })
+        })
     },
     getCheckedKeys () {
         return this.$refs.tree.getCheckedKeys()
@@ -674,23 +729,23 @@ i.el-icon-edit, i.el-icon-close{cursor:pointer}
  .eidtRoleBtn {
     width: 120px;
     height: 50px;}
- .eidtRoleBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
-.eidtRoleBtn:nth-of-type(2) {
+ .eidtRoleBtn:nth-of-type(1):hover{background: rgba(248, 126, 43, 0.9);}
+.eidtRoleBtn:nth-of-type(1) {
     background: #f87e2b;
     border: none;
     color: #fff;}
-.eidtRoleBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
-.eidtRoleBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
+.eidtRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+.eidtRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
 div.account>h1 .deleteRoleBtn {
     width: 120px;
     height: 50px;}
- div.account>h1 .deleteRoleBtn:nth-of-type(2):hover{background: rgba(248, 126, 43, 0.9);}
-div.account>h1 .deleteRoleBtn:nth-of-type(2) {
+ div.account>h1 .deleteRoleBtn:nth-of-type(1):hover{background: rgba(248, 126, 43, 0.9);}
+div.account>h1 .deleteRoleBtn:nth-of-type(1) {
     background: #f87e2b;
     border: none;
     color: #fff;}
-div.account>h1 .deleteRoleBtn:nth-of-type(1){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
-div.account>h1 .deleteRoleBtn:nth-of-type(1):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
+div.account>h1 .deleteRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+div.account>h1 .deleteRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
  button#roleSearchBtn{width: 80px;
     /* float: right; */
     height: 36px;

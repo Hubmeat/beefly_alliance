@@ -33,8 +33,8 @@
         <el-col :span='12' class="datas">
           <div class="datas_title">
             <span class="data_display ">数据分布
-              <small>时间段内车辆接单数,每10分钟自动刷新</small>
             </span>
+            <span  style="font-weight:normal;font-size:12px;color:rgba(148,148,148,1);">时间段内车辆接单数,每10分钟自动刷新</span>
             <span class="arrow">>></span>
           </div>
           <div class="Histogram">
@@ -86,14 +86,14 @@
           <el-row>
             <el-col :span="10">
               <span>运营热力图
-                <small>每十分钟自动刷新</small>
               </span>
+              <span  style="font-size:12px;color:rgba(148,148,148,1);">每十分钟自动刷新</span>
             </el-col>
             <el-col :span="14">
               <el-col :span="6">车辆总数2000辆</el-col>
               <el-col :span="6" class="using">使用中1900辆</el-col>
               <el-col :span="6">维修中99辆</el-col>
-              <el-col :span="6">已报废1辆</el-col>
+              <el-col :span="6">已报废1辆 <span  style=" float:right;cursor:pointer" class="arrow">&gt;&gt;</span></el-col>
             </el-col>
           </el-row>
         </div>
@@ -145,10 +145,6 @@ div.el-col-12 .income_count.monthcount{color:rgba(102,102,102,1)}
 
 div.el-col-12 .income_diff {
   text-align: right;
-}
-
-div.el-col-12 .income_diff span {
-  margin-right: 20px;
 }
 
 div.mounthIncoming {
@@ -230,7 +226,7 @@ div.datas {
 div.Histogram {
   height: 244px;
   width: 100%;
-  background: #ff4949;
+  background: #fff;
 }
 
 div.settlementInfo {
@@ -244,7 +240,16 @@ div.settlementInfo {
 div.settlementInfo button.withdrawal {
   float: right;
   margin-right: 20px;
+  width: 120px;
+  height: 40px;
+  border: 1px solid #f9f9f9;
+  background: rgba(255,153,0,0.8);
+  color: #fff;
+  border-radius: 6px;
+  display: block;
+  margin-left: 30px;
 }
+div.settlementInfo button.withdrawal:hover{background:rgba(255,153,0,1);}
 
 div.mapWrap {
   width: 100%;
@@ -264,6 +269,7 @@ div.mapTitle {
 span.earn, span.settle {color:rgba(134,134,134,1);font-weight: bold;margin-left:8px;}
 span.wait{color:rgba(255,102,0,1);font-weight: bold;margin-left:8px;}
 div.using{color:rgba(255,102,0,1);}
+div.settlementInfo div.el-col-8:nth-child(3){text-align: right;}
 </style>
 <script>
 import myCanvas from '../../../components/highChartRectIndex.vue'

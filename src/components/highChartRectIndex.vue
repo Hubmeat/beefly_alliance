@@ -101,6 +101,6 @@
   }
 </script>
 <style>
-  div#container{width:100%;height:245px;}
+  div#container{width:100%;height:237px;padding-top: 6px;}
   div#container g.highcharts-legend-item{display:none;}
 </style>
