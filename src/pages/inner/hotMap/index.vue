@@ -91,7 +91,7 @@ div.gmap{
       height: 32px;
       line-height: 32px;
       margin-right:-1px;
-      border: 1px solid rgba(0,0,0,.5); 
+      border: 1px solid rgba(0,0,0,.5);
       display: inline-block;
       padding: 0 10px;
       border-bottom-left-radius: 5px;
@@ -194,9 +194,14 @@ div.gmap{
       font-size: 18px;
     }
 
+
     div.showTime div.el-col button {
       border: none;
       padding: 5px 0 10px 0;
+    }
+
+    div.showTime div.el-col button:hover {
+      color: #666;
     }
 
     div.showTime div.el-col:nth-of-type(1) {

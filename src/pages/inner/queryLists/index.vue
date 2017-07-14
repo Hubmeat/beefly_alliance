@@ -20,6 +20,9 @@
           </tr>
         </tbody>
       </table>
+      <div class="datashow" v-show="noDate">
+        <p>暂无数据</p>
+      </div>
     </div>
 
 		<div id="earD_page">
@@ -29,6 +32,17 @@
   </div>
 </template>
 <style scoped>
+
+.datashow {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+}
+
+.datashow p {
+  text-align: center;
+  color: #5e7382;
+}
 
 div.queryLists h3 {
   text-align: right;
@@ -115,7 +129,8 @@ export default {
   data () {
     return {
       lists: [],
-      pageTotal: ''
+      pageTotal: '',
+      noDate: false
     }
   },
   methods: {
@@ -269,6 +284,9 @@ export default {
     this.dataUpdate()
   },
   beforeMount () {
+    if (this.$store.state.consumeData === '') {
+      this.noDate = true
+    }
     this.time()
   },
   watch: {

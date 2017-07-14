@@ -18,10 +18,10 @@
           <li>结算月份：
             <button class="active">2017-01</button>
           </li>
-          <li>本次可结算金额： 10000元<span>*每月结算一次，结算金额=上个月所有车辆的盈利*80%+以前遗留的未结算金额。</span></li>
+          <li>本次可结算金额:10000元<span>*每月结算一次，结算金额=上个月所有车辆的盈利*80%+以前遗留的未结算金额。</span></li>
           <li>
             <span>申请结算金额：</span>
-            <input type="text" ref="my_val" id="apply_money" readonly>
+            <!-- <input type="text" ref="my_val" id="apply_money" readonly> -->
             <button class="status">{{status}}</button>
           </li>
         </ul>
@@ -271,7 +271,7 @@ export default {
   #apply_account_header ul li:nth-of-type(1) button {
     width: 100px;
     height: 30px;
-    margin-left: 14px;
+    margin-left: 32px;
     border: 1px solid #ddd;
     outline: none;
     border-radius: 4px;
@@ -306,7 +306,7 @@ export default {
   #apply_account_header ul li:nth-of-type(3) button {
     width: 120px;
     height: 40px;
-    margin: 10px 0 0 10px;
+    margin: 10px 0 0 0px;
     border: 1px solid #f9f9f9;
     /*background: rgba(255,153,0,0.8);*/
     color: #fff;

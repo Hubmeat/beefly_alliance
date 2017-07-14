@@ -48,7 +48,7 @@
         <tbody>
           <tr v-bind:key="item.finnalNum" v-for="item of tableData">
             <td>
-              <router-link v-bind:to="{path:'/index/carUseDetail', query: {carNum:item.carNum}}">{{item.code}}</router-link>
+              <router-link v-bind:to="{path:'/index/carUseDetail', query: {code:item.code}}">{{item.code}}</router-link>
             </td>
             <td>{{item.boxCode}}</td>
             <td>{{item.generationsName}}</td>
@@ -68,6 +68,7 @@
 </template>
 <script>
 import request from 'superagent'
+import moment from 'moment'
 import $ from 'jquery'
 // import Vue from 'vue'
 require('../../../assets/lib/js/jquery.pagination.js')
@@ -76,7 +77,7 @@ export default {
   data: function () {
     return {
       form: {
-        radio: '使用中',
+        radio: '',
         data1: '',
         data2: ''
       },
@@ -160,25 +161,29 @@ export default {
   },
   methods: {
     searchByTimeline () {
-      console.log('1111')
-      if (this.form.data1 === '' || this.form.data2 === '') {
+      if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.form.radio === '') {
         this.$message({
-          message: '请输入日期',
+          message: '请输入查询条件',
           type: 'warning'
-        })
-      } else if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '') {
-        this.$message({
-            message: '请输入想要查询的车辆编号！',
-            type: 'warning'
         })
       } else {
         console.log(this.form.data1)
         console.log(this.form.data2)
+        console.log(this.terminalNumber)
+        console.log(this.form.radio)
+        var startTime = moment(this.form.data1).format('YYYY-MM-DD')
+        var endTime = moment(this.form.data2).format('YYYY-MM-DD')
         request
           .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes?page=')
           .send({
-            'franchiseeId': '123456',
-            'userId': 'admin'
+            "account": {
+              'franchiseeId': '123456',
+              'userId': 'admin'
+            },
+            'startDate': startTime,
+            'endDate': endTime,
+            'state': this.form.radio,
+            'number': this.terminalNumber
           })
           .end((error, res) => {
             if (error) {

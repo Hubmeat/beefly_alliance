@@ -4,11 +4,11 @@
       <div class="partner_content">
         <label>
           <span>关键字</span>
-          <input type="text" class="partner_my_input" placeholder="姓名/证件号码">
+          <input type="text" v-model="searchDate1" class="partner_my_input" placeholder="姓名/证件号码">
         </label>
         <label>
           <span>联系方式</span>
-          <input type="text" class="partner_my_input" placeholder="手机号/邮箱">
+          <input type="text" v-model="searchDate2" class="partner_my_input" placeholder="手机号/邮箱">
         </label>
         <label>
           <span>认购车辆数</span>
@@ -16,9 +16,9 @@
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-input placeholder="数量"></el-input>
+          <el-input placeholder="数量" v-model="search_Number"></el-input>
         </label>
-        <el-button class="my_btn">查询</el-button>
+        <el-button class="my_btn" @click="searchByInput">查询</el-button>
       </div>
     </div>
   
@@ -73,8 +73,8 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确 定</el-button>
-                <el-button class="partner_button" @click="dialogVisible = false">取 消</el-button>
+                <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确定</el-button>
+                <el-button class="partner_button" @click="dialogVisible = false">取消</el-button>
               </div>
             </el-dialog>
             <!--dialog 弹窗结束-->
@@ -219,9 +219,6 @@
   border-color: #20a0ff;
 }*/
 
-
-
-
 /*  #partner_table  */
 
 #partner_table {
@@ -358,22 +355,19 @@ export default {
     return {
       tableData: [],
       options: [{
-        value: '1',
+        value: '0',
         label: '>'
       }, {
-        value: '2',
+        value: '1',
         label: '<'
       }, {
-        value: '3',
+        value: '2',
         label: '='
       }, {
-        value: '4',
+        value: '3',
         label: '<='
       }, {
-        value: '5',
-        label: '='
-      }, {
-        value: '6',
+        value: '4',
         label: '=>'
       }],
       value: '',
@@ -389,7 +383,10 @@ export default {
         cars: '',
         id: ''
       },
-      fullscreenLoading: false
+      fullscreenLoading: false,
+      searchDate1: '',
+      searchDate2: '',
+      search_Number: ''
     }
   },
   mounted() {
@@ -540,6 +537,53 @@ export default {
         that.$store.state.partnerList.splice(index, 1, newAccountInfo)
         that.dialogVisible = false
       }, 500)
+    },
+    searchByInput () {
+      if (this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === '') {
+        this.$message({
+          message: '请输入查询信息',
+          type: 'warning'
+        })
+      } else {
+        console.log(this.searchDate1)
+        console.log(this.searchDate2)
+        console.log(this.search_Number)
+        console.log(this.value)
+          request
+            .post('http://192.168.3.52:7099/franchisee/partner/queryPartner？type=' + this.value)
+            .send({
+              'franchiseeId': '123456',
+              'userId': 'admin',
+              'idCard': this.searchDate1,
+              'name': this.searchDate1,
+              'phoneNo': this.searchDate2,
+              'email': this.searchDate2
+            })
+            .end((err, res) => {
+              if (err) {
+                console.log('err:' + err)
+              } else {
+                console.log(JSON.parse(res.text))
+                this.$store.dispatch('partner_action', { newArr })
+                this.tableData = this.$store.state.partnerList
+                var pageNumber = JSON.parse(res.text).totalPage
+                if (pageNumber < 10) {
+                  return
+                } else {
+                  this.pagetotal = pageNumber
+                  $('.M-box').pagination({
+                    pageCount: pageNumber,
+                    jump: true,
+                    coping: true,
+                    homePage: '首页',
+                    endPage: '尾页',
+                    prevContent: '«',
+                    nextContent: '»'
+                  })
+                }
+              }
+            })
+      }
     }
   }
 }

@@ -278,13 +278,12 @@ export default {
                 })
             })
             .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消添加'
-              })
+              // this.$message({
+              //   type: 'info',
+              //   message: '已取消添加'
+              // })
             })
         } else {
-          this.$alert('信息不合法，请重新输入！')
           return false
         }
       })
