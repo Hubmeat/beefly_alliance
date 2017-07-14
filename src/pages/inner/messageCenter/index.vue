@@ -39,6 +39,8 @@
         <el-table
           :data="tableData"
           style="width:100%"
+          v-loading="loadingdata"
+          element-loading-text="拼命加载中"
         >
           <el-table-column
            label="标题"
@@ -54,7 +56,7 @@
            min-width="40%"
           >
             <template scope="scope">
-                <span class="detail" ref="tdShow">{{scope.row.content}}</span>
+                <span class="detail" style="color:#555;font-size:14px;" ref="tdShow">{{scope.row.content}}</span>
                 <span class="open" @click="showMordWords(scope.row)" v-show="scope.row.tdshow">{{scope.row.changeText}}</span>
             </template>
           </el-table-column>
@@ -109,6 +111,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   export default {
     data: function () {
       return {
+        loadingdata:true,
         hasMsgData: true,
         msg_totalPage: '',
         msg_currentPage: 1,
@@ -134,6 +137,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
           that.msg_totalPage = JSON.parse(res.text).totalPage || 20
           var len = JSON.parse(res.text).list.length
           if (len>0) {
+            that.loadingdata  = false
             that.hasMsgData = false
             $('.M-box').pagination({
               pageCount: that.msg_totalPage,

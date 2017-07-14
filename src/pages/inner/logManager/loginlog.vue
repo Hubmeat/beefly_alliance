@@ -5,7 +5,7 @@
         <span slot="label"><i class="el-icon-date"></i>平台</span>
        <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_plat">
-           <el-form-item label="关键字：">
+           <el-form-item label="关键字">
              <el-input v-model="form_plat.keyword"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">
@@ -42,7 +42,11 @@
           <div class="hasData" v-show="form_plat.hasPlatData">
             暂无数据
           </div> -->
-          <el-table :data="form_plat.tableData" style="width:100%">
+          <el-table 
+            :data="form_plat.tableData" 
+            style="width:100%"
+            v-loading="loadingdata"
+            element-loading-text="拼命加载中">
             <el-table-column
               prop="userId"
               label="用户名"
@@ -194,6 +198,7 @@
     data: function () {
       return {
         tabTitle: '平台',
+        loadingdata:true,
         form_plat: {
           keyword: '姓名/用户名',
           startTime: moment(),
@@ -374,6 +379,7 @@
             that.plat_totalPage = JSON.parse(res.text).totalPage || 20
             var len = JSON.parse(res.text).list.length
             if (len>0) {
+              that.loadingdata = false,
               that.form_plat.hasPlatData = false
               $('.M-box').eq(0).pagination({
                 pageCount: that.plat_totalPage,

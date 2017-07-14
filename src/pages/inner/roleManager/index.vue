@@ -683,7 +683,7 @@ div.account>h1 button:hover {
   font-weight: 400;
   font-size: 14px;
   display: block;
-  margin-right: 20px;
+  margin-right: 10px;
   float: left;
 }
 
