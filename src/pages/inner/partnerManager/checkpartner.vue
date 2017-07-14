@@ -38,7 +38,7 @@
 						<p>{{form.address}}</p>
 					</li>
 					
-					<el-button class='addpartner_button' type="primary" @click="onSubmit">关&nbsp;&nbsp;&nbsp;闭</el-button>
+					<el-button class='addpartner_button' type="primary" @click="onSubmit">关闭</el-button>
 
 				</ul>
 	</div>

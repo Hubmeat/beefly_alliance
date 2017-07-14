@@ -9,9 +9,9 @@
           <el-button @click='getAllDate'>所有日期</el-button>
           <el-button @click='handleChangeType'>指定时间段</el-button>
         </div>
-        <el-date-picker style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
+        <el-date-picker v-model="timeLine" style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
         </el-date-picker>
-        <el-button v-show="show2" class="earning_btn">查询</el-button>        
+        <el-button v-show="show2" class="earning_btn" @click="searchByTimeLine">查询</el-button>        
       </div>
 		</div>
 
@@ -290,7 +290,7 @@ export default {
           }
         ]
       },
-      time_line: '',
+      timeLine: '',
       show: false,
       show2: false
     }
@@ -580,6 +580,54 @@ export default {
             this.tableData = this.$store.state.earningsDate.arr2
           }
         })
+    },
+    searchByTimeLine () {
+      if (this.timeLine === '') {
+        this.$message({
+          message: '请输入时间段',
+          type: 'warning'
+        })
+      } else {
+        var startTime = moment(this.timeLine[0]).format('YYYY-MM-DD HH:MM:SS')
+        var endTime = moment(this.timeLine[1]).format('YYYY-MM-DD HH:MM:SS')
+        console.log(startTime, endTime)
+        // request
+        //   .post('http://')
+        //   .send({
+        //     "account": {
+        //       'franchiseeId': '123456',
+        //       'userId': 'admin'
+        //     },
+        //     'startDate': startTime,
+        //     'endDate': endTime
+        //   })
+        //   .end((error, res) => {
+        //     if (error) {
+        //       console.log('error:', error)
+        //     } else {
+        //       // console.log(JSON.parse(res.text))
+        //       var pagedata = (JSON.parse(res.text)).list
+        //       var arr2 = this.tableDataDel(pagedata)
+        //       this.$store.dispatch('earningsDate_action', { arr2 })
+        //       this.tableData = this.$store.state.earningsDate.arr2
+        //       var pageNumber = JSON.parse(res.text).totalPage
+        //       this.totalPage = pageNumber
+        //       if (pageNumber < 10) {
+        //         return
+        //       } else {
+        //         $('.M-box').pagination({
+        //           pageCount: pageNumber,
+        //           jump: true,
+        //           coping: true,
+        //           homePage: '首页',
+        //           endPage: '尾页',
+        //           prevContent: '«',
+        //           nextContent: '»'
+        //         })
+        //       }
+        //     }
+        //   })
+      }
     }
   },
   created () {

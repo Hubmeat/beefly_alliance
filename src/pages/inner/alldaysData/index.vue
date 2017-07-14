@@ -74,7 +74,7 @@ div.allDays div.watchButton {
 
 div.allDays div.watchButton div.el-col-2 {
   float: right;
-  margin-left: 20px;
+  /* margin-left: 20px; */
   width: 6.668%
 }
 
