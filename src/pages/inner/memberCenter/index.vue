@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="homepage_select">
-			<h1>账户信息<i class="el-icon-arrow-down"></i></h1>
+			<h1>账户信息</h1>
 			<ul>
 				<li>
 					<span><i class="iconfont">&#xe600;</i></span>
@@ -132,6 +132,8 @@
     width: 80px;
     line-height: 30px;
     margin-top: 25px;
+		position: absolute;
+		top: 30px;
  	}
 
  	.homepage_info h3 {
@@ -158,6 +160,7 @@
  	.homepage_select h1 {
  		border-bottom: 2px solid #444;
  		text-align: left;
+		text-indent: 20px;
 		font-size: 22px;
  		width: 100%;
  		height: 60px;

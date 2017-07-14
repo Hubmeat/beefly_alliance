@@ -3,20 +3,20 @@
 		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">修改密码
               <span>
-                <a href="/index/memberCenter">
+                <a @click="$router.push('/index/memberCenter')">
                   <i class="el-icon-close">
                   </i>
                 </a>
               </span>
             </h1>
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-							<el-form-item label="原始密码" prop="oldPassword">
+							<el-form-item label="原始密码" prop="oldPassword" style="width: 500px;">
 								<el-input type="password" v-model="ruleForm.oldPassword" placeholder='请输入原密码'></el-input>
 							</el-form-item>
-							<el-form-item label="新密码" prop="pass">
+							<el-form-item label="新密码" prop="pass" style="width: 500px;">
 								<el-input type="password" v-model="ruleForm.pass" placeholder='密码为6-20位字符，可包含字母、数字、下划线'></el-input>
 							</el-form-item>
-							<el-form-item label="确认密码" prop="checkPass">
+							<el-form-item label="确认密码" prop="checkPass" style="width: 500px;">
 								<el-input type='password' v-model="ruleForm.checkPass" placeholder='确认密码'></el-input>
 							</el-form-item>
 							<el-form-item>
@@ -32,42 +32,43 @@
   @media screen and (min-width:1367px) {
     #addaccount_form {
       /*  适配好的样式 */
-      height: 50%;
+      height: 36%;
       /*overflow-y: scroll; 
       overflow-x: hidden;*/
-      width: 50%;
+      width: 36%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
       position: fixed;
       display: block;
       top:62%;
       left:50%;
-      margin-left:-28%;
+      margin-left:-20%;
       margin-top:-25%;  
       padding: 70px 80px 0 50px;
       margin-right: 20px;
       border: 1px solid #ccc;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
   @media screen and (max-width:1367px) {
     #addaccount_form {
-      height: 50%;
-      width: 50%;
+      height: 36%;
+      width: 40%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
       position: fixed;
       display: block;
       top: 62%;
       left: 50%;
       /*overflow-y: scroll;*/
-      margin-left: -34%;
-      margin-top: -24%;
-      padding: 80px 150px 60px 144px;
+      overflow: hidden;
+      margin-left: -20%;
+      margin-top: -20%;
+      padding: 80px 40px 60px 20px;
       margin-right: 20px;
       border: 1px solid #ccc;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
@@ -115,6 +116,10 @@
 		margin-right: 14px;
 		cursor: pointer;
 	}
+
+  #addaccount_title span a:hover {
+    color: #777;
+  }
 </style>
       
 <script>

@@ -3,17 +3,17 @@
 		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">绑定邮箱
               <span>
-                <a href="/index/memberCenter">
+                <a @click="$router.push('/index/memberCenter')">
                   <i class="el-icon-close">
                   </i>
                 </a>
               </span>
             </h1>
-					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-							<el-form-item label="邮箱" prop="maiAccount">
+					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+							<el-form-item label="邮箱" prop="maiAccount" style="width: 500px;">
 								<el-input v-model="ruleForm.maiAccount" placeholder='请输入邮箱'></el-input>
 							</el-form-item>
-							<el-form-item label="账户密码" prop="account_password">
+							<el-form-item label="账户密码" prop="account_password" style="width: 500px;">
 								<el-input type='password' v-model="ruleForm.account_password" placeholder='为保障账号安全，您需要填写当前登录账号和密码'></el-input>
 							</el-form-item>
 							<el-form-item>
@@ -24,47 +24,48 @@
 			</div>
 	</div>
 </template>
-<style scoped>
+<style>
 
   @media screen and (min-width:1367px) {
     #addaccount_form {
       /*  适配好的样式 */
-      height: 50%;
+      height: 36%;
       /*overflow-y: scroll; 
       overflow-x: hidden;*/
-      width: 50%;
+      width: 30%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
       position: fixed;
       display: block;
       top:62%;
       left:50%;
-      margin-left:-28%;
+      margin-left:-18%;
       margin-top:-25%;  
-      padding: 70px 80px 0 50px;
+      padding: 70px 80px 0 30px;
       margin-right: 20px;
       border: 1px solid #ccc;
+      overflow: hidden;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
   @media screen and (max-width:1367px) {
     #addaccount_form {
-      height: 50%;
-      width: 50%;
+      height: 40%;
+      width: 30%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
       position: fixed;
       display: block;
       top: 62%;
       left: 50%;
       /*overflow-y: scroll;*/
-      margin-left: -34%;
+      margin-left: -22%;
       margin-top: -24%;
-      padding: 80px 150px 60px 144px;
+      padding: 80px 150px 20px 40px;
       margin-right: 20px;
       border: 1px solid #ccc;
       background: #fff;
-      border-radius: 6px;
+      border-radius: 2px;
     }
   }
 
@@ -112,6 +113,55 @@
 		margin-right: 14px;
 		cursor: pointer;
 	}
+
+  #addaccount_title span a:hover {
+    color: #666;
+  }
+
+.el-input__inner {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #1f2d3d;
+  font-size: inherit;
+  height: 36px;
+  line-height: 1;
+  outline: 0;
+  padding: 3px 10px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.el-input__inner::-webkit-input-placeholder {
+  color: #ddd;
+}
+
+.el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
+  background: black !important;
+  color: #fff !important;
+}
+
+.el-input__inner:hover {
+  border: 1px solid #bbb;
+} 
+
+.el-textarea__inner {
+  display: block;
+  resize: vertical;
+  padding: 5px 7px;
+  line-height: 1.5;
+  width: 100%;
+  color: #1f2d3d;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
 </style>
       
 <script>
