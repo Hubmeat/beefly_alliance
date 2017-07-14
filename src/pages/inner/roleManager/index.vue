@@ -38,8 +38,8 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer addfooter">
-            <el-button class="deleteRoleBtn" type="primary" @click="handleAddRole">确 定</el-button>
-             <el-button class="deleteRoleBtn" @click="dialogFormVisible = false">取 消</el-button>
+            <el-button class="addRoleBtn" type="primary" @click="handleAddRole">确定</el-button>
+             <el-button class="addRoleBtn" @click="dialogFormVisible = false">取消</el-button>
           </div>
         </el-dialog> 
       </h1>
@@ -96,8 +96,8 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer editfooter">
                   
-                  <el-button class="eidtRoleBtn"  @click="handleEditRole">确 定</el-button>
-                  <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取 消</el-button>
+                  <el-button class="eidtRoleBtn"  @click="handleEditRole">确定</el-button>
+                  <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取消</el-button>
                 </div>
             </el-dialog>  
     </div>
@@ -436,7 +436,6 @@ export default {
         var that = this
 
         this.$refs.ruleForm.validate((valid) => {
-          alert(valid)
           if(valid){
               this.dialogFormVisible = false
               request
@@ -736,16 +735,17 @@ i.el-icon-edit, i.el-icon-close{cursor:pointer}
     color: #fff;}
 .eidtRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
 .eidtRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
-div.account>h1 .deleteRoleBtn {
+div.account>h1 .addRoleBtn {
     width: 120px;
-    height: 50px;}
- div.account>h1 .deleteRoleBtn:nth-of-type(1):hover{background: rgba(248, 126, 43, 0.9);}
-div.account>h1 .deleteRoleBtn:nth-of-type(1) {
+    height: 50px;
+    font-size:14px;}
+ div.account>h1 .addRoleBtn:nth-of-type(1):hover{background: rgba(248, 126, 43, 0.9);}
+div.account>h1 .addRoleBtn:nth-of-type(1) {
     background: #f87e2b;
     border: none;
     color: #fff;}
-div.account>h1 .deleteRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
-div.account>h1 .deleteRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
+div.account>h1 .addRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
+div.account>h1 .addRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
  button#roleSearchBtn{width: 80px;
     /* float: right; */
     height: 36px;

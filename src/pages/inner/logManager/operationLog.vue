@@ -238,7 +238,11 @@
               console.log(err)
             } else {
               console.log(JSON.parse(res.text))
-              that.form_plat.tableData = JSON.parse(res.text).list
+              var newArr =  JSON.parse(res.text).list.map((item) => {
+                var obj = Object.assign({},item,{operationTime: moment(item.operationTime).format('YYYY-MM-DD HH:mm:ss')})
+                return obj
+              })
+              that.form_plat.tableData = newArr
               that.plat_totalPage = JSON.parse(res.text).totalPage || 20
               var len = JSON.parse(res.text).list.length
               if (len>0) {
@@ -301,7 +305,11 @@
               console.log(err)
             } else {
               console.log(JSON.parse(res.text))
-              that.form_join.tableData = JSON.parse(res.text).list
+              var newArr =  JSON.parse(res.text).list.map((item) => {
+                var obj = Object.assign({},item,{operationTime: moment(item.operationTime).format('YYYY-MM-DD HH:mm:ss')})
+                return obj
+              })
+              that.form_join.tableData = newArr
               that.join_totalPage = JSON.parse(res.text).totalPage || 20
               var len = JSON.parse(res.text).list.length
               if (len>0) {
@@ -367,7 +375,11 @@
             console.log(err)
           } else {
             console.log(JSON.parse(res.text))
-            that.form_plat.tableData = JSON.parse(res.text).list
+            var newArr =  JSON.parse(res.text).list.map((item) => {
+              var obj = Object.assign({},item,{operationTime: moment(item.operationTime).format('YYYY-MM-DD HH:mm:ss')})
+              return obj
+            })
+            that.form_plat.tableData = newArr
             that.plat_totalPage = JSON.parse(res.text).totalPage || 20
             var len = JSON.parse(res.text).list.length
             if (len>0) {

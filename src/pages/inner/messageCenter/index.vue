@@ -42,14 +42,16 @@
         >
           <el-table-column
            label="标题"
+           min-width="20%"
           >
             <template scope="scope">
-              <el-checkbox v-model="scope.row.isChecked"></el-checkbox>
+              <span v-bind:class="{unRead:scope.row.unRead,read:scope.row.read}"></span>
               <span class="title">{{scope.row.title}}</span>
             </template>
           </el-table-column>
           <el-table-column
            label="消息内容"
+           min-width="40%"
           >
             <template scope="scope">
                 <span class="detail" ref="tdShow">{{scope.row.content}}</span>
@@ -59,13 +61,15 @@
           <el-table-column
            label="接收日期"
            prop="createTime"
+           min-width="30%"
           >
           </el-table-column>
           <el-table-column
             label="操作"
+            min-width="10%"
           >
             <template scope="scope">
-              <i class="icon iconfont icon-xinfeng"></i>
+              <i title="点击设置为已读" @click="setMsgStatus(scope)" class="icon iconfont icon-xinfeng"></i>
             </template>
           </el-table-column>
         </el-table>
@@ -90,6 +94,10 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
     border: none;
     /* border-radius: 4px; */
     background: rgba(52,52,67, 0.8);}
+  div.messageCenter{padding:20px;background:#fff;}
+  span.unRead{width:18px;height:18px;border-radius:20px;background:#ecb042;display:inline-block;vertical-align: middle;margin-top: -2px;}
+  span.read{background:transparent;opacity: 0}
+  i.icon-xinfeng{cursor:pointer}
 </style>
 <script>
   import request from 'superagent'
@@ -97,6 +105,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   require('../../../assets/lib/js/jquery.pagination.js')
   import '../../../assets/css/pagination.css'
    import {checkPositiveNumber} from '../../../../utils/index.js'
+  import moment from 'moment'
   export default {
     data: function () {
       return {
@@ -119,7 +128,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
         } else {
           var arr = JSON.parse(res.text).list
           that.tableData = arr.map((item) => {
-           return Object.assign({},item, {isChecked: item.isRead===0?false: true})
+           return Object.assign({},item,{createTime: moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')},{isChecked: item.isRead===0?false: true},{unRead:true,read:false})
           })
           that.checkWordsLength()
           that.msg_totalPage = JSON.parse(res.text).totalPage || 20
@@ -227,8 +236,13 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
       },
       selectAll () {
        this.tableData = this.tableData.map(function(item){
-         return Object.assign({},item, {isChecked:!item.isChecked})
+         return Object.assign({},item, {isChecked:!item.isChecked},{unRead:true,read:true})
        })
+      },
+      setMsgStatus(scope){
+        var index = scope.$index
+        scope.row.read = true
+
       }
     }
   }
