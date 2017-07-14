@@ -4,11 +4,11 @@
       <div class="partner_content">
         <label>
           <span>关键字</span>
-          <input type="text" class="partner_my_input">
+          <input type="text" class="partner_my_input" placeholder="姓名/证件号码">
         </label>
         <label>
           <span>联系方式</span>
-          <input type="text" class="partner_my_input">
+          <input type="text" class="partner_my_input" placeholder="手机号/邮箱">
         </label>
         <label>
           <span>认购车辆数</span>
@@ -53,28 +53,28 @@
             <!--dialog 弹窗开始-->
             <el-dialog title="合伙人信息" :visible.sync="dialogVisible" :modal="true" :modal-append-to-body="false">
               <el-form :model="editAccount">
-                <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-form-item label="姓名" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="性别" :label-width="formLabelWidth">
+                <el-form-item label="性别" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.sex"></el-input>
                 </el-form-item>
-                <el-form-item label="证件号码" :label-width="formLabelWidth">
+                <el-form-item label="证件号码" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.IDcard" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号码" :label-width="formLabelWidth">
+                <el-form-item label="手机号码" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.tel" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" :label-width="formLabelWidth">
+                <el-form-item label="邮箱" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.email" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="车辆数" :label-width="formLabelWidth">
+                <el-form-item label="车辆数" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.cars" auto-complete="off"></el-input>
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button class="partner_button" @click="dialogVisible = false">取 消</el-button>
                 <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确 定</el-button>
+                <el-button class="partner_button" @click="dialogVisible = false">取 消</el-button>
               </div>
             </el-dialog>
             <!--dialog 弹窗结束-->
@@ -91,7 +91,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 #partnerManager_router {
   width: 100%;
   height: 100%;
@@ -128,9 +128,10 @@
 
 #partner_header label:nth-of-type(1) {
   height: 70px;
-  width: 19%;
+  width: 200px;
   line-height: 70px;
   margin-left: 30px;
+  margin-right: 20px;
   font-size: 14px;
   float: left;
 }
@@ -142,9 +143,9 @@
 #partner_header label:nth-of-type(2) {
   height: 70px;
   font-size: 14px;
-  width: 20%;
+  width: 300px;
   line-height: 70px;
-  /*margin-left: 20px;*/
+  margin-left: 20px;
   float: left;
 }
 
@@ -154,21 +155,23 @@
 
 #partner_header label:nth-of-type(3) {
   height: 70px;
-  width: 26%;
+  width: 300px;
   font-size: 14px;
   line-height: 70px;
-  /*margin-left: 20px;*/
+  margin-left: -50px;
   float: left;
 }
 
 #partner_header label:nth-of-type(3) .el-select>.el-input input {
-  width: 100px;
+  width: 95px;
   border-radius: 4px;
   border: 1px solid #ddd;
 }
 
 #partner_header label:nth-of-type(3) .el-input {
-  width: 50px;
+  width: 80px;
+  text-align: center;
+
 }
 
 #partner_header label:nth-of-type(3) .el-input input {
@@ -286,6 +289,7 @@
   background: #f87e2b;
   border: none;
   color: #fff;
+  margin-left: 70px;
 }
 
 .partner_button:nth-of-type(1):hover {
@@ -306,7 +310,41 @@
 .partner_button {
   width: 120px;
   height: 50px;
+  float: left;
+  margin-top: -30px;
+  margin-bottom: 20px;
 }
+
+ .el-input__inner {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #1f2d3d;
+  font-size: inherit;
+  height: 36px;
+  line-height: 1;
+  outline: 0;
+  padding: 3px 10px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.el-input__inner::-webkit-input-placeholder {
+  color: #ddd;
+}
+
+.el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
+  background: black !important;
+  color: #fff !important;
+}
+
+.el-input__inner:hover {
+  border: 1px solid #bbb;
+} 
 </style>
 
 <script>
@@ -321,31 +359,22 @@ export default {
       tableData: [],
       options: [{
         value: '1',
-        label: '100'
+        label: '>'
       }, {
         value: '2',
-        label: '200'
+        label: '<'
       }, {
         value: '3',
-        label: '300'
+        label: '='
       }, {
         value: '4',
-        label: '400'
+        label: '<='
       }, {
         value: '5',
-        label: '500'
+        label: '='
       }, {
         value: '6',
-        label: '600'
-      }, {
-        value: '7',
-        label: '700'
-      }, {
-        value: '8',
-        label: '800'
-      }, {
-        value: '9',
-        label: '900'
+        label: '=>'
       }],
       value: '',
       pagetotal: '',

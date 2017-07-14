@@ -3,42 +3,42 @@
     <div id="addpartner_form">
       <h1 id="addpartner_title">添加合伙人
         <span>
-          <a href="/index/partnerManager">
+          <a @click="go_back">
             <i class="el-icon-close"></i>
           </a>
         </span>
       </h1>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="姓名" prop="name">
+        <el-form-item label="姓名" prop="name" style="width: 300px;">
           <el-input v-model="ruleForm.name" placeholder='请输入姓名'></el-input>
         </el-form-item>
-        <el-form-item label="性别" prop="sex">
+        <el-form-item label="性别" prop="sex" style="margin-top: -10px; width: 300px;">
           <el-radio-group v-model="ruleForm.sex">
             <el-radio label="男"></el-radio>
             <el-radio label="女"></el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="证件类别" prop="IDtype">
+        <el-form-item label="证件类别" prop="IDtype" style="margin-top: -10px;width: 300px;">
           <el-select v-model="ruleForm.IDtype" placeholder="请选择证件类别">
             <el-option label="居民身份证" value="居民身份证"></el-option>
             <el-option label="护照" value="护照"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="证件号码" prop="IDcard">
+        <el-form-item label="证件号码" prop="IDcard" style="width: 300px;">
           <el-input v-model="ruleForm.IDcard" placeholder='请输入证件号码'></el-input>
         </el-form-item>
-        <el-form-item label="手机号" prop="tel">
+        <el-form-item label="手机号" prop="tel" style="width: 300px;">
           <el-input v-model="ruleForm.tel" placeholder='请输入手机号'></el-input>
         </el-form-item>
-        <el-form-item label="车辆数" prop="car">
+        <el-form-item label="车辆数" prop="car" style="width: 300px;">
           <el-input v-model.number="ruleForm.car" placeholder='请输入车辆数(单位：/辆)'></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
+        <el-form-item label="邮箱" prop="email" style="width: 300px;">
           <el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
         </el-form-item>
-        <el-form-item label="通讯地址" prop="address">
+        <el-form-item label="通讯地址" prop="address" style="width: 300px;">
           <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
-        </el-form-item>
+        </el-form-item >
         <el-form-item label="备注">
           <el-input type="textarea"></el-input>
         </el-form-item>
@@ -50,19 +50,19 @@
     </div>
   </div>
 </template>
-<style scoped>
+<style>
 @media screen and (min-width:1367px) {
   #addpartner_form {
     min-height: 30%;
-    width: 50%;
+    width: 45%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     position: fixed;
     display: block;
     top: 54%;
-    left: 50%;
+    left: 53%;
     margin-left: -28%;
     margin-top: -27%;
-    padding: 70px 80px 0px 50px;
+    padding: 90px 80px 0px 50px;
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
@@ -117,18 +117,70 @@
   padding-left: 20px;
   width: 98%;
   height: 60px;
-  font-size: 20px;
-  overflow-x: hidden;
   line-height: 60px;
   color: #444;
   font-size: 24px;
-    border-bottom: 1px solid #eee;  
+  border-bottom: 1px solid #eee;
+  font-weight: 500;
+  overflow: hidden;  
 }
 
 #addpartner_title span {
   float: right;
   margin-right: 14px;
   cursor: pointer;
+  overflow: hidden;
+}
+
+#addpartner_title span a {
+  margin-right: 20px;
+  font-size: 18px;
+  overflow: hidden;
+}
+
+ .el-input__inner {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #1f2d3d;
+  font-size: inherit;
+  height: 36px;
+  line-height: 1;
+  outline: 0;
+  padding: 3px 10px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
+}
+
+.el-input__inner::-webkit-input-placeholder {
+  color: #ddd;
+}
+
+.el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
+  background: black !important;
+  color: #fff !important;
+}
+
+.el-input__inner:hover {
+  border: 1px solid #bbb;
+} 
+
+.el-textarea__inner {
+  display: block;
+  resize: vertical;
+  padding: 5px 7px;
+  line-height: 1.5;
+  width: 100%;
+  color: #1f2d3d;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 }
 </style>
       
@@ -236,6 +288,9 @@ export default {
           return false
         }
       })
+    },
+    go_back () {
+      this.$router.push('/index/partnerManager')
     }
   },
   beforeMount () {

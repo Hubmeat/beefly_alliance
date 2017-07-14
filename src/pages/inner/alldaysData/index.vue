@@ -88,11 +88,12 @@ div.allDays div.watchButton span {
 }
 
 div.allDays div.watchButton span.orderNum {
-  background: #74f7af;
+  background: #996600;
 }
 
 div.allDays div.watchButton span.orderMoney {
-  background: #ff4949;
+  background: #00cdcd;
+  /* ff4949 */
 }
 
 div.allDays div.watchButton i {
@@ -114,7 +115,7 @@ div.timeSelectBtn button {
   border: 1px solid #ddd;
   outline: none;
   font-size: 12px;
-  color: #999;
+  color: #666;
   /*background: rgba(66, 66, 66, 0.8);*/
   background: #fff;
   /*transition: all .2s linear 0s;*/
@@ -123,7 +124,7 @@ div.timeSelectBtn button {
 }
 
 div.timeSelectBtn button:hover {
-  color: #999;
+  color: #666;
 }
 
 div.timeSelectBtn button.active {
@@ -132,8 +133,6 @@ div.timeSelectBtn button.active {
   color: #fff;
   border: 1px solid rgba(	255,140,0, 0.5);
 }
-
-
 
 div.dateArrow {
   padding: 20px 20px 0 20px;

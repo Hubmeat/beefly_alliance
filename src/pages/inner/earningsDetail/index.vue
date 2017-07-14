@@ -2,15 +2,16 @@
 	<div style="margin-right:20px;">
 		<div id="earD_header">
       <div class="earD_con">
-        <div class="timeSelectBtn">
-          <el-button @click='getAllDate' class="active">所有明细</el-button>
-          <el-button @click='getMonthDate'>本月明细</el-button>
-          <el-button @click='getDailyDate'>今日明细</el-button>
+        <div class="time_earning">
+          <el-button @click='getDailyDate' class="active">今日</el-button>
+          <el-button @click='getMonthDate'>本月</el-button>
+          <el-button @click='getWeekDate'>本周</el-button>
+          <el-button @click='getAllDate'>所有日期</el-button>
           <el-button @click='handleChangeType'>指定时间段</el-button>
         </div>
         <el-date-picker style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
         </el-date-picker>
-        <el-button class="my_btn">查询</el-button>        
+        <el-button v-show="show2" class="earning_btn">查询</el-button>        
       </div>
 		</div>
 
@@ -126,7 +127,7 @@
     color: #f60;
   }
 
-  div.timeSelectBtn {
+  #earD_header div.time_earning {
     display:block;
     float:left;
     margin-right: 8px;
@@ -134,13 +135,13 @@
     padding-left: 20px;
   }
 
-  div.timeSelectBtn button {
+  #earD_header div.time_earning button {
     margin-left: 8px;
     display: inline-block;
     border: 1px solid #ddd;
     outline: none;
     font-size: 12px;
-    color: #999;
+    color: #666;
     /*background: rgba(66, 66, 66, 0.8);*/
     background: #fff;
     /*transition: all .2s linear 0s;*/
@@ -148,14 +149,14 @@
     height: 35px;
   }
 
-  div.timeSelectBtn button.active {
+  #earD_header div.time_earning button.active {
     /*background: rgb(66, 66, 66);*/
     background: rgba(	255,140,0, 0.8);
     color: #fff;
     border: 1px solid rgba(	255,140,0, 0.5);
   }
 
-  /*div.timeSelectBtn button:hover{color:#999;}*/
+  /*#earD_header div.time_earning button:hover{color:#999;}*/
 
 	#earD_excel {
     padding: 0px 30px 0px 30px;
@@ -224,7 +225,7 @@
 		min-height: 233px;
 	}
 
-  #earD_header .my_btn {
+  #earD_header .earning_btn {
       width: 80px;
       /*float: right;*/
       height: 36px;
@@ -238,7 +239,7 @@
       background: rgba(52,52,67, 0.8);
   }
 
-  #earD_header .my_btn:hover {
+  #earD_header .earning_btn:hover {
       background: rgba(52,52,67, 0.9);
       color: #fff;
   }
@@ -290,7 +291,8 @@ export default {
         ]
       },
       time_line: '',
-      show: false
+      show: false,
+      show2: false
     }
   },
   mounted () {
@@ -332,7 +334,7 @@ export default {
       $(this).addClass('active')
     })
     var that = this
-    $('.timeSelectBtn button').on('click', function (e) {
+    $('.time_earning button').on('click', function (e) {
       that.handleChangeType(e)
     })
   },
@@ -351,8 +353,10 @@ export default {
       // console.log(e.currentTarget.innerText)
       if (e.currentTarget.innerText === '指定时间段') {
         this.show = true
+        this.show2 = true
       } else {
         this.show = false
+        this.show2 = false
       }
     },
     export_excel () {
@@ -484,6 +488,36 @@ export default {
           }
         })
     },
+    getWeekDate () {
+      this.$router.push('/index/earningsDetail?type=getRevenueCurWeek')
+      request
+        .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurWeek')
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((err, res) => {
+          if (err) {
+            console.log('err:' + err)
+          } else {
+            var newArr = JSON.parse(res.text).list
+            var pageNumber = JSON.parse(res.text).totalPage
+            var arr2 = this.tableDataDel(newArr)
+            this.totalPage = pageNumber
+            this.$store.dispatch('earningsDate_action', { arr2 })
+            this.tableData = this.$store.state.earningsDate.arr2
+            $('.M-box').pagination({
+              pageCount: pageNumber,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
+          }
+        })
+    },
     pageUpdate (e) {
       var that = this
       console.log(this.pagetotal)
@@ -550,6 +584,9 @@ export default {
   },
   created () {
     this.dataUpdate()
+  },
+  beforeMount () {
+    this.$router.push('/index/earningsDetail?type=getAllRevenue')
   },
   watch: {
     '$route': 'dataUpdate'

@@ -3,7 +3,7 @@
 		<div id="hotmap_controller">
 			<el-row class="DatePicker">
         <el-col class="timebtn">
-          <div class="timeSelectBtn">
+          <div class="timeBtn">
             <el-button  class="active" @click='handleChangeType'>实时</el-button>
             <el-button @click='handleChangeType'>今日</el-button>
             <el-button @click='handleChangeType'>本周</el-button>
@@ -13,7 +13,7 @@
           </div>
           <el-date-picker v-show="show" v-model="value4" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
           </el-date-picker>
-          <el-button id="btn2" v-show="show2" @click="searchByTimeline">查询</el-button>
+          <!-- <el-button id="btn2" v-show="show2" >查询</el-button> -->
           <!-- <div v-show="show3" id="my_border"></div> -->
         </el-col>
       </el-row>
@@ -21,7 +21,7 @@
         <input type="text"
                placeholder="请输入加盟区域内地址，其他区域无法看到数据"
                class="hotmap_search_place">
-        <el-button class="my_btn">查询</el-button>
+        <el-button class="my_btn" @click="searchByTimeline">查询</el-button>
       </div>
 		</div>
 
@@ -153,19 +153,19 @@ div.gmap{
       left: 0;
     } */
 
-    div.timeSelectBtn {
+    #hotmap_controller div.timeBtn {
       display:block;
       float:left;
       margin-right: 8px;
     }
 
-    div.timeSelectBtn button {
+    #hotmap_controller div.timeBtn button {
       /*margin-left: 8px;*/
       display: inline-block;
       border: 1px solid #ddd;
       outline: none;
       font-size: 12px;
-      color: #999;
+      color: #666;
       /*background: rgba(66, 66, 66, 0.8);*/
       background: #fff;
       /*transition: all .2s linear 0s;*/
@@ -173,10 +173,16 @@ div.gmap{
       height: 35px;
     }
 
-    div.timeSelectBtn button:hover {
-      color: #999 !important;
-      border: 1px solid #ddd;
+    #hotmap_controller div.timeBtn button.active {
+      background: rgba(	255,140,0, 0.8);
+      color: #fff;
+      border: 1px solid rgba(	255,140,0, 0.5);
     }
+
+    #hotmap_controller div.timeBtn button.active:hover {
+      color: #fff !important;
+    }
+
 
     div.showTime {
       margin-top: 20px;
@@ -202,14 +208,14 @@ div.gmap{
       text-indent: 0.8em;
     }
 
-    div.timeSelectBtn button.active {
+    div.timeBtn button.active {
       /*background: rgb(66, 66, 66);*/
       background: rgba(	255,140,0, 0.8);
       color: #fff;
       border: 1px solid rgba(	255,140,0, 0.5);
     }
 
-    div.timeSelectBtn button.active:hover {
+    div.timeBtn button.active:hover {
       color: #fff !important;
     }
     
@@ -533,8 +539,9 @@ export default {
           type: 'warning'
         })
       } else {
-        startTime = moment(this.value4[0]).format('YYYY-MMM-DD HH:MM:SS')
-        endTime = moment(this.value4[1]).format('YYYY-MMM-DD HH:MM:SS')
+        startTime = moment(this.value4[0]).format('YYYY-MM-DD HH:MM:SS')
+        endTime = moment(this.value4[1]).format('YYYY-MM-DD HH:MM:SS')
+        console.log(startTime, endTime)
         request
           .post('http://192.168.3.52:7099/franchisee/report/hot/defineTime')
           .send({
@@ -542,10 +549,8 @@ export default {
               'franchiseeId': '123456',
               'userId': 'admin'
             },
-            "date": {
-              'startDate': startTime,
-              'endDate': endTime
-            }
+            'startDate': startTime,
+            'endDate': endTime
           })
           .end((error, res) => {
             if (error) {

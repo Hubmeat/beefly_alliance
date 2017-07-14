@@ -98,7 +98,7 @@
           series: [
             {
               name: ' ',
-              color: '#ccf',
+              color: '#996600',
               data: this.orderNumber,
               tooltip: {
                 valueSuffix: '单',
@@ -111,7 +111,7 @@
             },
             {
               name: ' ',
-              color: '#ffc',
+              color: '#00cdcd',
               data: this.consumeMoney,
               tooltip: {
                 valuePrefix: '￥',
@@ -128,7 +128,6 @@
       },
       getChartDate () {
         console.log(this.$store.state.consumeData)
-        console.log('sssss')
         var res = this.$store.state.consumeData.map((item) => {
           return item.time
         })

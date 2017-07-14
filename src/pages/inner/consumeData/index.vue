@@ -66,8 +66,9 @@ export default {
     },
     getDateByTimeLine() {
       if (this.form.data1 === '' || this.form.data2 === '') {
-        this.$alert('请选择想要查询的日期', 'Warning', {
-          confirmButtonText: '确定'
+        this.$message({
+          message: '请输入日期',
+          type: 'warning'
         })
       } else {
         var timeStart = moment(this.form.data1).format('YYYY-MM-DD')
@@ -81,7 +82,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 div.consumeData {
   margin-right: 20px;
 }
@@ -221,5 +222,14 @@ div.timeSelectBtn button.active {
 
 .el-input__inner:hover {
   border: 1px solid #bbb;
+}
+
+.el-month-table td.current:not(.disabled) .cell {
+  background: black !important;
+  color: #fff;
+}
+
+.el-button:focus, .el-button:hover {
+  color: #fff;
 }
 </style>
