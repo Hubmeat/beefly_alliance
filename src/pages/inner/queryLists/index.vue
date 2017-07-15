@@ -34,9 +34,11 @@
 <style scoped>
 
 .datashow {
-  width: 100%;
+  /* width: 100%; */
   height: 60px;
   line-height: 60px;
+  border: 1px solid #dfe6ec;
+  border-top: none;
 }
 
 .datashow p {
@@ -198,7 +200,7 @@ export default {
           if (error) {
             console.log('error:', error)
           } else {
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             // console.log(JSON.parse(res.text).list)
             var arr = JSON.parse(res.text).list
             var pageNumber = JSON.parse(res.text).totalPage
@@ -228,7 +230,6 @@ export default {
     },
     time () {
       if (this.$store.state.timeline.length === 0) {
-        console.log('beforeUpdate is noy entrey')
         return
       } else { 
         var type
@@ -254,31 +255,35 @@ export default {
               if (error) {
                 console.log('error:', error)
               } else {
-                var arr = JSON.parse(res.text).list
-                var newArr = []
-                for (var i = 0; i < arr.length; i++) {
-                  var obj = {}
-                  obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                  obj.totalBill = arr[i].totalBill
-                  obj.money = arr[i].money
-                  newArr.push(obj)
+                // console.log(JSON.parse(res.text))
+                if (JSON.parse(res.text).list.length === 0) {
+                  this.lists = ''
+                } else {
+                    var arr = JSON.parse(res.text).list
+                    var newArr = []
+                    for (var i = 0; i < arr.length; i++) {
+                      var obj = {}
+                      obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+                      obj.totalBill = arr[i].totalBill
+                      obj.money = arr[i].money
+                      newArr.push(obj)
+                    }
+                    that.$store.dispatch('consumeData_action', {newArr})
+                    that.lists = that.$store.state.consumeData
+                  }
                 }
-                that.$store.dispatch('consumeData_action', {newArr})
-                that.lists = that.$store.state.consumeData
-              }
+
             })
 
       }
     }
   },
   mounted () {
-    console.log(this.$store.state.timeline.length)
     if (this.$store.state.timeline.length === 0) {
       this.getDateMount()
     } else {
       return
     }
-
   },
   created () {
     this.dataUpdate()
@@ -288,6 +293,14 @@ export default {
       this.noDate = true
     }
     this.time()
+  },
+  beforeUpdate () {
+    if (this.lists === '') {
+      this.noDate = true
+    } else {
+      this.noDate = false
+      return
+    }
   },
   watch: {
     '$route': 'dataUpdate',

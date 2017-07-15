@@ -4,11 +4,11 @@
       <div class="partner_content">
         <label>
           <span>关键字</span>
-          <input type="text" v-model="searchDate1" class="partner_my_input" placeholder="姓名/证件号码">
+          <input type="text" v-on:input='inputChange' v-model="searchDate1" class="partner_my_input" placeholder="姓名/证件号码">
         </label>
         <label>
           <span>联系方式</span>
-          <input type="text" v-model="searchDate2" class="partner_my_input" placeholder="手机号/邮箱">
+          <input type="text" v-on:input='inputChange' v-model="searchDate2" class="partner_my_input" placeholder="手机号/邮箱">
         </label>
         <label>
           <span>认购车辆数</span>
@@ -16,7 +16,7 @@
             <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-input placeholder="数量" v-model="search_Number"></el-input>
+          <el-input v-on:input='inputChange' placeholder="数量" v-model="search_Number"></el-input>
         </label>
         <el-button class="my_btn" @click="searchByInput">查询</el-button>
       </div>
@@ -355,20 +355,20 @@ export default {
     return {
       tableData: [],
       options: [{
-        value: '0',
+        value: '>',
         label: '>'
       }, {
-        value: '1',
+        value: '<',
         label: '<'
       }, {
-        value: '2',
+        value: '=',
         label: '='
       }, {
-        value: '3',
-        label: '<='
+        value: '>=',
+        label: '≥'
       }, {
-        value: '4',
-        label: '=>'
+        value: '<=',
+        label: '≤'
       }],
       value: '',
       pagetotal: '',
@@ -390,33 +390,7 @@ export default {
     }
   },
   mounted() {
-    request
-      .post('http://192.168.3.52:7099/franchisee/franchiseeManager/getPartners')
-      .send({
-        'franchiseeId': '123456',
-        'userId': 'admin'
-      })
-      .end((err, res) => {
-        if (err) {
-          console.log('err:' + err)
-        } else {
-          // console.log(JSON.parse(res.text))
-          var newArr = JSON.parse(res.text).list
-          this.$store.dispatch('partner_action', { newArr })
-          var pageNumber = JSON.parse(res.text).totalPage
-          this.tableData = this.$store.state.partnerList
-          this.pagetotal = pageNumber
-          $('.M-box').pagination({
-            pageCount: pageNumber,
-            jump: true,
-            coping: true,
-            homePage: '首页',
-            endPage: '尾页',
-            prevContent: '«',
-            nextContent: '»'
-          })
-        }
-      })
+    this.mountedWay()
   },
   beforeUpdate() {
     var that = this
@@ -426,6 +400,35 @@ export default {
     })
   },
   methods: {
+    mountedWay () {
+      request
+        .post('http://192.168.3.52:7099/franchisee/franchiseeManager/getPartners')
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((err, res) => {
+          if (err) {
+            console.log('err:' + err)
+          } else {
+            // console.log(JSON.parse(res.text))
+            var newArr = JSON.parse(res.text).list
+            this.$store.dispatch('partner_action', { newArr })
+            var pageNumber = JSON.parse(res.text).totalPage
+            this.tableData = this.$store.state.partnerList
+            this.pagetotal = pageNumber
+            $('.M-box').pagination({
+              pageCount: pageNumber,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
+          }
+        })
+    },
     pageUpdate(e) {
       var that = this
       console.log(this.pagetotal)
@@ -545,25 +548,21 @@ export default {
           type: 'warning'
         })
       } else {
-        console.log(this.searchDate1)
-        console.log(this.searchDate2)
-        console.log(this.search_Number)
-        console.log(this.value)
           request
-            .post('http://192.168.3.52:7099/franchisee/partner/queryPartner？type=' + this.value)
+            .post('http://192.168.3.52:7099/franchisee/partner/queryPartner')
             .send({
-              'franchiseeId': '123456',
-              'userId': 'admin',
-              'idCard': this.searchDate1,
               'name': this.searchDate1,
-              'phoneNo': this.searchDate2,
-              'email': this.searchDate2
+              'phone': this.searchDate2,
+              'symbol': this.value,
+              'num': this.search_Number
             })
             .end((err, res) => {
               if (err) {
                 console.log('err:' + err)
               } else {
                 console.log(JSON.parse(res.text))
+                var newArr = JSON.parse(res.text)
+                console.log(newArr)
                 this.$store.dispatch('partner_action', { newArr })
                 this.tableData = this.$store.state.partnerList
                 var pageNumber = JSON.parse(res.text).totalPage
@@ -583,6 +582,13 @@ export default {
                 }
               }
             })
+      }
+    },
+    inputChange () {
+      if (this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === '') {
+        this.mountedWay()
+      } else {
+        return
       }
     }
   }

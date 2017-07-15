@@ -42,6 +42,7 @@ const mutations = {
         console.log('[[ setPartnerList ]]')
         // console.log(arr.newArr)
         var arr2 = arr.newArr
+        console.log(arr)
         var arrDeled = []
         for (var i = 0; i < arr2.length; i++) {
             var newoObj = {}
