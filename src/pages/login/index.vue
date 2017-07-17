@@ -1,101 +1,26 @@
 <template>
-  <div>
-    <div id="bg">
-      <img src="../../assets/img/1.jpg">
-    </div>
-  
-    <div id="cover">
-  
-    </div>
-  
-    <div>
-  
-      <div id="login-con">
-        <h1>
-          <img src="../../assets/img/footer.png">
-        </h1>
-        <span>蜜蜂出行加盟商管理平台</span>
-        <div class="loginForm">
-          <el-form  label-width="80px" :model="formLabelAlign" :rules="rules" ref="formLabelAlign">
-            <el-form-item prop="username" label="用户名">
-              <el-input v-model="formLabelAlign.username" placeholder="请输入用户名" autofocus="autofocus" tabindex="1"></el-input>
-            </el-form-item>
-            <el-form-item prop="password" label="密码">
-              <el-input v-model="formLabelAlign.password" @keyup.enter.native="handleEnter" type="password" placeholder="请输入密码" tabindex="2"></el-input>
-            </el-form-item>
-            <div class="button-group">
-              <el-button class="login" type="primary" name="username"  @click="handleSubmit">登录</el-button>
-              <el-button class="forget_psd" type="danger" name="password">忘记密码</el-button>
-            </div>
-          </el-form>
-        </div>
+  <div id="login">
+    <div class="content">
+      <header>
+        <h3>蜜蜂出行城市合伙人管理平台</h3>
+      </header>
+      <div class="loginForm">
+        <el-form  label-width="80px" :model="formLabelAlign" :rules="rules" ref="formLabelAlign">
+          <el-form-item prop="username" label="用户名">
+            <el-input v-model="formLabelAlign.username" placeholder="请输入用户名" autofocus="autofocus" tabindex="1"></el-input>
+          </el-form-item>
+          <el-form-item prop="password" label="密码">
+            <el-input v-model="formLabelAlign.password" @keyup.enter.native="handleEnter" type="password" placeholder="请输入密码" tabindex="2"></el-input>
+          </el-form-item>
+          <div class="button-group"  style="padding-left:81px; margin-top: -5px;">
+            <el-button class="login" type="primary" name="username"  @click="handleSubmit">登录</el-button>
+            <!-- <el-button class="forget_psd" type="danger" name="password">忘记密码</el-button> -->
+          </div>
+        </el-form>
       </div>
     </div>
   </div>
 </template>
-
-<style>
-html,
-body {
-  background: url('../../assets/img/bg-login.png') repeat-y;
-  overflow-y: hidden;
-}
-
-#bg {
-  position: fixed;
-  left: -272px;
-  top: -8px;
-}
-
-#bg img {
-  width: 100%;
-}
-
-#cover {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-#login-con {
-  width: 400px;
-  float: right;
-  /* border: 1px solid #ffc722; */
-  border: 1px solid #fff; 
-  border-radius: 11px;
-  padding: 32px;
-  box-shadow: 0px 0px 4px #FFFFFF, 0px 0px 4px #FFFFFF inset;
-}
-
-#login-con>h1 img {
-  margin-left: 152px;
-}
-
-#login-con>span {
-  color: #ffc722;
-  font-size: 30px;
-  font-weight: bolder;
-  font-family: "华文彩云";
-  margin-left: 148px;
-}
-
-#doc-ipt-email-1,
-#doc-ipt-pwd-1 {
-  border-radius: 5px;
-  box-shadow: 1px 0px 3px #FFFFFF, -1px 0px 15px #FFFFFF;
-}
-
-#btn {
-  font-size: 18px;
-  font-family: "微软雅黑";
-  font-weight: bolder;
-  box-shadow: 0px 0px 12px #FFFFFF, 0px 0px 6px #FFFFFD;
-}
-</style>
-
 <script>
   import request from 'superagent'
   export default {
@@ -119,18 +44,35 @@ body {
     },
     methods: {
       handleSubmit () {
-        request
-          .post('http://localhost:3000/login')
-          .send({ 'username': this.formLabelAlign.username, 'password': this.formLabelAlign.password })
-          .end((error, res) => {
-            if (error) {
-              console.log('error:', error)
-            } else {
-              if (res.text.trim() === '登录成功') {
-                this.$router.push('/index')
-              }
-            }
+        if (this.formLabelAlign.username === '' && this.formLabelAlign.password) {
+          this.$message({
+            message: '请输入用户名和密码',
+            type: 'warning'
           })
+        } else {
+            request
+              .post('http://192.168.3.52:7099/franchisee/franchiseeLogin')
+              .send({ 
+                'name': this.formLabelAlign.username,
+                'password': this.formLabelAlign.password })
+              .end((error, res) => {
+                if (error) {
+                  console.log('error:', error)
+                } else {
+                  console.log(res)
+                  console.log(JSON.parse(res.text).code)
+                  if (JSON.parse(res.text).code === 0) {
+                    this.$message({
+                      message: '登录成功！',
+                      type: 'success'
+                    })
+                    this.$router.push('/index')
+                  } else {
+                    this.$message.error('密码错误');
+                  }
+                }
+              })
+        }
       },
       handleEnter () {
         this.handleSubmit()
@@ -138,3 +80,18 @@ body {
     }
   }
 </script>
+<style scope>
+  div#login{width:100%;height:100%;background:#f7cd36;position:absolute;left:0;top:0;bottom:0;right:0;overflow:hidden;}
+  div#login div.content {width:100%;height:100%;}
+  div#login div.content header {width:100%;height:40px;line-height: 40px;margin-bottom:20px;margin-top:10%;}
+  div#login div.content header h3{width:400px;margin:0 auto;color:#fffaea;text-align: center;font-size:30px;}
+  div#login div.content div.loginForm{width:400px;margin:0 auto;color:#fff;}
+  div#login div.content div.loginForm form.el-form{height:100%;background:#292626;padding:40px;border-radius:5px;box-shadow:2px -1px 6px 2px rgba(0,0,0,.6)}
+  div#login div.content div.loginForm form.el-form input{ border:1px solid #fbfdff}
+  .el-button--primary{color: #fff;
+    background-color: #292626;
+    border-color: #ffffff;}
+  .el-button--primary:hover{background:#f7cd36;border:1px solid #f7cd36;color:#222}  
+  button.forget_psd{float:right;}
+</style>
+
