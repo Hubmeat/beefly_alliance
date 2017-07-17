@@ -11,7 +11,7 @@
             </h1>
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 							<el-form-item label="手机号" prop="tel" style="width: 500px;">
-								<el-input v-model="ruleForm.tel" placeholder='请输入手机号'></el-input>
+								<el-input v-model="ruleForm.tel" placeholder='请输入手机号' v-on:blur="handleBlur(ruleForm.tel)"></el-input>
 							</el-form-item>
 							<el-form-item label="验证码" prop="verificationCode" style="width: 500px;">
 								<el-input v-model="ruleForm.verificationCode" placeholder='请输入手机收到的验证码'></el-input>
@@ -68,6 +68,7 @@
       border: 1px solid #ccc;
       background: #fff;
       border-radius: 2px;
+      overflow:hidden;
     }
   }
 
@@ -131,30 +132,38 @@ export default {
       if (!value) {
         return callback(new Error('手机号码不能为空'))
       }else {
-        return callback()
+        setTimeout(() => {
+          var res = checkMobile(value)
+          if (res === true) {
+            return callback()
+          } else {
+            callback(new Error('手机格式格式不正确！！！'))
+          }
+        }, 1000)
       }
-      setTimeout(() => {
-        var res = checkMobile(value)
-        if (res === true) {
-          return callback()
-        } else {
-          callback(new Error('手机格式格式不正确！！！'))
-        }
-      }, 1000)
+      
+    }
+    var validateVerCode = (rule,value,callback) => {
+      if(!value) {
+        return callback(new Error('验证码不能为空'))
+      } else {
+       callback()
+      }
     }
     return {
       loading: false,
       ruleForm: {
         tel: '',
         verificationCode: '',
-        account_password: ''
+        account_password: '',
+        verCode: ''
       },
       rules: {
         tel: [
           {required: true, trigger: 'blur', validator: validateTel}
         ],
         verificationCode: [
-          { required: true, message: '请输入验证码', trigger: 'blur' }
+          { required: true, message: '请输入验证码', validator: validateVerCode }
         ],
         account_password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -164,6 +173,25 @@ export default {
     }
   },
   methods: {
+    handleBlur (val) {
+      var that = this
+      this.$message({
+        message: '已向您的手机发送验证码，请查收！！！',
+        type: 'success'
+      })
+      request.post('http://192.168.3.52:7099/franchisee/userCenter/getVerCode')
+        .send({
+          mobileNo: this.ruleForm.tel
+        })
+        .end(function(err,res){
+          if(err) {
+            console.log(err)
+          } else {
+            alert(JSON.parse(res.text))
+            that.ruleForm.verCode = JSON.parse(res.text)
+          }
+      })
+    },
     handleBindTel () {
       var that = this
       this.$refs.ruleForm.validate((valid) => {
@@ -175,12 +203,12 @@ export default {
           })
         .then(() => {
           that.loading = true
-          that.$alert('我们已经向您的手机发送验证码', '请查收', {
-            confirmButtonText: '确定',
-            callback: function (action) {
-              that.loading = true
-              request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingPhone')
-              .send({franchiseeId: '123456', userId: 'admin', emailphoneNo: that.ruleForm.tel})
+          request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingPhone')
+              .send({
+                phoneNo: that.ruleForm.tel,
+                verCode: that.ruleForm.verCode,
+                pwd: that.ruleForm.account_password
+              })
               .end((err, res) => {
                 if (err) {
                   console.log(err)
@@ -208,8 +236,6 @@ export default {
                   }
                 }
               })
-            }
-          })
         }).catch(() => {
           this.$message({
             type: 'info',

@@ -213,7 +213,7 @@ export default {
               confirmButtonText: '确定',
               callback: function (action) {
                 that.loading = true
-                request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingEmail2')
+                request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingEmail')
                 .send({franchiseeId: '123456', userId: 'admin', email: that.ruleForm.maiAccount, password: that.ruleForm.account_password})
                 .end((err, res) => {
                   if (err) {

@@ -33,7 +33,7 @@
         <el-menu-item index="/index/roleManager">
           <i class="iconfont my_icon_class">&#xe610;</i>角色管理</el-menu-item>
         <el-menu-item index="/index/messageCenter">
-          <i class="iconfont my_icon_class">&#xe624;</i>信息中心</el-menu-item>
+          <i class="iconfont my_icon_class">&#xe624;</i>消息中心</el-menu-item>
         <el-submenu index="10">
           <template slot="title">
             <i class="iconfont my_icon_class">&#xe603;</i>日志管理</template>
