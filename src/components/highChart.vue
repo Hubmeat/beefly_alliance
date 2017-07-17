@@ -1,9 +1,12 @@
 <template>
-   <div id="container"></div>
+   <div id="container" style="position: relative;">
+     <p class="my_noDate" style="position: absolute;" v-show="noData">暂无数据</p>
+   </div>
 </template>
 <script>
   import moment from 'moment'
   import request from 'superagent'
+  import HighchartsNoData from 'highcharts-no-data-to-display';
   var Highcharts = require('highcharts')
   // 在 Highcharts 加载之后加载功能模块
   require('highcharts/modules/exporting')(Highcharts)
@@ -11,24 +14,31 @@
     data () {
       return {
         orderlist: '',
-        moneyList: ''
+        moneyList: '',
+        noData: false
       }
     },
     mounted: function () {
       request
         .post('http://192.168.3.52:7099/franchisee/report/get24HourTrend?type=' + this.$route.query.type)
         .send({
-          'franchiseeId': '123456',
-          'userId': 'admin'
+          "account": {
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          },
         })
         .end((err, res) => {
           if (err) {
             console.log('err:' + err)
           } else {
             console.log(res)
-            var data = JSON.parse(res.text)
-            this.getChartByRoute(data)
-            this.initHighCharDate()
+            if (res.text === '') {
+              this.noData = true
+            } else {
+              var data = JSON.parse(res.text)
+              this.getChartByRoute(data)
+              this.initHighCharDate()
+            }
           }
         })
     },
@@ -52,6 +62,16 @@
             title: {
               text: ''              // 指定图表标题
             },
+            // lang: {
+            //   noData: '暂无数据',
+            //   noData: {
+            //     style: {
+            //         fontWeight: 'bold',
+            //         fontSize: '15px',
+            //         color: '#303030'
+            //     }
+            //   }
+            // },
             xAxis: {
               categories: ['0:00', '1:00', '2:00', '3:00', '4:00', '5:00', '6:00', '7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00', '24:00'],
               lables:{
@@ -135,9 +155,14 @@
               console.log('error:', error)
             } else {
               console.log(res)
-              var data = JSON.parse(res.text)
-              this.getChartByRoute(data)
-              this.initHighCharDate()
+              if (res.text === '') {
+                this.noData = true
+                return
+              } else {
+                var data = JSON.parse(res.text)
+                this.getChartByRoute(data)
+                this.initHighCharDate()
+              }
             }
           })
       }
@@ -152,4 +177,11 @@
 </script>
 <style>
   div#container g.highcharts-legend-item{display:none;}
+  .my_noDate {
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    color: #f60;
+    /* left: 50%; */
+  }
 </style>

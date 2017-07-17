@@ -171,6 +171,7 @@ import request from 'superagent'
 import highChart from '../../../components/highChart.vue'
 import { siblings } from '../../../../utils/index.js'
 import moment from 'moment'
+require('highcharts-no-data-to-display')
 export default {
   data () {
     return {
@@ -207,6 +208,7 @@ export default {
       },
       value4: '',
       nowTime: '',
+      timeStamp: '',
       show: false,
       clickTimes: 0,
       arrowTimeType: 'day'
@@ -267,21 +269,21 @@ export default {
           nums = --this.clickTimes
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
-          this.$router.push({ query: {type:  '0', date: this.nowTime}})
+          this.$router.push({ query: {type:  '0', date: moment(lastDay).format('YYYY-MM-DD')}})
           break
         }
         case 'week': {
           nums = --this.clickTimes
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
-          this.$router.push({ query: {type:  '1', date: this.nowTime}})
+          this.$router.push({ query: {type:  '1', date: moment(lastweek).format('YYYY-MM-DD')}})
           break
         }
         case 'month': {
           nums = --this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
-          this.$router.push({ query: {type:  '2', date: this.nowTime}})
+          this.$router.push({ query: {type:  '2', date: moment(lastmonth).format('YYYY-MM-DD')}})
           break
         }
       }
@@ -294,21 +296,21 @@ export default {
           nums = ++this.clickTimes
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
-          this.$router.push({ query: {type:  '0', date: this.nowTime}})
+          this.$router.push({ query: {type:  '0', date: moment(lastDay).format('YYYY-MM-DD')}})
           break
         }
         case 'week': {
           nums = ++this.clickTimes
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
-          this.$router.push({ query: {type:  '1', date: this.nowTime}})
+          this.$router.push({ query: {type:  '1', date: moment(lastweek).format('YYYY-WW')}})
           break
         }
         case 'month': {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
-          this.$router.push({ query: {type:  '2', date: this.nowTime}})
+          this.$router.push({ query: {type:  '2', date: moment(lastmonth).format('YYYY-MM')}})
           break
         }
       }
