@@ -4,8 +4,8 @@
       <div class="earD_con">
         <div class="time_earning">
           <el-button @click='getDailyDate' class="active">今日</el-button>
-          <el-button @click='getMonthDate'>本月</el-button>
           <el-button @click='getWeekDate'>本周</el-button>
+          <el-button @click='getMonthDate'>本月</el-button>
           <el-button @click='getAllDate'>所有日期</el-button>
           <el-button @click='handleChangeType'>指定时间段</el-button>
         </div>

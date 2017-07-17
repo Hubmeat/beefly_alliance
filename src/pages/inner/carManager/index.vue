@@ -48,17 +48,20 @@
         <tbody>
           <tr v-bind:key="item.finnalNum" v-for="item of tableData">
             <td>
-              <router-link v-bind:to="{path:'/index/carUseDetail', query: {code:item.code}}">{{item.code}}</router-link>
+              <router-link v-bind:to="{path:'/carUseDetail', query: {code:item.bikeCode}}">{{item.bikeCode}}</router-link>
             </td>
             <td>{{item.boxCode}}</td>
             <td>{{item.generationsName}}</td>
-            <td>{{item.generationsCode}}</td>
-            <td>{{item.onlineDate}}</td>
-            <td>{{item.carStatus}}</td>
-            <td>{{item.carRideTimes}}</td>
+            <td>{{item.model}}</td>
+            <td>{{item.onlineTime}}</td>
+            <td>{{item.state}}</td>
+            <td>{{item.orderNum}}</td>
           </tr>
         </tbody>
       </table>
+      <div class="datashow" v-show="noDate">
+        <p>暂无数据</p>
+      </div>
     </div>
   
     <div id="carManager_page">
@@ -84,7 +87,8 @@ export default {
       tableData: [],
       timer: null,
       pagetotal: '',
-      terminalNumber: ''
+      terminalNumber: '',
+      noDate: false
     }
   },
   mounted: function () {
@@ -99,25 +103,35 @@ export default {
         if (error) {
           console.log('error:', error)
         } else {
-          console.log(res)
-          console.log((JSON.parse(res.text)).totalPage)
-          const data = (JSON.parse(res.text)).list
-          console.log(data)
+          console.log((JSON.parse(res.text)).list)
+          var data = (JSON.parse(res.text)).list
+          var newData = this.tableDataDel(data)
           this.pagetotal = (JSON.parse(res.text)).totalPage
-          $('.M-box').pagination({
-            pageCount: this.pagetotal,
-            jump: true,
-            coping: true,
-            homePage: '首页',
-            endPage: '尾页',
-            prevContent: '«',
-            nextContent: '»'
-          })
-          this.tableData = data
+          this.tableData = newData
+          if (this.pagetotal > 1) {
+            $('.M-box').pagination({
+              pageCount: this.pagetotal,
+              jump: true,
+              coping: true,
+              homePage: '首页',
+              endPage: '尾页',
+              prevContent: '«',
+              nextContent: '»'
+            })
+          } else {
+            return
+          }
         }
       })
   },
   beforeUpdate: function () {
+    // 判断是否有数据
+    if (this.tableData.length === 0) {
+      this.noDate = true
+    } else {
+      this.noDate = false
+    }
+
     var that = this
     $('.M-box').click('a', function (e) {
       clearTimeout(this.timer)
@@ -148,16 +162,19 @@ export default {
             if (error) {
               console.log('error:', error)
             } else {
-              // console.log(res)
               console.log(JSON.parse(res.text))
-              const pagedata = (JSON.parse(res.text)).list
-              // console.log(pagedata)
-              // console.log(this.tableData)
-              that.tableData = pagedata
+              var pagedata = (JSON.parse(res.text)).list
+              var newData = that.tableDataDel(pagedata)
+              that.tableData = newData
             }
           })
       }, 200)
     })
+  },
+  beforeMount () {
+    if (this.tableData.length === 0) {
+      this.noDate = true
+    }
   },
   methods: {
     searchByTimeline () {
@@ -171,29 +188,77 @@ export default {
         console.log(this.form.data2)
         console.log(this.terminalNumber)
         console.log(this.form.radio)
+        if (this.form.radio === '使用中') {
+          // 使用中的对应值待定
+          var radio = 6
+        } else if (this.form.radio === '维修中') {
+          var radio = 7
+        } else {
+          var radio = 9
+        }
         var startTime = moment(this.form.data1).format('YYYY-MM-DD')
         var endTime = moment(this.form.data2).format('YYYY-MM-DD')
         request
-          .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes?page=')
+          .post('http://192.168.3.52:7099/franchisee/bikeManager/queryBikes')
           .send({
             "account": {
               'franchiseeId': '123456',
               'userId': 'admin'
             },
-            'startDate': startTime,
-            'endDate': endTime,
-            'state': this.form.radio,
+            'start': startTime,
+            'end': endTime,
+            'state': radio,
             'number': this.terminalNumber
           })
           .end((error, res) => {
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(res)
+              console.log(JSON.parse(res.text))
+              var data = (JSON.parse(res.text)).list
+              var newData = this.tableDataDel(data)
+              this.pagetotal = (JSON.parse(res.text)).totalPage
+              this.tableData = newData
+              if (this.pagetotal > 1) {
+                $('.M-box').pagination({
+                  pageCount: this.pagetotal,
+                  jump: true,
+                  coping: true,
+                  homePage: '首页',
+                  endPage: '尾页',
+                  prevContent: '«',
+                  nextContent: '»'
+                })
+              } else {
+                return
+              }
             }
           })
       }
+    },
+    tableDataDel (arr) {
+      var arrDeled = []
+      for (var i = 0; i < arr.length; i++) {
+        var obj = {}
+        obj.bikeCode = arr[i].bikeCode
+        obj.boxCode = arr[i].boxCode
+        obj.generationsName = arr[i].generationsName
+        obj.model = arr[i].model
+        if (arr[i].onlineTime == '') {
+          obj.onlineTime = ''
+        } else {
+          obj.onlineTime = moment(arr[i].onlineTime).format('YYYY-MM-DD HH:MM:SS')
+        }
+        obj.state = arr[i].state
+        obj.orderNum = arr[i].orderNum
+
+        arrDeled.push(obj)
+      }
+
+      // console.log('arrDeled:', arrDeled)
+      return arrDeled
     }
+    
   }
 }
 </script>
@@ -361,4 +426,18 @@ div#carManager_page {
 .el-button:focus, .el-button:hover {
   color: #fff;
 }
+
+.datashow {
+  /* width: 100%; */
+  height: 60px;
+  line-height: 60px;
+  border: 1px solid #dfe6ec;
+  border-top: none;
+}
+
+.datashow p {
+  text-align: center;
+  color: #5e7382;
+}
+
 </style>

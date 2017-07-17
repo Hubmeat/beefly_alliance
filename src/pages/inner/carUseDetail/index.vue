@@ -317,6 +317,9 @@ export default {
 <style scoped>
 div.carUseDetail {
   background: #fff;
+  /* width: 100%; */
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 div.carUseDetail table {
@@ -341,6 +344,7 @@ div.carUseDetail table tr td span.prex {
 
 div.carUseDetail div.detailTitle h3 {
   line-height: 30px;
+  /* width: 100%; */
   background: #555;
   color: #fff;
   margin-bottom: 20px;

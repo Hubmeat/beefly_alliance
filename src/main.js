@@ -9,6 +9,13 @@ import router from './router/index.js'
 import store from './store/store'
 import Vuex from 'vuex'
 
+Vue.directive('title', {
+  inserted: function (el, binding) {
+    document.title = el.innerText
+    el.remove()
+  }
+})
+
 Vue.config.productionTip = false
 Vue.use(Element)
 Vue.use(Vuex)

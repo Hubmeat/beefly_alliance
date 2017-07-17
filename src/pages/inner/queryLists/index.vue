@@ -171,12 +171,30 @@ export default {
                 nextContent: '»'
               })
               var newArr = []
-              for (var i = 0; i < arr.length; i++) {
-                var obj = {}
-                obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                obj.totalBill = arr[i].totalBill
-                obj.money = arr[i].money
-                newArr.push(obj)
+              if (this.$route.query.type === 'week') {
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年第ww周')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }
+              } else if (this.$route.query.type === 'day') {
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年MM月DD号')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }              
+              } else { 
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年MM月')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }                
               }
               // console.log(newArr)
               this.$store.dispatch('consumeData_action', {newArr})
@@ -218,7 +236,7 @@ export default {
             var newArr = []
             for (var i = 0; i < arr.length; i++) {
               var obj = {}
-              obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+              obj.time = moment(arr[i].time).format('YYYY年MM月DD号')
               obj.totalBill = arr[i].totalBill
               obj.money = arr[i].money
               newArr.push(obj)
@@ -272,9 +290,7 @@ export default {
                     that.lists = that.$store.state.consumeData
                   }
                 }
-
             })
-
       }
     }
   },

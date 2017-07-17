@@ -71,11 +71,6 @@ export default [
                 component: carManager
             },
             {
-                path: '/index/carUseDetail',
-                name: '车辆明细',
-                component: carUseDetail
-            },
-            {
                 path: '/index/consumeData',
                 name: '',
                 component: consumeData,
@@ -200,5 +195,10 @@ export default [
                 ]
             }
         ]
-    }
+    },
+    {
+        path: '/carUseDetail',
+        name: '车辆明细',
+        component: carUseDetail
+    },
 ]
