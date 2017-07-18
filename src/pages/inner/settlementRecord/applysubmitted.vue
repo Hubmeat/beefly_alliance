@@ -1,5 +1,6 @@
 <template>
   <div style="margin-right:20px;">
+  <div v-title>结算记录-结算状态</div>
   <el-dialog
     title="提示"
     :modal=false

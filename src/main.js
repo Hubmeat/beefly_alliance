@@ -8,6 +8,9 @@ import './assets/font/iconfont.css'
 import router from './router/index.js'
 import store from './store/store'
 import Vuex from 'vuex'
+// const VueResourceProgressBarInterceptor = require('vue-resource-progressbar-interceptor')
+
+// Vue.use(VueResourceProgressBarInterceptor)
 
 Vue.directive('title', {
   inserted: function (el, binding) {
@@ -16,10 +19,20 @@ Vue.directive('title', {
   }
 })
 
+// Vue.interceptors.push((request, next) => {
+//   console.log(this)
+  
+//   request.method = 'POST'
+//   　　next((response) => {
+//   　　response.body = '...'
+//   　  return response
+//   })
+// })
+
 Vue.config.productionTip = false
 Vue.use(Element)
 Vue.use(Vuex)
-    /* eslint-disable no-new */
+
 new Vue({
     store,
     el: '#app',

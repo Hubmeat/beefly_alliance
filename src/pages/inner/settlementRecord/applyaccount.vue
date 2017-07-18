@@ -1,6 +1,6 @@
 <template>
   <div style="margin-right:20px;">
-  
+  <div v-title>结算记录-申请结算</div>
     <div id="apply_account_header">
       <h1>申请结算 <span @click="$router.push('/index/settlementRecord')">返回</span></h1>
   
@@ -381,17 +381,18 @@ body {
   border-radius: 4px;
   cursor: pointer;
   outline: none;
-  margin-right: 17px; 
+  margin-right: 17px;
   background: #fff;
 }
 
-#apply_account_header ul li:nth-of-type(1) button:nth-last-of-type(2) {
-  margin-left: 20px;
-}
+ #apply_account_header ul li:nth-of-type(1) button:nth-of-type(1) {
+  margin-left: 21px;
+} 
 
 #apply_account_header ul li:nth-of-type(1) button.active {
   background: rgba(255, 153, 0, 1);
   border: 1px solid rgba(255, 153, 0, 1);
+  /* margin-left: 21px; */
   color: #fff;
 }
 

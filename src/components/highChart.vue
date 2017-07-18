@@ -1,5 +1,6 @@
 <template>
    <div id="container" style="position: relative;">
+     <div v-title>报表管理-消费数据-统计图</div>
      <p class="my_noDate" style="position: absolute;" v-show="noData">暂无数据</p>
    </div>
 </template>

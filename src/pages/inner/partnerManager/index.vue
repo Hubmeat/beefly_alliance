@@ -44,7 +44,7 @@
             <a style="color:#444; margin-right:10px; cursor: pointer;" @click="goDetail(scope.row.partnerId)" title="查看">
               <i class="el-icon-document"></i>
             </a>
-            <a href="javascript:;" @click="openEdit(scope.row, scope.$index)" style="color:#444; margin-right:10px;" title="编辑">
+            <a href="javascript:;" @click="openEdit(scope.row, scope.row.partnerId)" style="color:#444; margin-right:10px;" title="编辑">
               <i class="el-icon-edit"></i>
             </a>
             <a href="javascript:;" @click='delPartner(scope.row.partnerId, scope.$index)' style="color:#444; margin-right:10px;" title="删除">
@@ -73,7 +73,7 @@
                 </el-form-item>
               </el-form>
               <div slot="footer" class="dialog-footer">
-                <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row, scope.$index)">确定</el-button>
+                <el-button class="partner_button" type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="editConfim(scope.row)">确定</el-button>
                 <el-button class="partner_button" @click="dialogVisible = false">取消</el-button>
               </div>
             </el-dialog>
@@ -386,7 +386,8 @@ export default {
       fullscreenLoading: false,
       searchDate1: '',
       searchDate2: '',
-      search_Number: ''
+      search_Number: '',
+      thisOpenId: ''
     }
   },
   mounted() {
@@ -431,7 +432,6 @@ export default {
     },
     pageUpdate(e) {
       var that = this
-      console.log(this.pagetotal)
       clearTimeout(this.timer)
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
@@ -471,7 +471,7 @@ export default {
       }, 200)
     },
     delPartner(id, index) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('确定删除该合伙人吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -505,17 +505,19 @@ export default {
             }
           })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // })
+        return
       })
     },
     goDetail(id) {
       console.log(id)
       this.$router.push('/index/partnerManager/checkpartner/' + id)
     },
-    openEdit(row) {
+    openEdit(row, id) {
+      this.thisOpenId = id
       this.dialogVisible = true
       this.editAccount.name = row.name
       this.editAccount.sex = row.sex
@@ -524,7 +526,7 @@ export default {
       this.editAccount.email = row.email
       this.editAccount.cars = row.cars
     },
-    editConfim(row, index) {
+    editConfim(row, id) {
       var that = this
       this.fullscreenLoading = true
       setTimeout(() => {
@@ -537,8 +539,35 @@ export default {
         newAccountInfo.email = that.editAccount.email
         newAccountInfo.cars = that.editAccount.cars
         var index = that.editAccount.index
-        that.$store.state.partnerList.splice(index, 1, newAccountInfo)
-        that.dialogVisible = false
+        request
+          .post('http://192.168.3.52:7099/franchisee/partner/modifyPartner')
+          .send({
+            'name': newAccountInfo.name,
+            'sex': newAccountInfo.sex,
+            'idCard': newAccountInfo.IDcard,
+            'phoneNo': newAccountInfo.tel,
+            'email': newAccountInfo.email,
+            'bikeNum': newAccountInfo.cars,
+            'id': this.thisOpenId
+          })
+          .end((err, res) => {
+            if (err) {
+              console.log('err:' + err)
+            } else {
+              console.log(res)
+              console.log(res.text)
+              if (JSON.parse(res.text).code === 0) {
+                this.$message({
+                  message: '恭喜你，这是一条成功消息',
+                  type: 'success'
+                })
+                that.$store.state.partnerList.splice(index, 1, newAccountInfo)
+                that.dialogVisible = false
+              } else {
+                this.$message.error('出问题了，请重试')
+              }
+            }
+          })
       }, 500)
     },
     searchByInput () {
@@ -551,10 +580,10 @@ export default {
           request
             .post('http://192.168.3.52:7099/franchisee/partner/queryPartner')
             .send({
-              'name': this.searchDate1,
-              'phone': this.searchDate2,
-              'symbol': this.value,
-              'num': this.search_Number
+              'name': this.searchDate1?this.searchDate1:null,
+              'phone': this.searchDate2?this.searchDate2:null,
+              'symbol': this.value?this.value:null,
+              'num': this.search_Number?this.search_Number:0
             })
             .end((err, res) => {
               if (err) {

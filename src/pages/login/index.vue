@@ -1,5 +1,6 @@
 <template>
   <div id="login">
+    <div v-title>蜜蜂出行城市合伙人管理平台-登录</div> 
     <div class="content">
       <header>
         <h3>蜜蜂出行城市合伙人管理平台</h3>

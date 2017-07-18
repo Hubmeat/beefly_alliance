@@ -1,5 +1,6 @@
 <template>
   <div class="carManager" style="margin-right: 20px;">
+    <div v-title>车辆管理</div>
     <div class="carManager_content">
       <div class="queryCarInfo">
         <el-form :model="form">
@@ -7,13 +8,14 @@
             <el-col>
               <el-form-item class="filtercar">
                 <span class="labelAlign">关键字</span>
-                <input v-model="terminalNumber" class="carMan_bar" placeholder="车辆号\终端编号\车辆名称">
+                <input v-model="terminalNumber" v-on:input='inputChange' class="carMan_bar" placeholder="车辆号\终端编号\车辆名称">
               </el-form-item>
               <el-form-item class="filtercar">
                 <span class="labelAlign">状态</span>
-                <el-radio class="radio" v-model="form.radio" label="使用中">使用中</el-radio>
-                <el-radio class="radio" v-model="form.radio" label="维修中">维修中</el-radio>
-                <el-radio class="radio" v-model="form.radio" label="已报废">已报废</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="待出租">待出租</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="已预订">已预订</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="已出租">已出租</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="维护中">维护中</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -92,37 +94,7 @@ export default {
     }
   },
   mounted: function () {
-    request
-      .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes')
-      .send({
-        'franchiseeId': '123456',
-        'userId': 'admin'
-      })
-      .end((error, res) => {
-        // console.log('this is entry')
-        if (error) {
-          console.log('error:', error)
-        } else {
-          console.log((JSON.parse(res.text)).list)
-          var data = (JSON.parse(res.text)).list
-          var newData = this.tableDataDel(data)
-          this.pagetotal = (JSON.parse(res.text)).totalPage
-          this.tableData = newData
-          if (this.pagetotal > 1) {
-            $('.M-box').pagination({
-              pageCount: this.pagetotal,
-              jump: true,
-              coping: true,
-              homePage: '首页',
-              endPage: '尾页',
-              prevContent: '«',
-              nextContent: '»'
-            })
-          } else {
-            return
-          }
-        }
-      })
+    this.mountedWay()
   },
   beforeUpdate: function () {
     // 判断是否有数据
@@ -188,27 +160,32 @@ export default {
         console.log(this.form.data2)
         console.log(this.terminalNumber)
         console.log(this.form.radio)
-        if (this.form.radio === '使用中') {
+        if (this.form.radio === '待出租') {
           // 使用中的对应值待定
+          var radio = 4
+        } else if (this.form.radio === '已预定') {
+          var radio = 5
+        } else if (this.form.radio === '已出租') {
           var radio = 6
-        } else if (this.form.radio === '维修中') {
+        } else if (this.form.radio === '已出租') {
           var radio = 7
-        } else {
-          var radio = 9
         }
-        var startTime = moment(this.form.data1).format('YYYY-MM-DD')
-        var endTime = moment(this.form.data2).format('YYYY-MM-DD')
+        var startTime, endTime
+        if (this.form.data1 === '' || this.form.data2 === '') {
+          startTime = null
+          endTime = null
+        } else {
+          startTime = moment(this.form.data1).format('YYYY-MM-DD')
+          endTime = moment(this.form.data2).format('YYYY-MM-DD')
+        }
+
         request
           .post('http://192.168.3.52:7099/franchisee/bikeManager/queryBikes')
           .send({
-            "account": {
-              'franchiseeId': '123456',
-              'userId': 'admin'
-            },
-            'start': startTime,
-            'end': endTime,
-            'state': radio,
-            'number': this.terminalNumber
+            'start': startTime?startTime:null,
+            'end': endTime?endTime:null,
+            'state': radio?radio:[],
+            'name': this.terminalNumber?this.terminalNumber:null
           })
           .end((error, res) => {
             if (error) {
@@ -257,8 +234,47 @@ export default {
 
       // console.log('arrDeled:', arrDeled)
       return arrDeled
+    },
+    inputChange () {
+      if (this.form.data1 === '' && this.form.data2 === '' && this.terminalNumber === '') {
+        this.mountedWay()
+      } else {
+        return
+      }
+    },
+    mountedWay () {
+      request
+        .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes')
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((error, res) => {
+          // console.log('this is entry')
+          if (error) {
+            console.log('error:', error)
+          } else {
+            console.log((JSON.parse(res.text)).list)
+            var data = (JSON.parse(res.text)).list
+            var newData = this.tableDataDel(data)
+            this.pagetotal = (JSON.parse(res.text)).totalPage
+            this.tableData = newData
+            if (this.pagetotal > 1) {
+              $('.M-box').pagination({
+                pageCount: this.pagetotal,
+                jump: true,
+                coping: true,
+                homePage: '首页',
+                endPage: '尾页',
+                prevContent: '«',
+                nextContent: '»'
+              })
+            } else {
+              return
+            }
+          }
+        })     
     }
-    
   }
 }
 </script>

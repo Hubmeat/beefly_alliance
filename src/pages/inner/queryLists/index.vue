@@ -1,5 +1,6 @@
 <template>
   <div class="queryLists">
+    <div v-title>报表管理-消费数据-列表</div>
     <h3>
       <button class="btn_list" @click="handeClick">查看统计图</button>
     </h3>

@@ -462,6 +462,14 @@ export default {
           this.clickTimes = 0
           break
         }
+        case '所有日期': {
+          nowTime = moment().format('YYYY年MM月')
+          this.$router.push({ query: { type:  'getAll'}})
+          this.nowTime = nowTime
+          // this.arrowTimeType = 'month'
+          this.clickTimes = 0
+          break
+        }
       }
     },
     dateMinus () {
@@ -470,7 +478,6 @@ export default {
       switch (dateTimeType) {
         case 'day': {
           nums = --this.clickTimes
-          console.log('sssssssssss')
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
           this.$router.push({ query: { type:  'day', data: this.nowTime}})
@@ -528,13 +535,15 @@ export default {
     dataUpdate () {
       var flag = true
       console.log(this.$route.query.type)
-      if (this.$route.query.type === 'curHour') {
-        return
-      } else if (flag === true) {
-        this.requestWay(this.$route.query.type)
-      } else {
-        return
-      }
+      // if (this.$route.query.type === 'curHour') {
+      //   return
+      // } else if (flag === true) {
+      //   this.requestWay(this.$route.query.type)
+      // } else {
+      //   return
+      // }
+      
+      this.requestWay(this.$route.query.type)
     },
     searchByTimeline () {
       var startTime, endTime
@@ -546,7 +555,6 @@ export default {
       } else {
         startTime = moment(this.value4[0]).format('YYYY-MM-DD HH:MM:SS')
         endTime = moment(this.value4[1]).format('YYYY-MM-DD HH:MM:SS')
-        console.log(startTime, endTime)
         request
           .post('http://192.168.3.52:7099/franchisee/report/hot/defineTime')
           .send({
@@ -585,25 +593,25 @@ export default {
       }
     },
     requestWay (type) {
-        request
-          .post('http://192.168.3.52:7099/franchisee/report/hot/' + type)
-          .send({
-            "account": {
-              'franchiseeId': '123456',
-              'userId': 'admin'
-            },
-            "date": this.$route.query.date
-          })
-          .end((error, res) => {
-            // console.log('this is entry')
-            if (error) {
-              console.log('error:', error)
-            } else {
-              // console.log(JSON.parse(res.text).list)
-              var arr = JSON.parse(res.text)
-              this.init(arr)
-            }
-          })
+      request
+        .post('http://192.168.3.52:7099/franchisee/report/hot/' + type)
+        .send({
+          "account": {
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          },
+          "date": this.$route.query.date
+        })
+        .end((error, res) => {
+          // console.log('this is entry')
+          if (error) {
+            console.log('error:', error)
+          } else {
+            console.log(res)
+            var arr = JSON.parse(res.text)
+            this.init(arr)
+          }
+        })
     }
   },
   created () {

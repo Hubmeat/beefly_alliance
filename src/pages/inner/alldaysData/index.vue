@@ -1,5 +1,6 @@
 <template>
   <div class="allDays">
+    <div v-title>报表管理-24小时数据走势</div>
     <el-row class="DatePicker">
       <el-col class="timebtn">
         <div class="timeSelectBtn">
