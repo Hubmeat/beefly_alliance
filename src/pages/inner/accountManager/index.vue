@@ -22,7 +22,7 @@
       </h1>
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;" v-loading="loading" element-loading-text="正在删除中">
+      <el-table :data="tableData" :empty-text='emptyText' style="width: 100%; font-size:13px;" v-loading="loading" :element-loading-text="loadingText">
         <el-table-column prop="userId" label="用户名" min-width="140"></el-table-column>
         <el-table-column prop="phoneNo" label="手机号" min-width="140"></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="170"></el-table-column>
@@ -30,7 +30,6 @@
         <el-table-column prop="role" label="类别" min-width="120">
           <template scope="scope">
             <span v-if="scope.row.role===0">管理员</span>
-            <span v-else-if="scope.row.role===1">加盟商</span>
             <span v-else>合伙人</span>
           </template>
         </el-table-column>
@@ -79,18 +78,14 @@
                       label="合伙人"
                       value="合伙人">
                     </el-option>
-                    <el-option
-                      label="加盟商"
-                      value="加盟商">
-                    </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="状态" :label-width="formLabelWidth">
+                <!-- <el-form-item label="状态" :label-width="formLabelWidth">
                   <el-radio-group v-model="editAccount.state">
                     <el-radio v-bind:label="true">开启</el-radio>
                     <el-radio v-bind:label="false">关闭</el-radio>
                   </el-radio-group>
-                </el-form-item>
+                </el-form-item> -->
               </el-form>
               <div slot="footer" class="dialog-footer editfooter">
                 <el-button class="accountMangerBtn" type="primary" @click="handleEditAccount">确 定</el-button>
@@ -102,7 +97,15 @@
         </el-table-column>
       </el-table>
     </div>
-  
+    <el-pagination
+        v-show="pageShow"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-size="10"
+        layout="prev, pager, next, jumper"
+        :total="54">
+      </el-pagination>
     <div id="account_page">
       <div class="M-box">
       </div>
@@ -118,12 +121,20 @@ import $ from 'jquery'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
 import {checkPositiveNumber} from '../../../../utils/index.js'
-import request from 'superagent'
+import {getAllAccount} from '../../../api/getAllAccount.api'
+import {modifyAccountState} from '../../../api/modifyAccountState.api'
+import {delAccount} from '../../../api/delAccount.api'
+import {updateAccount} from '../../../api/updateAccount.api'
+
 export default {
   data () {
     return {
       input: '',
+      pageShow: true,
+      emptyText: ' ',
+      loadingText: '',
       currentPage: 1,
+      totalPage:1,
       tableData: [],
       router_show: false,
       dialogVisible: false,
@@ -143,6 +154,12 @@ export default {
     }
   },
   methods: {
+    handleSizeChange(val) {
+     // console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+    },
     addAccount () {
       this.$router.push('/index/accountManager/addaccount')
       this.router_show = true
@@ -150,12 +167,11 @@ export default {
     openEdit (scope) {
       if (scope.row.role === 0) {
         this.editAccount.role = '管理员'
-      } else if (scope.row.role === 1) {
-        this.editAccount.role = '加盟商'
-      } else {
+      } else{
         this.editAccount.role = '合伙人'
       }
       this.dialogVisible = true
+      this.editAccount.id = scope.row.id
       this.editAccount.userId = scope.row.userId
       this.editAccount.email = scope.row.email
       this.editAccount.phoneNo = scope.row.phoneNo
@@ -166,20 +182,49 @@ export default {
     handleEditAccount () {
       this.dialogVisible = false
       var newAccountInfo = {}
+      var that = this
       if (this.editAccount.role === '管理员') {
         newAccountInfo.role = 0
-      } else if (this.editAccount.role === '加盟商') {
+      } else{
         newAccountInfo.role = 1
-      } else {
-        newAccountInfo.role = 2
       }
+      newAccountInfo.id = this.editAccount.id
       newAccountInfo.userId = this.editAccount.userId
       newAccountInfo.email = this.editAccount.email
       newAccountInfo.phoneNo = this.editAccount.phoneNo
       newAccountInfo.name = this.editAccount.name
       newAccountInfo.state = this.editAccount.state
       var index = this.editAccount.index
-      this.tableData.splice(index,1,newAccountInfo)
+      updateAccount(
+        {
+          id: newAccountInfo.id,
+          userId: newAccountInfo.userId,
+          name: newAccountInfo.name,
+          email: newAccountInfo.email,
+          phoneNo: newAccountInfo.phoneNo
+        },function(error,res){
+          if(error){
+            that.$message({
+              type: 'error',
+              message: 'sorry，修改信息失败！'
+            })
+          }else {
+            var code = JSON.parse(res.text).code
+            if(code === 0 ){
+               that.$message({
+                type: 'success',
+                message: '恭喜您，修改成功！'
+               })
+               that.tableData.splice(index,1,newAccountInfo)
+            }else {
+              that.$message({
+                type: 'error',
+                message: 'sorry，修改信息失败！'
+              })
+            }
+          }
+        }
+      )
     },
     openDelete (scope) {
       var that = this
@@ -189,50 +234,47 @@ export default {
         type: 'warning'
       }).then(() => {
           that.loading = true
-          request.post('http://192.168.3.52:7099/franchisee/account/delAccount')
-            .send({
+          delAccount(
+            {
               curAcc: {
                 id: 0,
-                emailBinding: 0,
-                franchiseeId: '123456',
-                loginAuth: 0,
-                phoneNoBinding: 0,
                 role: 0,
                 state: 0,
                 userId: '123'
               },
               newAcc: {
                 id: scope.row.id,
-                emailBinding: 0,
-                franchiseeId: '123456',
-                loginAuth: 0,
-                phoneNoBinding: 0,
-                role: scope.row.role,
-                state: scope.row.state?0:1,
                 userId: scope.row.userId
               }
-            })
-            .end((err, res) => {
-              if (err) {
-                console.log(err)
-              } else {
-                var code = JSON.parse(res.text).code
-                if (code === 1) {
-                  that.loading = false
-                  that.$message({
-                    type: 'error',
-                    message: '对不起，您没有权限!'
-                  })
-                }else if(code === 0) {
-                  that.loading = false
-                  that.$message({
-                    type: 'success',
-                    message: '恭喜您，删除成功!'
-                  })
-                  that.tableData.splice(scope.$index,1)
-                }
-              }
-            })
+            },function(error,res){
+                  if(error) {
+                    console.log(error)
+                    that.$message({
+                      type: 'error',
+                      message: '对不起，删除失败!'
+                    })
+                  }else {
+                    var code = JSON.parse(res.text).code
+                    if (code === 1) {
+                      that.loading = false
+                      that.$message({
+                        type: 'error',
+                        message: '对不起，您没有权限!'
+                      })
+                    }else if(code === 0) {
+                      that.loading = false
+                      that.$message({
+                        type: 'success',
+                        message: '恭喜您，删除成功!'
+                      })
+                      that.tableData.splice(scope.$index,1)
+                      if( that.tableData.length===0) {
+                        that.pageShow = false
+                        that.emptyText = '暂无数据'
+                      }
+                    } 
+                  }
+                })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -241,119 +283,111 @@ export default {
         })
     },
     changeState (scope) {
-     var index= scope.$index
-     var obj = Object.assign({},scope.row,{state: !scope.row.state})
-     this.tableData.splice(index,1,obj)
-     if( this.tableData[index].state ) {
-       // 状态为true 发送请求 修改数据库状态
-       console.error('状态为true 发送请求 修改数据库状态')
-     }else {
-       // 状态为false 发送请求 修改数据库状态
-       console.error('false 发送请求 修改数据库状态')
-     }
+      var that = this
+      var initObj = Object.assign({},scope.row, {state: scope.row.state})
+      var obj = Object.assign({},scope.row, {state: !scope.row.state})
+      var obj2 = Object.assign({},scope.row, {state: !scope.row.state?0:1})
+      modifyAccountState(
+        {
+         id: scope.row.id,
+         state: !scope.row.state?0:1,
+         userId: scope.row.userId
+        },function(error, res){
+            if(error) {
+              console.log(error)
+              that.$message({
+                type:'error',
+                message: '对不起，修改失败'
+              })
+              that.tableData.splice(scope.$index,1,initObj)
+            }else {
+              var code = JSON.parse(res.text).code
+              if(code ===0 ){
+                that.$message({
+                  type:'success',
+                  message: '恭喜你，修改成功'
+                })
+                that.tableData.splice(scope.$index,1,obj)
+              }else {
+                that.$message({
+                  type:'error',
+                  message: '对不起，修改失败'
+                })
+                that.tableData.splice(scope.$index,1,initObj)
+              }
+            }
+          }
+        )
+    },
+    handleData (arr) {
+      var res = arr.map((item) => {
+        var obj = {}
+        var state = null
+        if (item.state === 0) {
+          state = true
+        } else {
+          state = false
+        }
+        obj = Object.assign({}, item, {state: state})
+        return obj
+      })
+      return res
     }
   },
   mounted () {
     var that = this
-    request.post('http://192.168.3.52:7099/franchisee/account/getAllAccount')
-    .send({
-      franchiseeId: '123456',
-      userId: 'admin'
-    })
-    .end(function (err, res) {
-      if (err) {
-        console.log(err)
+    this.currentPage = 1
+    getAllAccount({franchiseeId: '123456',userId: 'admin'}, 1, function(error, res){
+      if(error){
+        console.log(error)
+        setTimeout(function(){
+          that.loading = false
+          that.loadingText = '服务器链接超时'
+        },5000)
+        setTimeout(function(){
+          that.emptyText = '暂无数据'
+        },6000)
       } else {
-        that.totalPage = JSON.parse(res.text).totalPage || 20
-        var arr = JSON.parse(res.text).list
-        arr = arr.map((item) => {
-          var obj = {}
-          var state = null
-          if (item.state === 0) {
-            state = true
+          that.loading = false
+          that.totalPage = JSON.parse(res.text).totalPage || 20
+          var arr = JSON.parse(res.text).list
+          console.log(arr.length)
+          if(arr.length===0) {
+            that.emptyText = '暂无数据'
+            that.pageShow = false
           } else {
-            state = false
+            that.emptyText = ' '
+            that.pageShow = true
           }
-          obj = Object.assign({}, item, {state: state})
-          return obj
-        })
-        that.tableData = arr
-        that.$store.state.accountMangerData = arr
-        if (that.totalPage != null) {
-          $('.M-box').pagination({
-            pageCount: that.totalPage,
-            jump: true,
-            coping: true,
-            homePage: '首页',
-            endPage: '尾页',
-            prevContent: '«',
-            nextContent: '»'
-          })
-          $('.M-box').click(function (e) {
-            if (e.target.getAttribute('class') === 'active') {
-              return false
-            }
-            if (e.target.tagName === 'A') {
-              if (e.target.innerText === '首页') {
-                that.currentPage = 1
-              }
-              if (e.target.innerText === '尾页') {
-                that.currentPage = that.totalPage
-              }
-              if (e.target.innerText === '»') {
-                that.currentPage++
-              }
-              if (e.target.innerText === '«') {
-                that.currentPage--
-              }
-              if (checkPositiveNumber(e.target.innerText)) {
-                that.currentPage = e.target.innerText
-              }
-              if (e.target.innerText === '跳转') {
-                e.preventDefault()
-                var jumpPageNum = $('.M-box .active').text()
-                that.currentPage = jumpPageNum
-              }
-            }
-          })
-          $(document).keydown(function (e) {
-            if (e.keyCode === 13) {
-              that.currentPage = e.target.value
-            }
-          })
-        }
+          that.$store.state.accountMangerData = that.handleData(arr)
+          that.tableData =  that.$store.state.accountMangerData
+          //that.setPage(arr,that.totalPage)
       }
     })
   },
   watch: {
     currentPage: {
-      handler: function (val, oldVal) {
-        var that = this
-        request.post('http://192.168.3.52:7099/franchisee/account/getAllAccount?page=' + this.currentPage)
-          .send({
-            franchiseeId: '123456',
-            userId: 'admin'
-          })
-          .end(function (err, res) {
-            if (err) {
-              console.log(err)
-            } else {
-              var arr = JSON.parse(res.text).list
-              that.$store.state.accountMangerData = []
-              arr = arr.map((item) => {
-                var obj = {}
-                obj = Object.assign({}, item, {state: !item.state})
-                that.$store.state.accountMangerData.push(obj)
-                return obj
-              })
-              that.tableData = that.$store.state.accountMangerData
-            }
-          })
-      },
-      deep: true
+        handler: function (val, oldVal) {
+          var that = this
+          getAllAccount({franchiseeId: '123456',userId: 'admin'}, val, function(error, res){
+              if(error){
+                console.log(error)
+              } else {
+                  var arr = JSON.parse(res.text).list
+                  if(arr.length===0) {
+                    that.emptyText = '暂无数据'
+                  } else {
+                    that.emptyText = ' '
+                  }
+                  that.$store.state.accountMangerData = that.handleData(arr)
+                  that.tableData = that.$store.state.accountMangerData
+              }
+            })
+        },
+        deep: true
+      }
     }
   }
-}
 </script>
 
 <style scoped>
