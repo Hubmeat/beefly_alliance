@@ -30,10 +30,19 @@
 <script>
     import myHeader from '../../components/head.vue'
     import siderBar from '../../components/siderBar.vue'
+    import $ from 'jquery'
     export default {
       components: {
         myHeader,
         siderBar
+      },
+      watch: {
+        '$route' : 'isMenu'
+      },
+      methods: {
+        isMenu () {
+        console.log('页面路由变化了')
+        }
       }
     }
 </script>
@@ -100,7 +109,8 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    box-sizing: border-box
+    box-sizing: border-box;
+    position:relative;
   }
   .Grid .GridEntry .entryInner .workspace .scrollArea .editcontainer .documentedit {
     user-select: text;
