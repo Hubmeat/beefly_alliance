@@ -1,5 +1,9 @@
 <template>
-   <div id="container"></div>
+  <div style="position: relative;">
+      <div v-title>报表管理-消费数据-统计图</div>
+      <p class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">暂无数据</p>
+      <div id="container"></div>
+  </div>
 </template>
 <script>
   var Highcharts = require('highcharts')
@@ -13,12 +17,11 @@
       return {
         x_data: [],
         orderNumber: [],
-        consumeMoney: []
+        consumeMoney: [],
+        noData: false
       }
     },
     mounted: function () {
-      console.log(this.$store.state)
-      console.log(this.$store.state.consumeData.length)
       if (this.$store.state.consumeData.length === 0) {
         request
           .post('http://192.168.3.52:7099/franchisee/report/consume/day')
@@ -31,7 +34,6 @@
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(JSON.parse(res.text).list)
               var arr = JSON.parse(res.text).list
               var newArr = []
               for (var i = 0; i < arr.length; i++) {
@@ -43,7 +45,6 @@
               }
 
               this.$store.dispatch('consumeData_action', {newArr})
-              console.log(this)
               this.getChartDate()
               this.createChartsShap()
             }
@@ -127,7 +128,6 @@
         })
       },
       getChartDate () {
-        console.log(this.$store.state.consumeData)
         var res = this.$store.state.consumeData.map((item) => {
           return item.time
         })
@@ -139,16 +139,12 @@
         var allMoney = this.$store.state.consumeData.map((item) => {
           return item.money
         })
-        console.log(res)
         this.x_data = res
         this.orderNumber = order
         this.consumeMoney = allMoney
       },
       getChartByRoute (arr) {
-        console.log('-----------')
-        console.log(arr)
         var res = arr.map((item) => {
-          console.log(item)
           return item.time
         })
 
@@ -159,8 +155,6 @@
         var allMoney = arr.map((item) => {
           return item.money
         })
-        console.log(res)
-        console.log(order)
         this.$set(res, this.x_data)
         this.x_data = res
         this.orderNumber = order
@@ -182,20 +176,28 @@
               if (error) {
                 console.log('error:', error)
               } else {
-                console.log(JSON.parse(res.text).list)
-                var arr = JSON.parse(res.text).list
-                var newArr = []
-                for (var i = 0; i < arr.length; i++) {
-                  var obj = {}
-                  obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                  obj.totalBill = arr[i].totalBill
-                  obj.money = arr[i].money
-                  newArr.push(obj)
+                // console.log(res)
+                // console.log(JSON.parse(res.text))
+                if (JSON.parse(res.text).list.length === 0) {
+                  $('#container').html('')
+                  this.noData = true
+                } else {
+                  this.noData = false
+                  var arr = JSON.parse(res.text).list
+                  var newArr = []
+                  for (var i = 0; i < arr.length; i++) {
+                    var obj = {}
+                    obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+                    obj.totalBill = arr[i].totalBill
+                    obj.money = arr[i].money
+                    newArr.push(obj)
+                  }
+
+                  this.getChartByRoute(newArr)
+                  this.createChartsShap()
+                  flag = false
                 }
 
-                this.getChartByRoute(newArr)
-                this.createChartsShap()
-                flag = false
               }
             })
         } else {
@@ -204,7 +206,6 @@
       },
       time () {
         if (this.$store.state.timeline.length === 0) {
-          console.log('beforeUpdate is noy entrey')
           return
         } else { 
           var type
@@ -215,7 +216,6 @@
           } else {
             type = 2
           }
-          console.log(type)
             request
               .post('http://192.168.3.52:7099/franchisee/report/consume/userDefine')
               .send({
@@ -229,26 +229,36 @@
                 if (error) {
                   console.log('error:', error)
                 } else {
-                  var arr = JSON.parse(res.text).list
-                  var newArr = []
-                  for (var i = 0; i < arr.length; i++) {
-                    var obj = {}
-                    obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                    obj.totalBill = arr[i].totalBill
-                    obj.money = arr[i].money
-                    newArr.push(obj)
+                  console.log('；哈哈哈哈')
+                  if (JSON.parse(res.text).list.length === 0) {
+                    $('#container').html('')
+                    this.noData = true
+                  } else {
+                    this.noData = false
+                    var arr = JSON.parse(res.text).list
+                    var newArr = []
+                    for (var i = 0; i < arr.length; i++) {
+                      var obj = {}
+                      obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+                      obj.totalBill = arr[i].totalBill
+                      obj.money = arr[i].money
+                      newArr.push(obj)
+                    }
+                    this.getChartByRoute(newArr)
+                    this.createChartsShap()                    
                   }
-                  this.getChartByRoute(newArr)
-                  this.createChartsShap()
                 }
               })
 
         }
       }
     },
-    beforeUpdate () {
-      this.dataUpdate()
-    },
+    // beforeUpdate () {
+    //   if () {
+
+    //   }
+    //   this.dataUpdate()
+    // },
     beforeMount () {
       this.time()
     },
@@ -260,4 +270,11 @@
 </script>
 <style>
   div#container g.highcharts-legend-item{display:none;}
+  .my_noDate {
+    width: 100%;
+    text-align: center;
+    font-size: 22px;
+    color: #f60;
+    /* left: 50%; */
+  }
 </style>
