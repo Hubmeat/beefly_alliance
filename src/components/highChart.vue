@@ -1,13 +1,14 @@
 <template>
-   <div id="container" style="position: relative;">
-     <div v-title>报表管理-消费数据-统计图</div>
-     <p class="my_noDate" style="position: absolute;" v-show="noData">暂无数据</p>
-   </div>
+  <div style="position: relative;">
+      <div v-title>报表管理-消费数据-统计图</div>
+      <p class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">暂无数据</p>
+      <div id="container" style="position: relative;"></div>
+  </div>
 </template>
 <script>
   import moment from 'moment'
   import request from 'superagent'
-  import HighchartsNoData from 'highcharts-no-data-to-display';
+  import HighchartsNoData from 'highcharts-no-data-to-display'
   var Highcharts = require('highcharts')
   // 在 Highcharts 加载之后加载功能模块
   require('highcharts/modules/exporting')(Highcharts)
@@ -33,9 +34,12 @@
             console.log('err:' + err)
           } else {
             console.log(res)
+            console.log(res.text)
             if (res.text === '') {
+              $('#container').html('')
               this.noData = true
             } else {
+              // console.log(res.text)
               var data = JSON.parse(res.text)
               this.getChartByRoute(data)
               this.initHighCharDate()
@@ -45,6 +49,11 @@
     },
     methods: {
       initHighCharDate () {
+          // Highcharts.setOptions({
+          //     lang: {
+          //         noData: '暂无数据'
+          //     }
+          // }),
        // 创建图表
           Highcharts.chart('container', {
             /** Highcharts 配置 */
@@ -63,14 +72,11 @@
             title: {
               text: ''              // 指定图表标题
             },
-            // lang: {
-            //   noData: '暂无数据',
-            //   noData: {
-            //     style: {
-            //         fontWeight: 'bold',
-            //         fontSize: '15px',
-            //         color: '#303030'
-            //     }
+            // noData: {
+            //   style: {
+            //       fontWeight: 'bold',
+            //       fontSize: '15px',
+            //       color: '#303030'
             //   }
             // },
             xAxis: {
@@ -127,7 +133,7 @@
           })
       },
       getChartByRoute (arr) {
-        console.log(arr)
+        // console.log(arr)
         var money = arr.map((item) => {
           return item.money
         })
@@ -140,7 +146,6 @@
         this.moneyList = order
       },
       dataUpdate () {
-        console.log(this.$route.query)
         request
           .post('http://192.168.3.52:7099/franchisee/report/get24HourTrend?type=' + this.$route.query.type)
           .send({
@@ -155,8 +160,9 @@
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(res)
+              // console.log(res)
               if (res.text === '') {
+                $('#container').html('')
                 this.noData = true
                 return
               } else {

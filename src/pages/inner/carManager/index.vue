@@ -12,10 +12,16 @@
               </el-form-item>
               <el-form-item class="filtercar">
                 <span class="labelAlign">状态</span>
-                <el-radio class="radio" v-model="form.radio" label="待出租">待出租</el-radio>
+                <!-- <el-radio class="radio" v-model="form.radio" label="待出租">待出租</el-radio>
                 <el-radio class="radio" v-model="form.radio" label="已预订">已预订</el-radio>
                 <el-radio class="radio" v-model="form.radio" label="已出租">已出租</el-radio>
-                <el-radio class="radio" v-model="form.radio" label="维护中">维护中</el-radio>
+                <el-radio class="radio" v-model="form.radio" label="维护中">维护中</el-radio> -->
+              <el-checkbox-group v-model="checkList" style="width: 400px;">
+                  <el-checkbox label="4">待出租</el-checkbox>
+                  <el-checkbox label="5">已预订</el-checkbox>
+                  <el-checkbox label="6">已出租</el-checkbox>
+                  <el-checkbox label="7">维护中</el-checkbox>
+              </el-checkbox-group>
               </el-form-item>
             </el-col>
           </el-row>
@@ -88,6 +94,7 @@ export default {
       },
       tableData: [],
       timer: null,
+      checkList: [],
       pagetotal: '',
       terminalNumber: '',
       noDate: false
@@ -97,7 +104,7 @@ export default {
     this.mountedWay()
   },
   beforeUpdate: function () {
-    // 判断是否有数据
+    // 判断是否有数据来加载暂无数据
     if (this.tableData.length === 0) {
       this.noDate = true
     } else {
@@ -150,26 +157,12 @@ export default {
   },
   methods: {
     searchByTimeline () {
-      if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.form.radio === '') {
+      if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.checkList === '') {
         this.$message({
           message: '请输入查询条件',
           type: 'warning'
         })
       } else {
-        console.log(this.form.data1)
-        console.log(this.form.data2)
-        console.log(this.terminalNumber)
-        console.log(this.form.radio)
-        if (this.form.radio === '待出租') {
-          // 使用中的对应值待定
-          var radio = 4
-        } else if (this.form.radio === '已预定') {
-          var radio = 5
-        } else if (this.form.radio === '已出租') {
-          var radio = 6
-        } else if (this.form.radio === '已出租') {
-          var radio = 7
-        }
         var startTime, endTime
         if (this.form.data1 === '' || this.form.data2 === '') {
           startTime = null
@@ -179,19 +172,24 @@ export default {
           endTime = moment(this.form.data2).format('YYYY-MM-DD')
         }
 
+      // 根据用户选择不同状态进行数据的筛选
+        var radio = this.checkList
+        // if () {
+
+        // }
         request
           .post('http://192.168.3.52:7099/franchisee/bikeManager/queryBikes')
           .send({
             'start': startTime?startTime:null,
             'end': endTime?endTime:null,
-            'state': radio?radio:[],
+            'state': radio?radio:null,
             'name': this.terminalNumber?this.terminalNumber:null
           })
           .end((error, res) => {
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(JSON.parse(res.text))
+              console.log(JSON.parse(res.text).list)
               var data = (JSON.parse(res.text)).list
               var newData = this.tableDataDel(data)
               this.pagetotal = (JSON.parse(res.text)).totalPage
@@ -275,6 +273,12 @@ export default {
           }
         })     
     }
+  },
+  created  () {
+    this.searchByTimeline()
+  },
+  watch: {
+    'checkList': 'searchByTimeline'
   }
 }
 </script>
@@ -454,6 +458,20 @@ div#carManager_page {
 .datashow p {
   text-align: center;
   color: #5e7382;
+}
+
+.el-checkbox__inner {
+  border-color: #ddd !important;
+}
+
+.el-checkbox__inner:hover {
+  border-color: #ddd !important;
+}
+
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: #444;
+  border-color: #888;
+  color: #fff;
 }
 
 </style>

@@ -304,14 +304,14 @@ export default {
           nums = ++this.clickTimes
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
-          this.$router.push({ query: {type:  '1', date: moment(lastweek).format('YYYY-WW')}})
+          this.$router.push({ query: {type:  '1', date: moment(lastweek).format('YYYY-MM-DD')}})
           break
         }
         case 'month': {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
-          this.$router.push({ query: {type:  '2', date: moment(lastmonth).format('YYYY-MM')}})
+          this.$router.push({ query: {type:  '2', date: moment(lastmonth).format('YYYY-MM-DD')}})
           break
         }
       }
