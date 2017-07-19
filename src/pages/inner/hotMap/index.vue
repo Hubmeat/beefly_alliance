@@ -28,13 +28,13 @@
     <div style="margin-bottom: -10px;">
       <el-row class="showTime">
         <el-col class="dateArrow" ref="dateArrow" v-bind:data-timetype="arrowTimeType">
-          <el-button @click="dateMinus">
+          <button @click="dateMinus">
             <i class="el-icon-arrow-left"></i>
-          </el-button>
+          </button>
           <span class="nowTime">{{nowTime}}</span>
-          <el-button @click="dateAplus">
+          <button @click="dateAplus">
             <i class="el-icon-arrow-right"></i>
-          </el-button>
+          </button>
         </el-col>
         <el-col>
           骑行热力展示
@@ -242,6 +242,57 @@ div.gmap{
       background: rgba(52,52,67, 0.9);
       color: #fff;
     }
+
+    div.dateArrow {
+      padding: 20px 20px 0 20px;
+      background: #fff;
+    }
+
+    /* div.dateArrow button:nth-of-type(1) {
+      margin-left: 10px;
+    }
+
+    div.dateArrow button:nth-of-type(2) {
+      margin-left: -10px;
+    } */
+
+    div.dateArrow button {
+      cursor: pointer;
+      border: none;
+      padding-left: 2px;
+      background: #fff;
+      outline: none;
+      padding-right: 2px;
+      /* margin-left: -10px; */
+    }
+
+    div.dateArrow button span:hover {
+      color: #777 !important;
+    }
+
+    div.dateArrow button:hover {
+      color: #777 !important;
+    }
+    /* 
+    div.dateArrow span.nowTime {
+      margin-left: 5px; 
+      margin-right: 5px 
+    } */
+
+    [class*=" el-icon-"], [class^=el-icon-] {
+      font-family: element-icons!important;
+      speak: none;
+      font-style: normal;
+      font-weight: 400;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1;
+      vertical-align: top;
+      display: inline-block;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
 </style>
 <script>
 import AMap from 'AMap'

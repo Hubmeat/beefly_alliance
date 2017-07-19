@@ -17,13 +17,13 @@
     </el-row>
     <el-row class="showTime">
       <el-col class="dateArrow" ref="dateArrow" v-bind:data-timetype="arrowTimeType">
-        <el-button @click="dateMinus">
+        <button @click="dateMinus" style="color: #444;">
           <i class="el-icon-arrow-left"></i>
-        </el-button>
+        </button>
         <span class="nowTime">{{nowTime}}</span>
-        <el-button @click="dateAplus">
+        <button @click="dateAplus">
           <i class="el-icon-arrow-right"></i>
-        </el-button>
+        </button>
       </el-col>
       <el-col>
         24小时数据走势
@@ -66,6 +66,7 @@ div.allDays div.showTime div.el-col {
 
 div.allDays div.showTime div.el-col:nth-last-of-type(2) {
   font-size: 18px;
+  padding-bottom: 10px;
 }
 
 div.allDays div.watchButton {
@@ -152,18 +153,38 @@ div.dateArrow button {
   cursor: pointer;
   border: none;
   padding-left: 2px;
+  background: #fff;
+  outline: none;
   padding-right: 2px;
   /* margin-left: -10px; */
 }
 
+div.dateArrow button span:hover {
+  color: #777 !important;
+}
+
 div.dateArrow button:hover {
-  color: #777;
+  color: #777 !important;
 }
 /* 
 div.dateArrow span.nowTime {
    margin-left: 5px; 
    margin-right: 5px 
 } */
+
+[class*=" el-icon-"], [class^=el-icon-] {
+  font-family: element-icons!important;
+  speak: none;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: top;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 div.el-date-editor--datetimerange{margin-right: 8px;}
 </style>

@@ -33,13 +33,10 @@
           if (err) {
             console.log('err:' + err)
           } else {
-            console.log(res)
-            console.log(res.text)
             if (res.text === '') {
               $('#container').html('')
               this.noData = true
             } else {
-              // console.log(res.text)
               var data = JSON.parse(res.text)
               this.getChartByRoute(data)
               this.initHighCharDate()
@@ -133,7 +130,6 @@
           })
       },
       getChartByRoute (arr) {
-        // console.log(arr)
         var money = arr.map((item) => {
           return item.money
         })
@@ -156,11 +152,9 @@
             "date": this.$route.query.date
           })
           .end((error, res) => {
-            // console.log('this is entry')
             if (error) {
               console.log('error:', error)
             } else {
-              // console.log(res)
               if (res.text === '') {
                 $('#container').html('')
                 this.noData = true
