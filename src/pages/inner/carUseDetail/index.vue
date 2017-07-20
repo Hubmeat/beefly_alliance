@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-right: 20px;">
+  <div>
       <div class="carUseDetail">
         <div class="detailTitle">
           <h3>车辆详情</h3>
@@ -316,10 +316,10 @@ export default {
 </script>
 <style scoped>
 div.carUseDetail {
-  background: #fff;
-  /* width: 100%; */
-  padding-left: 5%;
-  padding-right: 5%;
+    background: #fff;
+    margin: 0 auto;
+    border: 1px solid #e7ecf1;
+    width: 1000px;
 }
 
 div.carUseDetail table {

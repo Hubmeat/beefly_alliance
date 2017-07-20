@@ -26,7 +26,11 @@
       <div id="partner_add">
         <button @click="$router.push({path:'/index/partnerManager/addpartner'})">添加合伙人</button>
       </div>
-      <el-table :data="tableData" style="width: 100% font-size:13px; color: #6c6c6c;">
+      <el-table 
+            :data="tableData" 
+            style="width: 100% font-size:13px; color: #6c6c6c;"
+            v-loading="loading2"
+            element-loading-text="拼命加载中">
         <el-table-column prop="name" label="姓名" min-width="80">
         </el-table-column>
         <el-table-column prop="sex" label="性别" min-width="60">
@@ -387,7 +391,8 @@ export default {
       searchDate1: '',
       searchDate2: '',
       search_Number: '',
-      thisOpenId: ''
+      thisOpenId: '',
+      loading2: false
     }
   },
   mounted() {
@@ -400,8 +405,12 @@ export default {
       that.pageUpdate(e)
     })
   },
+  beforeCreate () {
+    this.$router.push('/index/partnerManager')
+  },
   methods: {
     mountedWay () {
+      this.loading2 = true
       request
         .post('http://192.168.3.52:7099/franchisee/franchiseeManager/getPartners')
         .send({
@@ -416,6 +425,9 @@ export default {
             var newArr = JSON.parse(res.text).list
             this.$store.dispatch('partner_action', { newArr })
             var pageNumber = JSON.parse(res.text).totalPage
+            // loading关闭
+            this.loading2 = false
+
             this.tableData = this.$store.state.partnerList
             this.pagetotal = pageNumber
             $('.M-box').pagination({
@@ -431,6 +443,8 @@ export default {
         })
     },
     pageUpdate(e) {
+      this.loading2 = true
+      console.log(this.$store.state.partnerAdded)
       var that = this
       clearTimeout(this.timer)
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
@@ -465,10 +479,36 @@ export default {
               that.$store.dispatch('partner_action', { newArr })
               var pageNumber = JSON.parse(res.text).totalPage
               that.tableData = that.$store.state.partnerList
+              // loading关闭
+              that.loading2 = false
               that.totalPage = pageNumber
             }
           })
       }, 200)
+    },
+    partnerUpdate () {
+      this.loading2 = true
+      console.log($('.M-box span.active')[0].innerHTML)
+      request
+        .post('http://192.168.3.52:7099/franchisee/franchiseeManager/getPartners?page=' + $('.M-box span.active')[0].innerHTML)
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((error, res) => {
+          if (error) {
+            console.log('error:', error)
+          } else {
+            // console.log(JSON.parse(res.text))
+            var newArr = JSON.parse(res.text).list
+            this.$store.dispatch('partner_action', { newArr })
+            // loading关闭
+            this.loading2 = true
+            var pageNumber = JSON.parse(res.text).totalPage
+            this.tableData = this.$store.state.partnerList
+            this.totalPage = pageNumber
+          }
+        })
     },
     delPartner(id, index) {
       this.$confirm('确定删除该合伙人吗?', '提示', {
@@ -577,6 +617,7 @@ export default {
           type: 'warning'
         })
       } else {
+          this.loading2 = true
           request
             .post('http://192.168.3.52:7099/franchisee/partner/queryPartner')
             .send({
@@ -595,6 +636,8 @@ export default {
                 this.$store.dispatch('partner_action', { newArr })
                 this.tableData = this.$store.state.partnerList
                 var pageNumber = JSON.parse(res.text).totalPage
+                // loading关闭
+                this.loading2 = false
                 if (pageNumber < 10) {
                   return
                 } else {
@@ -620,6 +663,9 @@ export default {
         return
       }
     }
+  },
+  watch: {
+    '$store.state.partnerAdded': 'partnerUpdate'
   }
 }
 </script>

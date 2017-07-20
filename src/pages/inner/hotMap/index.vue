@@ -440,8 +440,8 @@ export default {
         alert('起点或终点不能为空！')
       } else {
         driving.search([
-                  {keyword: this.startDriving, city: this.city},
-                  {keyword: this.endDriving, city: this.city}
+          {keyword: this.startDriving, city: this.city},
+          {keyword: this.endDriving, city: this.city}
         ])
         this.isShowDriving = true
         this.startDriving = ''
@@ -531,7 +531,7 @@ export default {
           nums = --this.clickTimes
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
-          this.$router.push({ query: { type:  'day', data: this.nowTime}})
+          this.$router.push({ query: { type:  'day', date: moment(lastDay).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -539,7 +539,7 @@ export default {
           nums = --this.clickTimes
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
-          this.$router.push({ query: { type:  'week', data: this.nowTime}})
+          this.$router.push({ query: { type:  'week', date: moment(lastweek).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -547,7 +547,7 @@ export default {
           nums = --this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
-          this.$router.push({ query: { type:  'month', data: this.nowTime}})
+          this.$router.push({ query: { type:  'month', date: moment(lastmonth).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -561,7 +561,7 @@ export default {
           nums = ++this.clickTimes
           var lastDay = new Date().getTime() + 24 * 60 * 60 * 1000 * nums
           this.nowTime = moment(lastDay).format('YYYY-MM-DD')
-          this.$router.push({ query: { type:  'day', data: this.nowTime}})
+          this.$router.push({ query: { type:  'day', date: moment(lastDay).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -569,7 +569,7 @@ export default {
           nums = ++this.clickTimes
           var lastweek = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * nums
           this.nowTime = moment(lastweek).format('YYYY年第WW周')
-          this.$router.push({ query: { type:  'week', data: this.nowTime}})
+          this.$router.push({ query: { type:  'week', date: moment(lastweek).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -577,7 +577,7 @@ export default {
           nums = ++this.clickTimes
           var lastmonth = new Date().getTime() + 24 * 60 * 60 * 1000 * 7 * 4 * nums
           this.nowTime = moment(lastmonth).format('YYYY年MM月')
-          this.$router.push({ query: { type:  'month', data: this.nowTime}})
+          this.$router.push({ query: { type:  'month', date: moment(lastmonth).format('YYYY-MM-DD')}})
           this.searchByDirType()
           break
         }
@@ -586,13 +586,13 @@ export default {
     dataUpdate () {
       var flag = true
       console.log(this.$route.query.type)
-      // if (this.$route.query.type === 'curHour') {
-      //   return
-      // } else if (flag === true) {
-      //   this.requestWay(this.$route.query.type)
-      // } else {
-      //   return
-      // }
+      if (this.$route.query.type === 'curHour') {
+        return
+      } else if (flag === true) {
+        this.requestWay(this.$route.query.type)
+      } else {
+        return
+      }
       
       this.requestWay(this.$route.query.type)
     },

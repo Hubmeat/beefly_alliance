@@ -19,6 +19,8 @@
 	<div id="settleRed_table">
 		<el-table
       :data="tableData"
+      v-loading="loading2"
+      element-loading-text="拼命加载中"
       style="width: 100%"
 			@cell-click='goDetail'>
       <el-table-column
@@ -199,10 +201,12 @@ export default {
   data () {
     return {
       tableData: [],
-      totalPage: ''
+      totalPage: '',
+      loading2: false
     }
   },
   mounted () {
+    this.loading2 = true
     request
       .post('http://192.168.3.52:7099/franchisee/withdrawal/getAllWithdrawal')
       .send({
@@ -217,6 +221,10 @@ export default {
           var newArr = JSON.parse(res.text).list
           var pageNumber = JSON.parse(res.text).totalPage
           this.totalPage = pageNumber
+
+          // loading 关闭
+          this.loading2 = false
+
           var arr2 = this.tableDataDel(newArr)
           this.$store.dispatch('settlementDate_action', { arr2 })
           this.tableData = this.$store.state.settlementDate.arr2
@@ -278,6 +286,7 @@ export default {
     pageUpdate (e) {
       var that = this
       clearTimeout(this.timer)
+      this.loading2 = true
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
           e.target.innerHTML = 1
@@ -309,6 +318,10 @@ export default {
               console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = that.tableDataDel(pagedata)
+              
+              //关闭loading 
+              that.loading2 = false
+
 							that.$store.dispatch('settlementDate_action', { arr2 })
 							that.tableData = that.$store.state.settlementDate.arr2
             }

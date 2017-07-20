@@ -26,7 +26,11 @@
     <div class="apply_account_table">
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;">
+      <el-table 
+          v-loading="loading2"
+          element-loading-text="拼命加载中"
+          :data="tableData" 
+          style="width: 100%; font-size:13px;">
         <el-table-column prop="order_time" label="订单时间" min-width="200"></el-table-column>
         <el-table-column prop="bike_number" label="车牌号" min-width="150"></el-table-column>
         <el-table-column prop="riding_time" label="骑行时间" min-width="150"></el-table-column>
@@ -62,7 +66,8 @@ export default {
       currentCode: '',
       allMoney: [],
       currentIndex: 0,
-      crash: ''
+      crash: '',
+      loading2: false
     }
   },
   methods: {
@@ -94,6 +99,7 @@ export default {
       return arrDeled
     },
     getDataByTime () {
+      this.loading2 = true
       request
         .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail')
         .send({
@@ -111,6 +117,9 @@ export default {
             var newArr = this.tableDataDel(arr)
             this.tableData = newArr
             this.totalPage = pageNumber
+
+            // 关闭loading
+            this.loading2 = false
             $('.M-box').pagination({
               pageCount: pageNumber,
               jump: true,
@@ -126,6 +135,9 @@ export default {
     pageUpdate (e) {
       var that = this
       clearTimeout(this.timer)
+
+      this.loading2 = true
+
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
           e.target.innerHTML = 1
@@ -157,6 +169,10 @@ export default {
               // console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = that.tableDataDel(pagedata)
+
+              // 关闭loading
+              that.loading2 = false
+
               that.tableData = arr2
             }
           })
@@ -164,6 +180,7 @@ export default {
     }
   },
   mounted() {
+    this.loading2 = true
     request
       .post('http://192.168.3.52:7099/franchisee/withdrawal/getNotWithdrawal')
       .send({
@@ -179,6 +196,10 @@ export default {
             var mon = {}
             mon.month = allMonth[i].month
             mon.withdrawalCode = allMonth[i].withdrawalCode
+
+            // loading 关闭
+            this.loading2 = false
+
             this.monthLists.push(mon)
             this.allMoney.push(allMonth[i].money)
           }

@@ -29,7 +29,9 @@
 
 		<div id="earD_body">
 			<el-table
-      :data="tableData"
+      :data="tableData"    
+      v-loading="loading2"
+      element-loading-text="拼命加载中"
       style="width: 100%">
       <el-table-column
         prop="money"
@@ -293,12 +295,14 @@ export default {
       },
       timeLine: '',
       show: false,
-      show2: false
+      show2: false,
+      loading2: false
     }
   },
   mounted () {
     // console.log(this.$route.query)
     this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
+    this.loading2 = true
     request
       .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurDay')
       .send({
@@ -316,6 +320,8 @@ export default {
           this.totalPage = pageNumber
           var arr2 = this.tableDataDel(newArr)
           this.$store.dispatch('earningsDate_action', { arr2 })
+          // loading 关闭
+          this.loading2 = false
           this.tableData = this.$store.state.earningsDate.arr2
           $('.M-box').pagination({
             pageCount: pageNumber,
@@ -473,6 +479,7 @@ export default {
     },
     getMonthDate () {
       this.$router.push('/index/earningsDetail?type=getRevenueCurMonth')
+      this.loading2 = true
       request
         .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurMonth')
         .send({
@@ -488,6 +495,8 @@ export default {
             var pageNumber = JSON.parse(res.text).totalPage
             var arr2 = this.tableDataDel(newArr)
             this.totalPage = pageNumber
+            // loading 关闭
+            this.loading2 = false
             this.$store.dispatch('earningsDate_action', { arr2 })
             this.tableData = this.$store.state.earningsDate.arr2
             $('.M-box').pagination({
@@ -504,6 +513,7 @@ export default {
     },
     getDailyDate () {
       this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
+      this.loading2 = true
       request
         .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurDay')
         .send({
@@ -518,6 +528,8 @@ export default {
             var pageNumber = JSON.parse(res.text).totalPage
             var arr2 = this.tableDataDel(newArr)
             this.totalPage = pageNumber
+            // loading关闭
+            this.loading2 = false
             this.$store.dispatch('earningsDate_action', { arr2 })
             this.tableData = this.$store.state.earningsDate.arr2
             $('.M-box').pagination({
@@ -534,6 +546,7 @@ export default {
     },
     getWeekDate () {
       this.$router.push('/index/earningsDetail?type=getRevenueCurWeek')
+      this.loading2 = true
       request
         .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurWeek')
         .send({
@@ -547,6 +560,9 @@ export default {
             var newArr = JSON.parse(res.text).list
             var pageNumber = JSON.parse(res.text).totalPage
             var arr2 = this.tableDataDel(newArr)
+            // loading关闭
+            this.loading2 = false
+
             this.totalPage = pageNumber
             this.$store.dispatch('earningsDate_action', { arr2 })
             this.tableData = this.$store.state.earningsDate.arr2
@@ -566,6 +582,7 @@ export default {
       var that = this
       console.log(this.pagetotal)
       clearTimeout(this.timer)
+      this.loading2 = true
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
           e.target.innerHTML = 1
@@ -597,6 +614,8 @@ export default {
               console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = that.tableDataDel(pagedata)
+              // loading关闭
+              that.loading2 = false
               that.$store.dispatch('earningsDate_action', { arr2 })
               that.tableData = that.$store.state.earningsDate.arr2
             }
@@ -608,6 +627,7 @@ export default {
       if (type === 'getRevenueDefine') {
         return
       } else {
+        this.loading2 = true
         request
           .post('http://192.168.3.52:7099/franchisee/revenue/' + type)
           .send({
@@ -621,6 +641,10 @@ export default {
               // console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var pageNumber = JSON.parse(res.text).totalPage
+
+              // loading 关闭
+              this.loading2 = false
+
               var arr2 = this.tableDataDel(pagedata)
               this.totalPage = pageNumber
               this.$store.dispatch('earningsDate_action', { arr2 })
@@ -639,6 +663,7 @@ export default {
         var startTime = moment(this.timeLine[0]).format('YYYY-MM-DD HH:MM:SS')
         var endTime = moment(this.timeLine[1]).format('YYYY-MM-DD HH:MM:SS')
         console.log(startTime, endTime)
+        this.loading2 = true
         request
           .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueDefine')
           .send({
@@ -657,6 +682,10 @@ export default {
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = this.tableDataDel(pagedata)
               this.$store.dispatch('earningsDate_action', { arr2 })
+
+              // loading关闭
+              this.loading2 = false
+
               this.tableData = this.$store.state.earningsDate.arr2
               var pageNumber = JSON.parse(res.text).totalPage
               this.totalPage = pageNumber

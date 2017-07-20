@@ -32,7 +32,11 @@
     <div class="apply_account_table">
   
       <!-- 表单 -->
-      <el-table :data="tableData" style="width: 100%; font-size:13px;">
+      <el-table 
+            :data="tableData"
+            v-loading="loading2"
+            element-loading-text="拼命加载中"
+            style="width: 100%; font-size:13px;">
         <el-table-column prop="order_time" label="订单时间" min-width="260"></el-table-column>
         <el-table-column prop="bike_number" label="车牌号" min-width="180"></el-table-column>
         <el-table-column prop="riding_time" label="骑行时间" min-width="180"></el-table-column>
@@ -70,7 +74,8 @@ export default {
       router_show: false,
       dialogVisible: false,
       apply_money_data: '2017-01',
-      status: ''
+      status: '',
+      loading2: false
     }
   },
   mounted () {
@@ -88,6 +93,7 @@ export default {
     }
 
     // console.log(data1)
+    this.loading2 = true
     request
       .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail')
       .send({
@@ -104,6 +110,10 @@ export default {
           console.log(JSON.parse(res.text).list)
           var pageNumber = JSON.parse(res.text).totalPage
           var arr = this.tableDataDel(JSON.parse(res.text).list)
+          
+          // loading关闭
+          this.loading2 = false
+
           this.tableData = arr
           this.totalPage = pageNumber
           $('.M-box').pagination({
@@ -147,6 +157,7 @@ export default {
       return arrDeled
     },
     pageUpdate (e) {
+      this.loading2 = true
       var that = this
       clearTimeout(this.timer)
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
@@ -180,6 +191,10 @@ export default {
             } else {
               console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
+
+              // loading 关闭
+              that.loading2 = false
+
               var arr2 = that.tableDataDel(pagedata)
               that.$store.dispatch('earningsDate_action', { arr2 })
               that.tableData = that.$store.state.earningsDate.arr2

@@ -235,12 +235,12 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$confirm('确认添加吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '信息有误',
-            type: 'warning'
-          })
-            .then(() => {
+          // this.$confirm('确认添加吗?', '提示', {
+          //   confirmButtonText: '确定',
+          //   cancelButtonText: '信息有误',
+          //   type: 'warning'
+          // })
+          //   .then(() => {
               var that = this
               request
                 .post('http://192.168.3.52:7099/franchisee/partner/add')
@@ -262,6 +262,7 @@ export default {
                     setTimeout(function () {
                       that.fullscreenLoading = false
                       if (JSON.parse(res.text).code === 0) {
+                        that.$store.state.partnerAdded = true
                         that.$router.push('/index/partnerManager')
                         that.$message({
                           type: 'success',
@@ -276,13 +277,13 @@ export default {
                     }, 600)
                   }
                 })
-            })
-            .catch(() => {
-              // this.$message({
-              //   type: 'info',
-              //   message: '已取消添加'
-              // })
-            })
+            // })
+            // .catch(() => {
+            //   // this.$message({
+            //   //   type: 'info',
+            //   //   message: '已取消添加'
+            //   // })
+            // })
         } else {
           return false
         }

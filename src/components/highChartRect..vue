@@ -229,7 +229,6 @@
                 if (error) {
                   console.log('error:', error)
                 } else {
-                  console.log('；哈哈哈哈')
                   if (JSON.parse(res.text).list.length === 0) {
                     $('#container').html('')
                     this.noData = true

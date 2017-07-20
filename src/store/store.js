@@ -10,6 +10,7 @@ const state = {
     timeline: [],
     allData: [],
     partnerList: [],
+    partnerAdded: false,
     accountMangerData: []
 }
 
