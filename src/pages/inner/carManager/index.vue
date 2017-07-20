@@ -315,6 +315,11 @@ font-size: 14px;
     text-align: center;
   }
 div.filtercar{display: inline-block;}
+
+div.filtercar .el-form-item__content .el-input input.el-input__inner {
+    width: 200px;
+}
+
 div.line {
   margin-left: 0px;
 }
