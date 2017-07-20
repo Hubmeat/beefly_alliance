@@ -34,7 +34,9 @@ import addaccount from '../pages/inner/accountManager/addaccount.vue'
 // [ ====== memberCenter ====== ]
 import memberCenter from '../pages/inner/memberCenter/index.vue'
 import bindEamil from '../pages/inner/memberCenter/bindEamil.vue'
+import updateEmail from '../pages/inner/memberCenter/updateEmail.vue'
 import bindTel from '../pages/inner/memberCenter/bindTel.vue'
+import updateTel from '../pages/inner/memberCenter/updateTel.vue'
 import amendPassword from '../pages/inner/memberCenter/amendPassword.vue'
 
 // [ ====== roleManager ====== ]
@@ -153,11 +155,23 @@ export default [
                     path: '/index/memberCenter/bindEamil',
                     name: '绑定邮箱',
                     component: bindEamil
-                }, {
+                }, 
+                {
+                    path: '/index/memberCenter/updateEmail',
+                    name: '绑定邮箱',
+                    component: updateEmail
+                },
+                {
                     path: '/index/memberCenter/bindTel',
                     name: '绑定手机号',
                     component: bindTel
-                }, {
+                }, 
+                {
+                    path: '/index/memberCenter/updateTel',
+                    name: '修改手机号',
+                    component: updateTel
+                }, 
+                {
                     path: '/index/memberCenter/amendPassword',
                     name: '修改密码',
                     component: amendPassword

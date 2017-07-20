@@ -68,7 +68,7 @@
                 <el-form-item label="姓名" :label-width="formLabelWidth">
                   <el-input v-model="editAccount.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="类别" :label-width="formLabelWidth">
+                <!-- <el-form-item label="类别" :label-width="formLabelWidth">
                   <el-select v-model="editAccount.role" placeholder="请选择类别">
                     <el-option
                       label="管理员"
@@ -79,7 +79,7 @@
                       value="合伙人">
                     </el-option>
                   </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <!-- <el-form-item label="状态" :label-width="formLabelWidth">
                   <el-radio-group v-model="editAccount.state">
                     <el-radio v-bind:label="true">开启</el-radio>
@@ -616,4 +616,13 @@ div.addfooter,div.editfooter{text-align: left;
     padding-left: 60px;
     margin-top: -43px;}
     div.el-input{width:initial}
+.el-pagination {
+    white-space: nowrap;
+    /* padding: 2px 5px; */
+    color: #48576a;
+    padding-left: 30px;
+    background: #fff;
+    /* margin-left: 1px; */
+    border-left: 1px solid #e7ecf1;
+}    
 </style>

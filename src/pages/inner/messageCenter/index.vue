@@ -5,49 +5,18 @@
         <el-button class="selectAll" id="msgCenterBtn" type="primary" @click="selectAll">全部设为已读</el-button>
       </el-col>
       <el-col>
-        <!-- <table>
-          <thead>
-            <tr>
-              <th>标题</th>
-              <th>消息内容</th>
-              <th>接收日期</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-bind:key="msg.title" v-for="msg of tableData">
-              <td>
-                <el-checkbox v-model="msg.isChecked"></el-checkbox>
-                <span class="title">{{msg.title}}</span>
-              </td>
-              <td class="showAllMessage">
-                <span class="detail" ref="tdShow">{{msg.content}}</span>
-                <span class="open" @click="showMordWords(msg)" v-show="msg.tdshow">{{msg.changeText}}</span>
-              </td>
-              <td>
-                {{msg.createTime}}
-              </td>
-              <td>
-                <i class="icon iconfont icon-xinfeng"></i>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="hasData" v-show="hasMsgData">
-              暂无数据
-        </div> -->
         <el-table
           :data="tableData"
           style="width:100%"
-          v-loading="loadingdata"
-          element-loading-text="拼命加载中"
+          @cell-click = "handleClick"
         >
           <el-table-column
            label="标题"
            min-width="20%"
+           label-class-name="tableTitle"
           >
             <template scope="scope">
-              <span v-bind:class="{unRead:scope.row.unRead,read:scope.row.read}"></span>
+              <span style="margin-left:-10px;" v-bind:class="{unRead:true,read:scope.row.isRead}"></span>
               <span class="title">{{scope.row.title}}</span>
             </template>
           </el-table-column>
@@ -56,7 +25,7 @@
            min-width="40%"
           >
             <template scope="scope">
-                <span class="detail" style="color:#555;font-size:14px;" ref="tdShow">{{scope.row.content}}</span>
+                <span class="detail" ref="tdShow">{{scope.row.content}}</span>
                 <span class="open" @click="showMordWords(scope.row)" v-show="scope.row.tdshow">{{scope.row.changeText}}</span>
             </template>
           </el-table-column>
@@ -71,7 +40,7 @@
             min-width="10%"
           >
             <template scope="scope">
-              <i title="点击设置为已读" @click="setMsgStatus(scope)" class="icon iconfont icon-xinfeng"></i>
+              <i v-bind:title='scope.row.isRead===0?"点击设置为已读":" "' v-bind:class='scope.row.isRead===0?"unread icon iconfont icon-xinfeng":"read icon iconfont icon-xinfeng"'></i>
             </template>
           </el-table-column>
         </el-table>
@@ -99,7 +68,10 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   div.messageCenter{padding:20px;background:#fff;}
   span.unRead{width:18px;height:18px;border-radius:20px;background:#ecb042;display:inline-block;vertical-align: middle;margin-top: -2px;}
   span.read{background:transparent;opacity: 0}
-  i.icon-xinfeng{cursor:pointer}
+  i.icon-xinfeng.read{cursor:default;color:gray}
+  i.icon-xinfeng.unread{cursor:pointer;color:#f35000}
+  .el-table th>.tableTitle{margin-left: 20px;}
+  /* td.isread i {color:gray;cursor:default;} */
 </style>
 <script>
   import request from 'superagent'
@@ -111,11 +83,11 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   export default {
     data: function () {
       return {
-        loadingdata:true,
         hasMsgData: true,
         msg_totalPage: '',
         msg_currentPage: 1,
-        tableData: []
+        tableData: [],
+        msgList: []
       }
     },
     mounted: function () {
@@ -131,13 +103,12 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
         } else {
           var arr = JSON.parse(res.text).list
           that.tableData = arr.map((item) => {
-           return Object.assign({},item,{createTime: moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')},{isChecked: item.isRead===0?false: true},{unRead:true,read:false})
+           return Object.assign({},item,{createTime: moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')},{isChecked: item.isRead===0?false: true},{unRead:true,read:item.isRead===0?false: true})
           })
           that.checkWordsLength()
           that.msg_totalPage = JSON.parse(res.text).totalPage || 20
           var len = JSON.parse(res.text).list.length
           if (len>0) {
-            that.loadingdata  = false
             that.hasMsgData = false
             $('.M-box').pagination({
               pageCount: that.msg_totalPage,
@@ -238,17 +209,46 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
           }
         })
       },
-      selectAll () {
-       this.tableData = this.tableData.map(function(item){
-         return Object.assign({},item, {isChecked:!item.isChecked},{unRead:true,read:true})
-       })
+      handleClick(row, column, cell, event){
+        //console.log(row)
+        if(row.isRead===0){
+          this.msgList.push({id:row.id})
+          row.isRead=1
+           request.post('http://192.168.3.52:7099/franchisee/msg/read')
+            .send({
+              list: this.msgList
+            })
+            .end(function(error,res){
+              if(error) {
+                console.log(error)
+              }else {
+                console.log(res)
+              }
+            })
+        }else {
+           return false
+        }
       },
-      setMsgStatus(scope){
-        var index = scope.$index
-        scope.row.read = true
-
-      }
+      selectAll () {
+        var newArr = this.tableData.map((item)=>{
+            var obj = Object.assign({},item,{isRead:1})
+            return obj
+        })
+        this.tableData = newArr
+        request.post('http://192.168.3.52:7099/franchisee/msg/read')
+          .send({
+            list: newArr
+          })
+          .end(function(error,res){
+            if(error) {
+              console.log(error)
+            }else {
+              console.log(res)
+            }
+          })
+      },
     }
   }
 </script>
+
 

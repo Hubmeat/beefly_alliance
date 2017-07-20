@@ -519,6 +519,7 @@ export default {
          console.log(err)
        } else {
          var result = JSON.parse(res.text).list
+         console.log(result)
          if (result.length>0 ) {
             $('.M-box').pagination({
               pageCount: that.totalPage,
@@ -531,6 +532,7 @@ export default {
             })
          }
         var newArr = result.map(function(item, index) {
+            console.log(item)
             var res = item.auth.split('-')
             var fathCode = []
             var childrenCode = []

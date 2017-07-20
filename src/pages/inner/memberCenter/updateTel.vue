@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
-						<h1 id="addaccount_title">绑定手机号
+						<h1 id="addaccount_title">修改手机号
               <span>
                 <a @click="$router.push('/index/memberCenter')">
                   <i class="el-icon-close">
@@ -12,7 +12,7 @@
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 							<el-form-item label="手机号" prop="tel" style="width: 550px;">
 								<el-input v-model="ruleForm.tel" placeholder='请输入手机号'></el-input>
-                <el-button 
+                 <el-button 
                   class="getVerCode"
                   @click="getVerCode(ruleForm.tel)"
                   :plain="isPlain"
@@ -28,7 +28,7 @@
 								<el-input type='password' v-model="ruleForm.account_password" placeholder='为保障账号安全，您需要填写当前登录账号和密码'></el-input>
 							</el-form-item>
 							<el-form-item>
-								<el-button class='addaccount_button' type="primary" @click="handleBindTel">立即绑定</el-button>
+								<el-button class='addaccount_button' type="primary" @click="handleBindTel">立即修改</el-button>
 								<el-button class='addaccount_button' @click="$router.push({path:'/index/memberCenter'})">取消</el-button>
 							</el-form-item>
 					</el-form>
@@ -36,7 +36,7 @@
 	</div>
 </template>
 <style scoped>
-  button.getVerCode{width:102px;}
+
   @media screen and (min-width:1367px) {
     #addaccount_form {
       /*  适配好的样式 */
@@ -133,8 +133,8 @@
       
 <script>
 import {checkMobile, IsEmpty} from '../../../../utils/index.js'
-import request from 'superagent'
 import $ from 'jquery'
+import request from 'superagent'
 export default {
   data () {
     var validateTel = (rule, value, callback) => {
@@ -186,15 +186,15 @@ export default {
   },
   methods: {
     getVerCode (val) {
-       var that = this
-       var $btn = $('button.getVerCode')
-       var text = $btn.text()
-       this.initText = text
-       var initTime = 60
-      if(checkMobile(val)){
-          this.isDisabled = true
-          this.isPlain = false
-           var timer = setInterval(function(){
+      var that = this
+      var $btn = $('button.getVerCode')
+      var text = $btn.text()
+      this.initText = text
+      var initTime = 60
+      if(!IsEmpty(val)&&checkMobile(val)){
+         this.isDisabled = true
+         this.isPlain = false
+            var timer = setInterval(function(){
               initTime--
               if(initTime<=0){
                 that.isDisabled = false
@@ -207,12 +207,11 @@ export default {
               }
           },1000)
           setTimeout(function(){
-             that.$message({
+              that.$message({
               message: '已向您的手机发送验证码，请查收！！！',
               type: 'success'
             })
           },1000)
-         
           request.post('http://192.168.3.52:7099/franchisee/userCenter/getVerCode')
             .send({
               mobileNo: this.ruleForm.tel
@@ -230,18 +229,19 @@ export default {
       var that = this
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.$confirm('确认绑定吗?', '提示', {
+          this.$confirm('确认修改吗?', '提示', {
             confirmButtonText: '确定',
-            cancelButtonText: '信息有误',
+            cancelButtonText: '取消',
             type: 'warning'
           })
         .then(() => {
           that.loading = true
-          request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingPhone')
+          request.post('http://192.168.3.52:7099/franchisee/account/updatePhone4Fran')
               .send({
-                phoneNo: that.ruleForm.tel,
-                verCode: that.ruleForm.verCode,
-                pwd: that.ruleForm.account_password
+                	id:1123339,
+                  phoneNo: that.ruleForm.tel,
+                  verCode: that.ruleForm.verCode,
+                  pwd: that.ruleForm.account_password
               })
               .end((err, res) => {
                 if (err) {
@@ -258,13 +258,13 @@ export default {
                     that.loading = false
                     that.$router.push('/index/memberCenter')
                     that.$message({
-                      message: '恭喜你，绑定手机成功',
+                      message: '恭喜你，修改手机成功',
                       type: 'success'
                     })
                   } else {
                     that.loading = false
                     that.$message({
-                      message: 'sorry，绑定手机失败',
+                      message: 'sorry，修改手机失败',
                       type: 'error'
                     })
                   }

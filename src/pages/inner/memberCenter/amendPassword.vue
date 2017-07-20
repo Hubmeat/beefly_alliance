@@ -176,7 +176,7 @@ export default {
           that.loading = true
           setTimeout(() => {
             request.post('http://192.168.3.52:7099/franchisee/userCenter/modifyPwd')
-              .send({franchiseeId: '123456', userId: 'admin', oldPwd: this.ruleForm.pass, newPwd: this.ruleForm.checkPass})
+              .send({id: 1123339, oldPwd: this.ruleForm.pass, newPwd: this.ruleForm.checkPass})
               .end((err, res) => {
                 if (err) {
                   console.log(err)
@@ -185,9 +185,10 @@ export default {
                   that.$router.push('./')
                 } else {
                   var status = Number(JSON.parse(res.text).code)
+                  var cbText = JSON.parse(res.text).data
                   if (status !== 0) {
                     that.loading = false
-                    this.$message.error('sorry,密码修改失败,请重新修改')
+                    this.$message.error('sorry,修改密码失败' )
                   } else {
                     that.loading = false
                     that.$message({

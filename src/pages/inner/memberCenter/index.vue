@@ -16,6 +16,20 @@
 		<div class="homepage_select">
 			<h1>账户信息</h1>
 			<ul>
+					<li>
+					<span><i class="iconfont">&#xe600;</i></span>
+					<span>手机验证</span>
+					<span>未绑定</span>
+					<span>您的手机号：bie18@163.com尚未验证，请尽快进行验证</span>
+
+					<span>
+						<button @click='$router.push({path:"/index/memberCenter/bindTel"})'>绑定手机号</button>
+					</span>
+
+					<span>
+						<button @click='$router.push({path:"/index/memberCenter/updateTel"})'>修改手机号</button>
+					</span>
+				</li>
 				<li>
 					<span><i class="iconfont">&#xe600;</i></span>
 					<span>邮箱验证</span>
@@ -27,23 +41,10 @@
 					</span>
 
 					<span>	
-						<button @click='modifyEmail'>修改邮箱</button>
+						<button @click='$router.push({path:"/index/memberCenter/updateEmail"})'>修改邮箱</button>
 					</span>
 				</li>
-				<li>
-					<span><i class="iconfont">&#xe600;</i></span>
-					<span>手机验证</span>
-					<span>未绑定</span>
-					<span>您的手机号：bie18@163.com尚未验证，请尽快进行验证</span>
-
-					<span>
-						<button @click='$router.push({path:"/index/memberCenter/bindTel"})'>绑定手机号</button>
-					</span>
-
-					<span>
-						<button @click='verify_tel'>修改手机号</button>
-					</span>
-				</li>
+			
 				<li>
 					<span><i class="iconfont">&#xe616;</i></span>
 					<span>登录密码</span>
@@ -261,8 +262,14 @@
 </style>
 
 <script>
+import {updateEmail} from '../../../api/modifyEmail.api'
 export default {
-  name: 'HomePage',
+	name: 'HomePage',
+	data: function (){
+		return {
+			updateEmail: ''
+		}
+	},
   methods: {
     modifyEmail () {
       this.$prompt('请输入邮箱', '提示', {
@@ -270,8 +277,17 @@ export default {
         cancelButtonText: '取消',
         inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
         inputErrorMessage: '邮箱格式不正确'
-      }).then(function ({ value }) {
-        console.log(value)
+      }).then(({ value }) => {
+				console.log(value)
+					// if(value) {
+					// 	updateEmail(
+					// 		{	
+					// 			id: 1123339,
+					// 			email: '123@.com'
+					// 		},function(error,res){
+
+					// 	})
+					// }
         this.$message({
           type: 'success',
           message: '你的邮箱是: ' + value

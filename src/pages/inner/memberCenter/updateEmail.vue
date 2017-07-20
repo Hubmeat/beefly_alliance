@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div id="addaccount_form" v-loading="loading" element-loading-text=" ">
-						<h1 id="addaccount_title">绑定邮箱
+						<h1 id="addaccount_title">修改邮箱
               <span>
                 <a @click="$router.push('/index/memberCenter')">
                   <i class="el-icon-close">
@@ -17,7 +17,7 @@
 								<el-input type='password' v-model="ruleForm.account_password" placeholder='为保障账号安全，您需要填写当前登录账号和密码'></el-input>
 							</el-form-item>
 							<el-form-item>
-								<el-button class='addaccount_button' type="primary" @click="handleBindEmail">立即绑定</el-button>
+								<el-button class='addaccount_button' type="primary" @click="handleBindEmail">立即修改</el-button>
 								<el-button class='addaccount_button' @click="$router.push({path:'/index/memberCenter'})">取消</el-button>
 							</el-form-item>
 					</el-form>
@@ -204,12 +204,12 @@ export default {
       var that = this
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          that.$alert('申请绑定成功，已向您的邮箱' + that.ruleForm.maiAccount + '发送验证邮件，请注意查收', '绑定邮箱', {
+          that.$alert('申请修改成功，已向您的邮箱' + that.ruleForm.maiAccount + '发送验证邮件，请注意查收', '修改邮箱', {
               confirmButtonText: '我知道了',
               callback: function (action) {
                 that.loading = true
-                request.post('http://192.168.3.52:7099/franchisee/userCenter/bindingEmail')
-                .send({id:1123339, email: that.ruleForm.maiAccount, password: that.ruleForm.account_password})
+                request.post('http://192.168.3.52:7099/franchisee/account/updateEmail4Fran')
+                .send({id:1123339, email: that.ruleForm.maiAccount,pwd: that.ruleForm.account_password})
                 .end((err, res) => {
                   if (err) {
                     console.log(err)
@@ -225,13 +225,13 @@ export default {
                       that.loading = false
                       that.$router.push('/index/memberCenter')
                       that.$message({
-                        message: '恭喜你，绑定成功',
+                        message: '恭喜你，修改邮箱成功',
                         type: 'success'
                       })
                     } else {
                       that.loading = false
                       that.$message({
-                        message: 'sorry，绑定失败',
+                        message: 'sorry，修改邮箱失败',
                         type: 'error'
                       })
                     }

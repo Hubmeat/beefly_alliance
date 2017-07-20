@@ -19,7 +19,7 @@
 							<el-form-item label="所属角色" prop="role">
 								<el-select v-model="ruleForm.role" placeholder="选择角色类型">
 									<el-option label="管理员" value="管理员"></el-option>
-									<el-option label="加盟商" value="加盟商"></el-option>
+									<!-- <el-option label="加盟商" value="加盟商"></el-option> -->
 									<el-option label="合伙人" value="合伙人"></el-option>
 								</el-select>
 							</el-form-item>
@@ -216,11 +216,9 @@ export default {
         ).then(() => {
           if (this.ruleForm.role === '管理员') {
             this.ruleForm.role = 0
-          } else if (this.ruleForm.role === '加盟商') {
+          } else{
             this.ruleForm.role = 1
-          } else {
-            this.ruleForm.role = 2
-          }
+          } 
           request.post('http://192.168.3.52:7099/franchisee/account/addAccount')
            .send({
               curAcc: {
