@@ -88,7 +88,7 @@
   div#login div.content header h3{width:400px;margin:0 auto;color:#fffaea;text-align: center;font-size:30px;}
   div#login div.content div.loginForm{width:400px;margin:0 auto;color:#fff;}
   div#login div.content div.loginForm form.el-form{height:100%;background:#292626;padding:40px;border-radius:5px;box-shadow:2px -1px 6px 2px rgba(0,0,0,.6)}
-  div#login div.content div.loginForm form.el-form input{ border:1px solid #fbfdff}
+  div#login div.content div.loginForm form.el-form input{ border:1px solid #fbfdff;width:auto;}
   .el-button--primary{color: #fff;
     background-color: #292626;
     border-color: #ffffff;}
