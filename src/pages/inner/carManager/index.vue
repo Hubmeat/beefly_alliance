@@ -542,5 +542,5 @@ div#carManager_page {
   border-color: #888;
   color: #fff;
 }
-
+div.carManager .el-form-item__content .el-input input.el-input__inner{width:194px;}
 </style>

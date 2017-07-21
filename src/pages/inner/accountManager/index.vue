@@ -601,7 +601,7 @@ button#accountSearchBtn{width: 80px;
     border: none;
     /* border-radius: 4px; */
     background: rgba(52,52,67, 0.8);}
-    button#accountSearchBtn:hover{color:#fff;}
+    button#accountSearchBtn:hover{color:#fff;background:rgba(52,52,67,1);}
 .accountMangerBtn {
     width: 120px;
     height: 50px;}
