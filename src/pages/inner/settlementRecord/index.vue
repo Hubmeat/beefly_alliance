@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column
         prop="apply_time"
-        label="结算时间"
+        label="申请时间"
         min-width="120">
       </el-table-column>
       <el-table-column
