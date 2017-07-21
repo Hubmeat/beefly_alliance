@@ -1,7 +1,7 @@
 <template>
   <div class="operationlog">
     <el-tabs type="border-card" v-model="active" @tab-click="handleClickTab">
-      <el-tab-pane name="first">
+      <!-- <el-tab-pane name="first">
         <span slot="label"><i class="el-icon-date"></i>平台</span>
        <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_plat">
@@ -21,27 +21,6 @@
          </el-form>
        </el-row>
        <el-row class="table">
-         <!-- <table>
-            <thead>
-              <tr>
-                <th>用户名</th>
-                <th>姓名</th>
-                <th>操作内容</th>
-                <th>操作日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-bind:key="item.username" v-for="item of form_plat.tableData">
-                <td>{{item.userId}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.content}}</td>
-                <td>{{item.operationTime}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="hasData" v-show="form_plat.hasPlatData">
-            暂无数据
-          </div> -->
           <el-table
             :data="form_plat.tableData"
             style="width:100%"
@@ -71,8 +50,8 @@
        <div class="operationlog_page">
         <div class="M-box"></div>
        </div>
-      </el-tab-pane>
-      <el-tab-pane label="加盟商" name="second">
+      </el-tab-pane> -->
+      <el-tab-pane label="加盟商" name="first">
         <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_join">
            <el-row class="selectPlace">
@@ -195,7 +174,7 @@
     data: function () {
       return {
         active: 'first',
-        tabTitle: '平台',
+        tabTitle: '加盟商',
         form_plat: {
           keyword: '姓名/用户名',
           startTime: moment(),
@@ -360,8 +339,8 @@
     },
     mounted: function () {
       var that = this
-      if(this.tabTitle === '平台') {
-         request.post('http://192.168.3.52:7099/franchisee/log/getAllOperationLog')
+      if(this.tabTitle === '加盟商') {
+         request.post('http://192.168.3.52:7099/franchisee/log/getOperationLog')
         .send({
           franchiseeId: '123456',
           userId: 'jjjj'

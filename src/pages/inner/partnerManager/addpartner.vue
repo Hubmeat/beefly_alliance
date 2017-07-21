@@ -156,9 +156,6 @@
   transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 }
 
-.el-input__inner::-webkit-input-placeholder {
-  color: #ddd;
-}
 
 .el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
   background: black !important;

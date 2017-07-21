@@ -11,10 +11,11 @@
             </h1>
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 							<el-form-item label="用户名" prop="userId">
-								<el-input v-model="ruleForm.userId" placeholder='请输入用户名'></el-input>
+								<el-input v-model="ruleForm.userId" placeholder='不超过100个字符'></el-input>
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
 								<el-input type="password" v-model="ruleForm.password" placeholder='请输入密码'></el-input>
+                <span class="tips">6-20位字符，可包括字母数字，区分大小写</span>
 							</el-form-item>
 							<el-form-item label="所属角色" prop="role">
 								<el-select v-model="ruleForm.role" placeholder="选择角色类型">
@@ -24,7 +25,7 @@
 								</el-select>
 							</el-form-item>
 							<el-form-item label="姓名" prop="name">
-								<el-input v-model="ruleForm.name" placeholder='请输入姓名'></el-input>
+								<el-input v-model="ruleForm.name" placeholder='不超过50个字符'></el-input>
 							</el-form-item>
 							<el-form-item label="手机号" prop="phoneNo">
 								<el-input v-model="ruleForm.phoneNo" placeholder='请输入手机号'></el-input>
@@ -33,7 +34,7 @@
 								<el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
 							</el-form-item>
 							<el-form-item label="备注">
-								<el-input type="textarea" v-model="ruleForm.textarea"></el-input>
+								<el-input type="textarea" v-model="ruleForm.textarea" placeholder="不超过200个字符"></el-input>
 							</el-form-item>
 							<el-form-item>
 								<el-button class='addaccount_button' type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -132,6 +133,9 @@
     cursor: pointer;
     font-size:18px;
 	}
+  div#addaccount_form .el-form-item__content .el-input input.el-input__inner{width:initial;}
+  span.tips{color:#dedede;}
+  
 </style>
       
 <script>

@@ -3,14 +3,14 @@
     <div id="am_search">
       <label>
         <span>关键字</span>
-        <input type="text" class="account_my_input">
+        <input type="text" placeholder="账号/用户名" v-on:blur="initQuery" v-model="accountOrUsername" class="account_my_input">
       </label>
       <label>
         <span>联系方式</span>
-        <input type="text" class="account_my_input">
+        <input type="text" placeholder="手机号/邮箱" v-on:blur="initQuery" v-model="telOrMail" class="account_my_input">
       </label>
   
-			<el-button id="accountSearchBtn" class="timeSelect_button">查询</el-button>
+			<el-button id="accountSearchBtn" @click="queryAccountInfo" class="timeSelect_button">查询</el-button>
     </div>
   
     <!-- account -->
@@ -27,7 +27,7 @@
         <el-table-column prop="phoneNo" label="手机号" min-width="140"></el-table-column>
         <el-table-column prop="email" label="邮箱" min-width="170"></el-table-column>
         <el-table-column prop="name" label="姓名" min-width="100"></el-table-column>
-        <el-table-column prop="role" label="类别" min-width="120">
+        <el-table-column prop="role" label="角色" min-width="120">
           <template scope="scope">
             <span v-if="scope.row.role===0">管理员</span>
             <span v-else>合伙人</span>
@@ -125,10 +125,12 @@ import {getAllAccount} from '../../../api/getAllAccount.api'
 import {modifyAccountState} from '../../../api/modifyAccountState.api'
 import {delAccount} from '../../../api/delAccount.api'
 import {updateAccount} from '../../../api/updateAccount.api'
-
+import request from 'superagent'
 export default {
   data () {
     return {
+      accountOrUsername:'',
+      telOrMail:'',
       input: '',
       pageShow: true,
       emptyText: ' ',
@@ -136,6 +138,7 @@ export default {
       currentPage: 1,
       totalPage:1,
       tableData: [],
+      initData: [],
       router_show: false,
       dialogVisible: false,
       totalPage: '',
@@ -154,6 +157,11 @@ export default {
     }
   },
   methods: {
+    initQuery(){
+      if(this.accountOrUsername.trim().length===0&&this.telOrMail.trim().length===0){
+        this.tableData = this.initData
+      }
+    },
     handleSizeChange(val) {
      // console.log(`每页 ${val} 条`);
     },
@@ -332,6 +340,30 @@ export default {
         return obj
       })
       return res
+    },
+    queryAccountInfo (){
+       var obj = {
+         name: this.accountOrUsername,
+         phone: this.telOrMail
+       }
+       var that = this
+       if(this.accountOrUsername.trim().length>0||this.telOrMail.trim().length>0){
+          request.post('http://192.168.3.52:7099/franchisee/account/queryAccount')
+          .send(obj)
+          .end(function(error,res){
+            if(error){
+              console.log(error)
+            }else {
+              var res = JSON.parse(res.text)
+              that.tableData =  res
+              that.pageShow = false
+              that.accountOrUsername = ''
+              that.telOrMail = ''
+            }
+          })
+       } else {
+         this.tableData = this.initData
+       }
     }
   },
   mounted () {
@@ -360,6 +392,7 @@ export default {
             that.pageShow = true
           }
           that.$store.state.accountMangerData = that.handleData(arr)
+          that.initData = that.$store.state.accountMangerData
           that.tableData =  that.$store.state.accountMangerData
           //that.setPage(arr,that.totalPage)
       }
@@ -386,7 +419,8 @@ export default {
         },
         deep: true
       }
-    }
+    },
+    
   }
 </script>
 

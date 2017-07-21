@@ -1,7 +1,7 @@
 <template>
   <div class="loginlog">
     <el-tabs type="border-card" @tab-click="handleClickTab">
-      <el-tab-pane>
+      <!-- <el-tab-pane>
         <span slot="label"><i class="el-icon-date"></i>平台</span>
        <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_plat">
@@ -21,27 +21,6 @@
          </el-form>
        </el-row>
        <el-row class="table">
-          <!-- <table>
-              <thead>
-                <tr>
-                  <th>用户名</th>
-                  <th>姓名</th>
-                  <th>操作类别</th>
-                  <th>操作日期</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-bind:key="item.username" v-for="item of form_plat.tableData">
-                  <td>{{item.userId}}</td>
-                  <td>{{item.name}}</td>
-                  <td>{{item.type===0?'登录':'注销'}}</td>
-                  <td>{{item.loginTime}}</td>
-                </tr>
-              </tbody>
-          </table>
-          <div class="hasData" v-show="form_plat.hasPlatData">
-            暂无数据
-          </div> -->
           <el-table 
             :data="form_plat.tableData" 
             style="width:100%"
@@ -74,7 +53,7 @@
        <div class="loginLog_page">
         <div class="M-box"></div>
        </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="加盟商">
         <el-row class="querybar">
          <el-form :inline="true" v-bind:model="form_join">
@@ -105,27 +84,6 @@
          </el-form>
        </el-row>
        <el-row class="table">
-         <!-- <table>
-            <thead>
-              <tr>
-                <th>用户名</th>
-                <th>姓名</th>
-                <th>操作类别</th>
-                <th>操作日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-bind:key="item.username" v-for="item of form_join.tableData">
-                <td>{{item.userId}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.type===0?'登录':'注销'}}</td>
-                <td>{{item.loginTime}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="hasData" v-show="form_join.hasJoinData">
-                暂无数据
-          </div> -->
            <el-table :data="form_join.tableData" style="width:100%">
             <el-table-column
               prop="userId"
@@ -186,6 +144,8 @@
     border: none;
     /* border-radius: 4px; */
     background: rgba(52,52,67, 0.8);}
+    .el-form-item__content .el-input input.el-input__inner{width:initial}
+    
 </style>
 <script>
   import $ from 'jquery'
@@ -197,7 +157,7 @@
   export default {
     data: function () {
       return {
-        tabTitle: '平台',
+        tabTitle: '加盟商',
         loadingdata:true,
         form_plat: {
           keyword: '姓名/用户名',
@@ -361,8 +321,8 @@
     },
     mounted: function () {
       var that = this
-      if(this.tabTitle === '平台') {
-         request.post('http://192.168.3.52:7099/franchisee/log/allLog')
+      if(this.tabTitle === '加盟商') {
+         request.post('http://192.168.3.52:7099/franchisee/log/getLoginLog')
         .send({
           franchiseeId: '123456',
           userId: 'jjjj'
@@ -375,14 +335,14 @@
               var obj = Object.assign({},item,{loginTime: moment(item.loginTime).format('YYYY-MM-DD HH:mm:ss')})
               return obj
             })
-            that.form_plat.tableData = newArr
-            that.plat_totalPage = JSON.parse(res.text).totalPage || 20
+            that.form_join.tableData = newArr
+            that.join_totalPage = JSON.parse(res.text).totalPage || 20
             var len = JSON.parse(res.text).list.length
             if (len>0) {
               that.loadingdata = false,
-              that.form_plat.hasPlatData = false
+              that.form_join.hasPlatData = false
               $('.M-box').eq(0).pagination({
-                pageCount: that.plat_totalPage,
+                pageCount: that.join_totalPage,
                 jump: true,
                 coping: true,
                 homePage: '首页',
@@ -396,30 +356,30 @@
                 }
                 if (e.target.tagName === 'A') {
                   if (e.target.innerText === '首页') {
-                    that.plat_currentPage = 1
+                    that.join_currentPage=1
                   }
                   if (e.target.innerText === '尾页') {
-                    that.plat_currentPage = that.totalPage
+                    that.join_currentPage = that.totalPage
                   }
                   if (e.target.innerText === '»') {
-                    that.plat_currentPage++
+                    that.join_currentPage++
                   }
                   if (e.target.innerText === '«') {
-                    that.plat_currentPage--
+                    that.join_currentPage--
                   }
                   if (checkPositiveNumber(e.target.innerText)) {
-                    that.plat_currentPage = e.target.innerText
+                    that.join_currentPage = e.target.innerText
                   }
                   if (e.target.innerText === '跳转') {
                     e.preventDefault()
                     var jumpPageNum = $('.M-box .active')
-                    that.plat_currentPage = jumpPageNum[0].innerText
+                    that.join_currentPage = jumpPageNum[0].innerText
                   }
                 }
               })
               $(document).keydown(function (e) {
                 if (e.keyCode === 13) {
-                  that.plat_currentPage = e.target.value
+                  that.join_currentPage = e.target.value
                 }
               })
             }

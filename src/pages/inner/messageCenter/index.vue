@@ -210,23 +210,24 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
         })
       },
       handleClick(row, column, cell, event){
-        //console.log(row)
-        if(row.isRead===0){
-          this.msgList.push({id:row.id})
-          row.isRead=1
-           request.post('http://192.168.3.52:7099/franchisee/msg/read')
-            .send({
-              list: this.msgList
-            })
-            .end(function(error,res){
-              if(error) {
-                console.log(error)
-              }else {
-                console.log(res)
-              }
-            })
-        }else {
-           return false
+        if(event.target.tagName==='I'){
+          if(row.isRead===0){
+            this.msgList.push({id:row.id})
+            row.isRead=1
+            request.post('http://192.168.3.52:7099/franchisee/msg/read')
+              .send({
+                list: this.msgList
+              })
+              .end(function(error,res){
+                if(error) {
+                  console.log(error)
+                }else {
+                  console.log(res)
+                }
+              })
+          }else {
+            return false
+          }
         }
       },
       selectAll () {

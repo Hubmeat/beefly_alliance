@@ -158,7 +158,7 @@ export default [
                 }, 
                 {
                     path: '/index/memberCenter/updateEmail',
-                    name: '绑定邮箱',
+                    name: '修改邮箱',
                     component: updateEmail
                 },
                 {

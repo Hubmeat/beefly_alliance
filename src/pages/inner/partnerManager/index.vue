@@ -183,26 +183,6 @@
   border: 1px solid #ddd;
 }
 
-::-webkit-input-placeholder {
-  /* WebKit browsers */
-  color: #bfcbd9;
-}
-
-:-moz-placeholder {
-  /* Mozilla Firefox 4 to 18 */
-  color: #bfcbd9;
-}
-
-::-moz-placeholder {
-  /* Mozilla Firefox 19+ */
-  color: #bfcbd9;
-}
-
-:-ms-input-placeholder {
-  /* Internet Explorer 10+ */
-  color: #bfcbd9;
-}
-
 
 /*#partner_header button {
   display: inline-block;
@@ -334,9 +314,6 @@
   transition: border-color .2s cubic-bezier(.645,.045,.355,1);
 }
 
-.el-input__inner::-webkit-input-placeholder {
-  color: #ddd;
-}
 
 .el-date-table td.current:not(.disabled), .el-date-table td.end-date, .el-date-table td.start-date {
   background: black !important;
