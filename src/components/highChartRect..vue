@@ -1,8 +1,11 @@
 <template>
   <div style="position: relative;">
       <div v-title>报表管理-消费数据-统计图</div>
-      <p class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">暂无数据</p>
-      <div id="container"></div>
+      <div class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">
+        <img src="../assets/img/2.png" />
+        <p>暂无数据</p>
+      </div>
+      <div id="container" style="position: relative;"></div>
   </div>
 </template>
 <script>
@@ -34,19 +37,25 @@
             if (error) {
               console.log('error:', error)
             } else {
-              var arr = JSON.parse(res.text).list
-              var newArr = []
-              for (var i = 0; i < arr.length; i++) {
-                var obj = {}
-                obj.time = moment(arr[i].time).format('YYYY-MM-DD')
-                obj.totalBill = arr[i].totalBill
-                obj.money = arr[i].money
-                newArr.push(obj)
-              }
+              if (JSON.parse(res.text).list.length === 0) {
+                $('#container').html('')
+                this.noData = true
+              } else {
+                this.noData = false
+                var arr = JSON.parse(res.text).list
+                var newArr = []
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY-MM-DD')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }
 
-              this.$store.dispatch('consumeData_action', {newArr})
-              this.getChartDate()
-              this.createChartsShap()
+                this.$store.dispatch('consumeData_action', {newArr})
+                this.getChartDate()
+                this.createChartsShap()
+              }
             }
           })
       } else {
@@ -90,6 +99,14 @@
               color: '#808080'
             }]
           },
+          credits: {
+            enabled: true,
+            text:"北京蜜蜂出行科技有限公司",  
+            href: "http://www.mmuu.com" 
+          },
+          exporting:{  
+            enabled: false //用来设置是否显示‘打印’,'导出'等功能按钮，不设置时默认为显示  
+          },  
           legend: {
             layout: 'vertical',
             align: 'left',
@@ -273,7 +290,19 @@
     width: 100%;
     text-align: center;
     font-size: 22px;
-    color: #f60;
+    color: rgba(243, 243, 245, 1);
+    position: relative;
+    text-align: center;
     /* left: 50%; */
+  }
+
+  .my_noDate img {
+    display: inline-block;
+    width: 500px;
+    height: 200px;
+  }
+
+  .my_noDate p {
+    color: #ccc;
   }
 </style>

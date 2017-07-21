@@ -22,12 +22,16 @@
 						<p>{{form.IDtype}}</p>
 					</li>
 					<li>
+						<span>证件号码</span>
+						<p>{{form.IDcard}}</p>
+					</li>
+					<li>
 						<span>手机号</span>
 						<p>{{form.tel}}</p>
 					</li>
 					<li>
 						<span>认购车辆数</span>
-						<p>{{form.car}}</p>
+						<p>{{form.car}}辆</p>
 					</li>
 					<li>
 						<span>邮箱</span>
@@ -185,12 +189,15 @@ export default {
 				if (err) {
 					console.log('err:' + err)
 				} else {
-					console.log(res)
 					console.log(JSON.parse(res.text))
 					var arr = JSON.parse(res.text)
 					this.form.name = arr.name
 					this.form.sex = arr.sex
-					this.form.IDcard = arr.IDcard
+					if (arr.cardType === 0) {
+						this.form.IDtype = '身份证'
+					} else {
+						this.form.IDtype = '护照'
+					}
 					this.form.tel = arr.phoneNo
 					this.form.cars = arr.bikeNum
 					this.form.email = arr.email

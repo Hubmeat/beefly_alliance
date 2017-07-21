@@ -9,25 +9,25 @@
             <table>
               <tbody>
                 <tr>
-                  <td>
+                  <td class="lang">
                     <span class="prex">车辆号:</span>100001</td>
                   <td>
                     <span class="prex">终端编号:</span>100001</td>
                 </tr>
                 <tr>
-                  <td>
+                  <td class="lang">
                     <span class="prex">车辆型号:</span>小蜜蜂1代</td>
                   <td>
                     <span class="prex">车型:</span>车型1</td>
                 </tr>
                 <tr>
-                  <td>
+                  <td class="lang">
                     <span class="prex">上线日期:</span>2015-01-01</td>
                   <td>
                     <span class="prex">报废日期:</span>2020-01-01</td>
                 </tr>
                 <tr>
-                  <td>
+                  <td class="lang">
                     <span class="prex">所属区域:</span>无为县</td>
                   <td>
                     <span class="prex">车辆位置:</span>无为县****区****路****号</td>
@@ -35,7 +35,7 @@
               </tbody>
             </table>
           </el-col>
-          <el-col :span="6" class="battery">
+          <!-- <el-col :span="6" class="battery">
             <ul>
               <li>
                 <span class="online">在线</span>
@@ -47,7 +47,7 @@
                 <span class="capacity">电池电量: 50V</span>
               </li>
             </ul>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row class="record">
           <el-tabs v-model="activeName">
@@ -55,10 +55,17 @@
               <table>
                 <thead>
                   <tr>
-                    <th>消费日期</th>
-                    <th>时间</th>
-                    <th>里程</th>
-                    <th>金额</th>
+                    <th>下单时间</th>
+                    <th>骑行时间（分钟）</th>
+                    <th>里程（公里）</th>
+                    <th>订单费用</th>
+                    <th>优惠卷支付</th>
+                    <th>实际收益
+                      <el-tooltip placement="top">
+                        <div slot="content">实际收益就是用户实际支付金额，但不等于订单费用减去优惠券支付金额；<br/>优惠券支付的金额可能大于订单费用，例如某笔订单骑行费用是3元，<br/>然后用户可能是用5元的优惠券抵扣的。</div>
+                        <span class="help">?</span>
+                      </el-tooltip>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,11 +74,13 @@
                     <td>{{item.time}}</td>
                     <td>{{item.mileage}}</td>
                     <td>{{item.money}}</td>
+                    <td>{{item.actualAmount}}</td>
+                    <td>{{item.couponAmount}}</td>
                   </tr>
                 </tbody>
               </table>
             </el-tab-pane>
-            <el-tab-pane label="换电记录" name="second" class="recodeTable">
+            <!-- <el-tab-pane label="换电记录" name="second" class="recodeTable">
               <table>
                 <thead>
                   <tr>
@@ -110,7 +119,7 @@
                   </tr>
                 </tbody>
               </table>
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
         </el-row>
         <div id="carUseDetail_page">
@@ -169,8 +178,13 @@ export default {
               var obj = {}
               obj.money = newArr[i].money
               obj.mileage = newArr[i].mileage + '里'
-              obj.date = moment(newArr[i].chargeTime).format('YYYY-MM-DD')
+              obj.date = moment(newArr[i].chargeTime).format('YYYY-MM-DD HH:MM:SS')
               obj.time =  Math.floor((newArr[i].time) / 60000) + ' 分钟'
+              /*
+                以下为新增优惠卷字段，需跟后台确认后渲染数据
+              */
+              obj.actualAmount = newArr[i].actualAmount
+              obj.couponAmount = newArr[i].couponAmount
               arrDeled.push(obj)
             }
             this.incomeTableData = arrDeled
@@ -314,7 +328,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 div.carUseDetail {
     background: #fff;
     margin: 0 auto;
@@ -392,6 +406,7 @@ div.carUseDetail div.battery ul li span.capacity {
 
 div.carUseDetail div.record {
   margin-top: 50px;
+  padding: 10px;
 }
 
 div.carUseDetail div.recodeTable table {
@@ -416,4 +431,41 @@ div.carUseDetail div.recodeTable table tbody tr td {
 div#carUseDetail_page {
   margin-top: 50px;
 }
+
+.el-tabs__active-bar {
+  position: absolute;
+  width: 0 !important;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  /* background-color: #20a0ff; */
+  z-index: 1;
+  transition: transform .3s cubic-bezier(.645,.045,.355,1);
+  list-style: none;
+}
+
+.el-tabs__item.is-active {
+  color: #444;
+}
+
+.el-tabs__nav-scroll {
+    overflow: hidden;
+    border-bottom: 2px solid #444;
+}
+
+.lang {
+  width: 300px;  
+}
+
+.help {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  text-align: center;
+  color: #f60;
+  border-radius: 50%;
+  margin-left: 5px;
+  border: 1px solid #f60;
+}
+
 </style>

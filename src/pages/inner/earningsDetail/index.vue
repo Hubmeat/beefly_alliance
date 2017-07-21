@@ -34,29 +34,38 @@
       element-loading-text="拼命加载中"
       style="width: 100%">
       <el-table-column
-        prop="money"
-        label="金额"
-        min-width="60">
-      </el-table-column>
-      <el-table-column
         prop="bikeCode"
-        label="车牌号"
+        label="车牌编号"
         min-width="70">
       </el-table-column>
       <el-table-column
+        prop="orderDate"
+        label="下单时间">
+      </el-table-column>
+      <el-table-column
         prop="placeOrderTime"
-        label="消费时间"
+        label="骑行时间（公里）"
         min-width="70">
       </el-table-column>
       <el-table-column
         prop="journey"
-        label="里程"
+        label="骑行里程（公里）"
         min-width="70">
       </el-table-column>
+      <el-table-column
+        prop="money"
+        label="订单费用"
+        min-width="60">
       </el-table-column>
       <el-table-column
-        prop="orderDate"
-        label="订单日期">
+        prop="couponPayfor"
+        label="优惠卷支付"
+        min-width="60">
+      </el-table-column>
+      <el-table-column
+        prop="actualAmount"
+        label="实际收益（元）"
+        min-width="60">
       </el-table-column>
     </el-table>
 		</div>
@@ -381,8 +390,8 @@ export default {
           setTimeout(() => {
             that.$loading({customClass: 'loading_class'}).close()
             const { export_json_to_excel } = require('../../../assets/lib/js/Export2Excel.js')
-            const tHeader = ['金额', '车牌号', '消费时间', '里程(公里)', '订单日期']
-            const filterVal = ['money', 'bikeCode', 'placeOrderTime', 'journey', 'orderDate']
+            const tHeader = ['车辆编号', '下单时间', '骑行时间（分钟）', '骑行里程(公里)', '订单费用', '优惠券支付','实际收益（元）']
+            const filterVal = ['bikeCode', 'orderDate', 'placeOrderTime', 'journey', 'money', 'couponPayfor', 'actualAmount']
             var type = that.$route.query.type
             var newType
             switch (type) {
@@ -468,6 +477,12 @@ export default {
         obj.placeOrderTime = Math.floor((arr[i].time) / 60000) + ' 分钟'
         obj.journey = arr[i].mileage
         obj.orderDate = moment(arr[i].chargeTime).format('YYYY-MM-DD')
+        /**
+         * 下面的数据为新增数据
+         * 需跟后台对接
+         * */
+        obj.couponPayfor = arr[i].couponPayfor
+        obj.actualAmount = arr[i].actualAmount
         arrDeled.push(obj)
       }
 

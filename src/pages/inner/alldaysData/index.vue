@@ -32,14 +32,14 @@
     <el-row class="watchButton">
       <el-col :span="2">
         <span class="orderMoney"></span>
-        <i>金额</i>
+        <i>实际收益</i>
       </el-col>
       <el-col :span="2">
         <span class="orderNum"></span>
         <i>单数</i>
       </el-col>
     </el-row>
-    <el-col style="padding-bottom:190px; background:#fff;">
+    <el-col style="padding-bottom:190px; background:#fff; height: 600px;">
       <highChart></highChart>
     </el-col>
     </el-row>
@@ -77,7 +77,7 @@ div.allDays div.watchButton {
 div.allDays div.watchButton div.el-col-2 {
   float: right;
   /* margin-left: 20px; */
-  width: 6.668%
+  width: 7.8%
 }
 
 div.allDays div.watchButton span {
@@ -279,6 +279,7 @@ export default {
         }
         case '最近六个月': {
           this.$router.push({ query: { type:  '3'}})
+          this.nowTime = '近6个月'
           break
         }
       }

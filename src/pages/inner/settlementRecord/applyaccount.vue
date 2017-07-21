@@ -31,11 +31,13 @@
           element-loading-text="拼命加载中"
           :data="tableData" 
           style="width: 100%; font-size:13px;">
-        <el-table-column prop="order_time" label="订单时间" min-width="200"></el-table-column>
-        <el-table-column prop="bike_number" label="车牌号" min-width="150"></el-table-column>
-        <el-table-column prop="riding_time" label="骑行时间" min-width="150"></el-table-column>
-        <el-table-column prop="riding_dis" label="骑行距离" min-width="180"></el-table-column>
-        <el-table-column prop="riding_consume" label="消费金额"></el-table-column>
+        <el-table-column prop="order_time" label="下单时间" min-width="200"></el-table-column>
+        <el-table-column prop="riding_time" label="骑行时间（分钟）" min-width="150"></el-table-column>
+        <el-table-column prop="riding_dis" label="骑行历程（公里）" min-width="180"></el-table-column>
+        <el-table-column prop="riding_consume" label="订单费用"></el-table-column>
+        <!-- <el-table-column prop="bike_number" label="车牌号" min-width="150"></el-table-column> -->
+        <el-table-column prop="couponPayfor" label="优惠券支付" min-width="150"></el-table-column>
+        <el-table-column prop="actualAmount" label="实际收益（元）" min-width="150"></el-table-column>
       </el-table>
     </div>
   
@@ -289,10 +291,10 @@ export default {
               message: '提现申请已提交, 预计1-2个工作日到账'
             })
           } else {
-            that.$message({
-              type: 'info',
-              message: '提现申请已取消'
-            })
+            // that.$message({
+            //   type: 'info',
+            //   message: '提现申请已取消'
+            // })
           }
         })
       }

@@ -191,7 +191,7 @@ export default {
     return {
       ruleForm: {
         name: '',
-        sex: '女',
+        sex: '男',
         IDtype: '',
         IDcard: '',
         tel: '',
@@ -211,8 +211,8 @@ export default {
           { required: true, message: '请选择证件类型', trigger: 'change' }
         ],
         IDcard: [
-          { type: 'string', required: true, message: '请输入身份证号码', trigger: 'blur' },
-          { min: 15, max: 19, message: '请输入合法的身份证号码', trigger: 'blur' }
+          { type: 'string', required: true, message: '请输入证件号码', trigger: 'blur' },
+          { min: 15, max: 19, message: '请输入合法的证件号码', trigger: 'blur' }
         ],
         tel: [
           { type: 'string', required: true, message: '请填写手机号', trigger: 'blur' },
