@@ -460,12 +460,14 @@ div#carUseDetail_page {
 .help {
   height: 20px;
   width: 20px;
+  line-height: 20px;
+  cursor: help;
   display: inline-block;
   text-align: center;
-  color: #f60;
+  color: #666;
   border-radius: 50%;
   margin-left: 5px;
-  border: 1px solid #f60;
+  border: 1px solid #666;
 }
 
 </style>
