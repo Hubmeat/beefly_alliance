@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="showCarInfo">
-      <table>
+      <!-- <table>
         <thead>
           <tr>
             <th>车辆号</th>
@@ -66,10 +66,61 @@
             <td>{{item.orderNum}}</td>
           </tr>
         </tbody>
-      </table>
-      <div class="datashow" v-show="noDate">
+      </table> -->
+
+      <el-table
+        :data="tableData"
+        style="width: 100% font-size:13px; color: #6c6c6c;"
+        v-loading="loading2"
+        element-loading-text="拼命加载中">
+        <el-table-column
+          min-width="80"
+          label="车辆号"
+          prop='bikeCode'>
+          <template scope="scope">
+              <!-- <a>{{scope.row.bikeCode}}</a> -->
+              <router-link style="color:rgb(118, 103, 233); text-decoration: none;" target='_blank' v-bind:to="{path:'/carUseDetail', query: {code:scope.row.bikeCode}}">{{scope.row.bikeCode}}</router-link>  
+             <!-- <a @click="$router.push({path:'/carUseDetail', query: {code:scope.row.bikeCode}})">{{scope.row.bikeCode}}</a>  -->
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="boxCode"
+          label="终端编号"
+          min-width="90">
+        </el-table-column>
+        <!-- <el-table-column
+          prop="generationsName"
+          label="车辆名称"
+          min-width="90">
+        </el-table-column>
+        <el-table-column
+          prop="model"
+          label="车型"
+          min-width="90">
+        </el-table-column> -->
+        <el-table-column
+          prop="onlineTime"
+          label="上线日期"
+          min-width="120">
+        </el-table-column>
+        <el-table-column
+          prop="state"
+          label="车辆状态"
+          min-width="80">
+        </el-table-column>
+        <!-- <el-table-column
+          prop="orderNum"
+          label="骑行次数">
+        </el-table-column> -->
+        <el-table-column
+          prop="bikePosition"
+          label="车辆位置">
+        </el-table-column>
+      </el-table>
+
+      <!-- <div class="datashow" v-show="noDate">
         <p>暂无数据</p>
-      </div>
+      </div> -->
     </div>
   
     <div id="carManager_page">
@@ -84,6 +135,7 @@ import $ from 'jquery'
 // import Vue from 'vue'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import { host } from '../../../config/index.js'
 export default {
   data: function () {
     return {
@@ -97,7 +149,8 @@ export default {
       checkList: [],
       pagetotal: '',
       terminalNumber: '',
-      noDate: false
+      noDate: false,
+      loading2: false
     }
   },
   mounted: function () {
@@ -105,14 +158,15 @@ export default {
   },
   beforeUpdate: function () {
     // 判断是否有数据来加载暂无数据
-    if (this.tableData.length === 0) {
-      this.noDate = true
-    } else {
-      this.noDate = false
-    }
+    // if (this.tableData.length === 0) {
+    //   this.noDate = true
+    // } else {
+    //   this.noDate = false
+    // }
 
     var that = this
     $('.M-box').click('a', function (e) {
+      that.loading2 = true
       clearTimeout(this.timer)
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
         if (e.target.innerHTML === '首页') {
@@ -132,7 +186,7 @@ export default {
       }
       this.timer = setTimeout(function () {
         request
-          .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes?page=' + e.target.innerHTML)
+          .post(host + '/franchisee/bikeManager/getBikes?page=' + e.target.innerHTML)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -144,6 +198,9 @@ export default {
               console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var newData = that.tableDataDel(pagedata)
+
+              // loading关闭
+              that.loading2 = false
               that.tableData = newData
             }
           })
@@ -163,6 +220,7 @@ export default {
           type: 'warning'
         })
       } else {
+        this.loading2 = true
         var startTime, endTime
         if (this.form.data1 === '' || this.form.data2 === '') {
           startTime = null
@@ -178,7 +236,7 @@ export default {
 
         // }
         request
-          .post('http://192.168.3.52:7099/franchisee/bikeManager/queryBikes')
+          .post(host + '/franchisee/bikeManager/queryBikes')
           .send({
             'start': startTime?startTime:null,
             'end': endTime?endTime:null,
@@ -193,6 +251,8 @@ export default {
               var data = (JSON.parse(res.text)).list
               var newData = this.tableDataDel(data)
               this.pagetotal = (JSON.parse(res.text)).totalPage
+              // loading 关闭
+              this.loading2 = false
               this.tableData = newData
               if (this.pagetotal > 1) {
                 $('.M-box').pagination({
@@ -226,6 +286,10 @@ export default {
         }
         obj.state = arr[i].state
         obj.orderNum = arr[i].orderNum
+        /*
+          上面的字段一部分需求去掉了，下面的需求为新增字段
+        */
+        obj.bikePosition = arr[i].place
 
         arrDeled.push(obj)
       }
@@ -241,8 +305,9 @@ export default {
       }
     },
     mountedWay () {
+      this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/bikeManager/getBikes')
+        .post(host + '/franchisee/bikeManager/getBikes')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -257,6 +322,9 @@ export default {
             var newData = this.tableDataDel(data)
             this.pagetotal = (JSON.parse(res.text)).totalPage
             this.tableData = newData
+
+            // loading 关闭
+            this.loading2 = false
             if (this.pagetotal > 1) {
               $('.M-box').pagination({
                 pageCount: this.pagetotal,
@@ -330,7 +398,7 @@ div.showCarInfo {
   border: 1px solid #e7ecf1;
   border-bottom: none;
 }
-
+/* 
 div.showCarInfo table {
   border-collapse: collapse;
   width: 100%;
@@ -351,20 +419,20 @@ div.showCarInfo table tr th {
 div.showCarInfo table tr {
   border-bottom: 1px solid #eee;
   text-indent: 2em;
-}
+} */
 
-div.showCarInfo table tr td {
+/* div.showCarInfo table tr td {
   text-align: left;
-  /*border: 1px solid #dfe6ec;*/
   padding: 10px 0;
   color: #555;
   font-size: 14px;
-}
-
+} */
+/* 
 div.showCarInfo table tr td a {
   text-decoration: none;
   color: #555
 }
+ */
 
 div#carManager_page {
     padding: 4px 10px 0 22px;

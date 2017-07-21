@@ -37,6 +37,12 @@ export default {
       active: false
     }
   },
+  mounted () {
+    this.form.data2 = moment().format('YYYY-MM-DD')
+
+    // request
+    //   .post('')
+  },
   methods: {
     handleChangeType(e) {
       switch (e.target.innerText) {

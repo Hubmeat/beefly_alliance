@@ -1,7 +1,10 @@
 <template>
   <div style="position: relative;">
-      <div v-title>报表管理-消费数据-统计图</div>
-      <p class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">暂无数据</p>
+      <div v-title>报表管理-消费数据-走势图</div>
+      <div class="my_noDate" style="position: absolute; min-height:40px; height: 40px;" v-show="noData">
+        <img src="../assets/img/1.png" />
+        <p>暂无数据</p>
+      </div>
       <div id="container" style="position: relative;"></div>
   </div>
 </template>
@@ -9,6 +12,7 @@
   import moment from 'moment'
   import request from 'superagent'
   import HighchartsNoData from 'highcharts-no-data-to-display'
+  import { host } from '../config/index'
   var Highcharts = require('highcharts')
   // 在 Highcharts 加载之后加载功能模块
   require('highcharts/modules/exporting')(Highcharts)
@@ -22,7 +26,7 @@
     },
     mounted: function () {
       request
-        .post('http://192.168.3.52:7099/franchisee/report/get24HourTrend?type=' + this.$route.query.type)
+        .post(host + 'franchisee/report/get24HourTrend?type=' + this.$route.query.type)
         .send({
           "account": {
             'franchiseeId': '123456',
@@ -63,6 +67,14 @@
               downloadPNG: '下载PNG文件',
               downloadSVG: '下载SVG文件'
             },
+            credits: {
+              enabled: true,
+              text:"北京蜜蜂出行科技有限公司",  
+              href: "http://www.mmuu.com" 
+            },
+            exporting:{  
+              enabled: false //用来设置是否显示‘打印’,'导出'等功能按钮，不设置时默认为显示  
+            },  
             chart: {
               type: 'line'                           // 指定图表的类型，默认是折线图（line）
             },
@@ -143,7 +155,7 @@
       },
       dataUpdate () {
         request
-          .post('http://192.168.3.52:7099/franchisee/report/get24HourTrend?type=' + this.$route.query.type)
+          .post(host + 'franchisee/report/get24HourTrend?type=' + this.$route.query.type)
           .send({
             "account": {
               'franchiseeId': '123456',
@@ -182,7 +194,19 @@
     width: 100%;
     text-align: center;
     font-size: 22px;
-    color: #f60;
+    color: rgba(243, 243, 245, 1);
+    position: relative;
+    text-align: center;
     /* left: 50%; */
+  }
+
+  .my_noDate img {
+    display: inline-block;
+    width: 500px;
+    height: 200px;
+  }
+
+  .my_noDate p {
+    color: #ccc;
   }
 </style>

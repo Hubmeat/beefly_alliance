@@ -3,9 +3,10 @@
     <div v-title>报表管理-消费数据-列表</div>
     <h3>
       <button class="btn_list" @click="handeClick">查看统计图</button>
+      <h1>{{$store.state.moment}}</h1>
     </h3>
     <div>
-      <table>
+      <!-- <table>
         <thead>
           <tr>
             <th>消费时间</th>
@@ -20,10 +21,47 @@
             <td>￥{{list.money}}</td>
           </tr>
         </tbody>
-      </table>
-      <div class="datashow" v-show="noDate">
+      </table> -->
+      <!-- <div class="datashow" v-show="noDate">
         <p>暂无数据</p>
-      </div>
+      </div> -->
+      <el-table
+        :data="lists"
+        v-loading="loading2"
+        element-loading-text="拼命加载中"
+        style="width: 100%">
+        <el-table-column
+          prop="time"
+          label="订单日期"
+          sortable
+          min-width="120">
+        </el-table-column>
+        <el-table-column
+          prop="totalBill"
+          label="订单数"
+          min-width="120">
+        </el-table-column>
+        <el-table-column
+          prop="money"
+          label="订单总额">
+        </el-table-column>
+        <el-table-column
+          prop="couponApplyMoney"
+          label="优惠卷支付总额">
+        </el-table-column>
+        <el-table-column
+          min-width="80"
+          label="实际收益（元） ?"
+          prop='bikeCode'>
+          <template scope="scope">
+            <el-tooltip placement="top">
+              <div slot="content">多行信息<br/>第二行信息</div>
+              <el-button>Top center</el-button>
+            </el-tooltip>
+            <span>11</span>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
 		<div id="earD_page">
@@ -63,7 +101,7 @@ div.queryLists h3 button {
   width: 137px;
 }
 
-div.queryLists table {
+/* div.queryLists table {
   border-collapse: collapse;
   width: 100%;
   border-left: 1px solid #eee;
@@ -87,11 +125,10 @@ div.queryLists table tr {
 
 div.queryLists table tr td {
   text-align: left;
-  /*border: 1px solid #dfe6ec;*/
   padding: 10px 0;
   color: #555;
   font-size: 14px;
-}
+} */
 
 #earD_page {
   padding: 14px 0px 0px 0px;
@@ -128,12 +165,14 @@ import request from 'superagent'
 import moment from 'moment'
 import '../../../assets/css/pagination.css'
 require('../../../assets/lib/js/jquery.pagination.js')
+import { host } from '../../../config/index.js'
 export default {
   data () {
     return {
       lists: [],
       pageTotal: '',
-      noDate: false
+      noDate: false,
+      loading2: false
     }
   },
   methods: {
@@ -142,11 +181,12 @@ export default {
     },
     dataUpdate () {
       var flag = true
+      this.loading2 = true
       if (this.$route.query.type === undefined) {
         return
       } else if (flag === true) {
         request
-          .post('http://192.168.3.52:7099/franchisee/report/consume/' + this.$route.query.type)
+          .post(host + 'franchisee/report/consume/' + this.$route.query.type)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -160,6 +200,9 @@ export default {
               // console.log(JSON.parse(res.text).list)
               var arr = JSON.parse(res.text).list
               var pageNumber = JSON.parse(res.text).totalPage
+
+              // loading关闭
+              this.loading2 = false
               // 设置data分页
               this.pageTotal = pageNumber
               $('.M-box').pagination({
@@ -208,8 +251,9 @@ export default {
       }
     },
     getDateMount () {
+      this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/report/consume/day')
+        .post(host +'franchisee/report/consume/day')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -222,6 +266,10 @@ export default {
             // console.log(JSON.parse(res.text))
             // console.log(JSON.parse(res.text).list)
             var arr = JSON.parse(res.text).list
+
+            // loading关闭
+            this.loading2 = false
+
             var pageNumber = JSON.parse(res.text).totalPage
             // 设置data分页
             this.pageTotal = pageNumber
@@ -259,10 +307,13 @@ export default {
         } else {
           type = 2
         }
+
+        this.loading2 = true
+
         console.log(type)
         var that = this
           request
-            .post('http://192.168.3.52:7099/franchisee/report/consume/userDefine')
+            .post(host + 'franchisee/report/consume/userDefine')
             .send({
               'franchiseeId': '123456',
               'userId': 'admin',
@@ -280,6 +331,10 @@ export default {
                 } else {
                     var arr = JSON.parse(res.text).list
                     var newArr = []
+
+                    // 关闭Loading
+                    this.loading2 = false
+
                     for (var i = 0; i < arr.length; i++) {
                       var obj = {}
                       obj.time = moment(arr[i].time).format('YYYY-MM-DD')
