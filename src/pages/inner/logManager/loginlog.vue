@@ -69,7 +69,7 @@
            </el-row>
            <el-form-item class="keywords">
              <span class="keywords">关键字:</span>
-             <el-input v-model="form_join.keyword"></el-input>
+             <el-input v-model="form_join.keyword" placeholder="用户名/姓名"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">
             <el-col :span="11">
@@ -154,20 +154,21 @@
   import moment from 'moment'
   import request from 'superagent'
   import {siblings, checkPositiveNumber} from '../../../../utils/index.js'
+  import {host} from '../../../config/index'
   export default {
     data: function () {
       return {
         tabTitle: '加盟商',
         loadingdata:true,
         form_plat: {
-          keyword: '姓名/用户名',
+          keyword: '',
           startTime: moment(),
           endTime: moment(),
           tableData: [],
           hasPlatData: true
         },
         form_join: {
-          keyword: '姓名/用户名',
+          keyword: '',
           startTime: moment(),
           endTime: moment(),
           tableData: [],
@@ -191,7 +192,7 @@
         var that = this
         this.tabTitle = event.target.innerText
          if(this.tabTitle === '平台') {
-          request.post('http://192.168.3.52:7099/franchisee/log/allLog')
+          request.post(host + 'franchisee/log/allLog')
           .send({
             franchiseeId: '123456',
             userId: 'jjjj'
@@ -254,7 +255,7 @@
             }
           })
         }else {
-          request.post('http://192.168.3.52:7099/franchisee/log/getLoginLog')
+          request.post(host + 'franchisee/log/getLoginLog')
           .send({
             franchiseeId: '123456',
             userId: 'jjjj'
@@ -322,7 +323,7 @@
     mounted: function () {
       var that = this
       if(this.tabTitle === '加盟商') {
-         request.post('http://192.168.3.52:7099/franchisee/log/getLoginLog')
+         request.post(host + 'franchisee/log/getLoginLog')
         .send({
           franchiseeId: '123456',
           userId: 'jjjj'
@@ -391,7 +392,7 @@
       plat_currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          request.post('http://192.168.3.52:7099/franchisee/log/allLog?page=' + that.plat_currentPage)
+          request.post(host + 'franchisee/log/allLog?page=' + that.plat_currentPage)
             .send({
               franchiseeId: '123456',
               userId: 'jjjj'
@@ -409,7 +410,7 @@
       join_currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          request.post('http://192.168.3.52:7099/franchisee/log/getLoginLog?page=' + that.join_currentPage)
+          request.post(host + 'franchisee/log/getLoginLog?page=' + that.join_currentPage)
             .send({
               franchiseeId: '123456',
               userId: 'jjjj'

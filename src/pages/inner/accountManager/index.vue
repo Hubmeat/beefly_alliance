@@ -112,6 +112,7 @@ import request from 'superagent'
 export default {
   data () {
     return {
+      isQuery: false,
       accountOrUsername:'',
       telOrMail:'',
       input: '',
@@ -143,6 +144,7 @@ export default {
   methods: {
     initQuery(){
       var that = this
+      this.isQuery = false
       this.currentPage = 1
       if(this.accountOrUsername.trim().length===0&&this.telOrMail.trim().length===0){
           getAllAccount({franchiseeId: '123456',userId: 'admin'}, 1, function(error, res){
@@ -355,6 +357,7 @@ export default {
       return res
     },
     queryAccountInfo (){
+      this.isQuery = true
        var obj = {
          name: this.accountOrUsername,
          phone: this.telOrMail
@@ -376,7 +379,7 @@ export default {
                 that.pageShow = true
                 that.totalItems = JSON.parse(res.text).totalItems
               }
-              that.tableData =  newArr
+              that.tableData =  that.handleData(newArr)
             }
           })
        } else {
@@ -420,7 +423,7 @@ export default {
     currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          if(this.accountOrUsername.trim().length===0&&this.telOrMail.trim().length===0){
+          if(this.isQuery===false){
             getAllAccount({franchiseeId: '123456',userId: 'admin'}, val, function(error, res){
               if(error){
                 console.log(error)
@@ -458,7 +461,7 @@ export default {
                     that.pageShow = true
                     that.totalItems = JSON.parse(res.text).totalItems
                   }
-                  that.tableData =  newArr
+                  that.tableData =  that.handleData(newArr)
                 }
               })
           }

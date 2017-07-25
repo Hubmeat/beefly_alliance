@@ -266,10 +266,10 @@ export default {
                     type: 'success',
                     message: '添加成功'
                   })
-                //  this.$store.commit({
-                //    type: 'addAcount',
-                //    obj: this.ruleForm
-                //  })
+                 this.$store.commit({
+                   type: 'addAcount',
+                   obj: this.ruleForm
+                 })
                  console.log(this.$store.state.accountMangerData)
               }
             }

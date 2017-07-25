@@ -66,7 +66,7 @@
            </el-row>
            <el-form-item class="keywords">
              <span class="keywords">关键字:</span>
-             <el-input v-model="form_join.keyword"></el-input>
+             <el-input v-model="form_join.keyword" placeholder="用户名/姓名"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">
             <el-col :span="11">
@@ -81,27 +81,6 @@
          </el-form>
        </el-row>
        <el-row class="table">
-         <!-- <table>
-            <thead>
-              <tr>
-                <th>用户名</th>
-                <th>姓名</th>
-                <th>操作内容</th>
-                <th>操作日期</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-bind:key="item.username" v-for="item of form_join.tableData">
-                <td>{{item.userId}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.content}}</td>
-                <td>{{item.operationTime}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="hasData" v-show="form_join.hasJoinData">
-                暂无数据
-          </div> -->
           <el-table
             :data="form_join.tableData"
             style="width:100%"
@@ -176,14 +155,14 @@
         active: 'first',
         tabTitle: '加盟商',
         form_plat: {
-          keyword: '姓名/用户名',
+          keyword: '',
           startTime: moment(),
           endTime: moment(),
           tableData: [],
           hasPlatData: true
         },
         form_join: {
-          keyword: '姓名/用户名',
+          keyword: '',
           startTime: moment(),
           endTime: moment(),
           tableData: [],

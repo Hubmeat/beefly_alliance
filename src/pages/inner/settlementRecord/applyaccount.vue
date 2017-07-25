@@ -228,10 +228,10 @@ export default {
       if ($('#apply_money').val() < 1) {
         that.$message({
           message: '提交现金必须是数字哦！',
-          type: 'warning'
+          type: '警告'
         })
       } else if ($('#apply_money').val() > that.allMoney[that.currentIndex]) {
-        that.$alert('体现金额超过当前可体现最大金额', 'Warning', {
+        that.$alert('提现金额超过当前可提现最大金额', '警告', {
           confirmButtonText: '确定'
         })
       } else {  

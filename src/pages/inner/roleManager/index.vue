@@ -2,10 +2,12 @@
   <div style="margin-right:20px;">
     <div id="am_search">
       <label>
-        <span>角色名称</span>
-        <input type="text" v-model="roleName" v-on:blur="initRole" class="account_my_input">
+        <el-form :inline="true"  class="demo-form-inline">
+          <el-form-item label="角色名称">
+            <el-input v-model="roleName" v-on:blur="initRole" placeholder="请输入角色名称"></el-input>
+          </el-form-item>
+        </el-form>
       </label>
-  
       <el-button @click="queryRole" id="roleSearchBtn">查询</el-button>
     </div>
   
@@ -100,12 +102,17 @@
                   <el-button class="eidtRoleBtn" @click="dialogEditVisible = false">取消</el-button>
                 </div>
             </el-dialog>  
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page.sync="currentPage3"
+              :page-size="10"
+              layout="prev, pager, next, jumper"
+              v-show="pageShow"
+              :total="totalItems">
+            </el-pagination>
     </div>
   
-    <div id="account_page">
-      <div class="M-box">
-      </div>
-    </div>
 
       <!--<div v-show='router_show' >-->
         <router-view id="account_router"></router-view>
@@ -118,6 +125,7 @@ import $ from 'jquery'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
 import request from 'superagent'
+import {host} from '../../../config/index'
 export default {
   data () {
     var validateRoleName = (rule, value, callback) => {
@@ -128,6 +136,10 @@ export default {
         }
       }
     return {
+      isQuery:false,
+      currentPage3:1,
+      totalItems:1,
+      pageShow: false,
       roleName: '',
       loading: false,
       loading2: false,
@@ -329,15 +341,56 @@ export default {
     }
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     initRole(){
+      this.isQuery = false
       if(this.roleName.trim().length===0){
-        this.tableData = this.initData
+        var that = this
+        request
+        .post(host + 'franchisee/account/getRole')
+        .end((err, res) => {
+          if (err) {
+            console.log(err)
+          } else {
+            var result = JSON.parse(res.text).list
+            var totalPage = JSON.parse(res.text).totalPage
+            if(totalPage>1){
+              this.pageShow = true
+            }else {
+              this.pageShow = false
+            }
+            this.totalItems = JSON.parse(res.text).totalItems
+            var newArr = result.map(function(item, index) {
+                console.log(item)
+                var res = item.auth.split('-')
+                var fathCode = []
+                var childrenCode = []
+                for(var i=0; i < res.length; i++){
+                  if(res[i] % 100 == 0) {
+                    fathCode.push(Number(res[i]))
+                  } else {
+                    childrenCode.push(Number(res[i]))
+                  }
+                }
+                var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+                return obj
+              })
+            that.tableData  = newArr
+            that.initData = that.tableData
+          }
+        })
       }
     },
     queryRole () {
       var that = this
       if(this.roleName.trim().length!==0){
-        request.post('http://192.168.3.52:7099/franchisee/account/queryRole')
+        this.isQuery = true
+        request.post(host + 'franchisee/account/queryRole')
           .send({
             roleName: this.roleName.trim()
           })
@@ -345,9 +398,30 @@ export default {
             if(error){
               console.log(error)
             }else {
-              var res = JSON.parse(res.text)
-              that.tableData = res
-              $('.M-box').hide()
+               var result = JSON.parse(res.text).list
+                var totalPage = JSON.parse(res.text).totalPage
+                if(totalPage>1){
+                  that.pageShow = true
+                }else {
+                  that.pageShow = false
+                }
+                that.totalItems = JSON.parse(res.text).totalItems
+                var newArr = result.map(function(item, index) {
+                    console.log(item)
+                    var res = item.auth.split('-')
+                    var fathCode = []
+                    var childrenCode = []
+                    for(var i=0; i < res.length; i++){
+                      if(res[i] % 100 == 0) {
+                        fathCode.push(Number(res[i]))
+                      } else {
+                        childrenCode.push(Number(res[i]))
+                      }
+                    }
+                    var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+                    return obj
+                  })
+                that.tableData  = newArr
             }
           })
       }
@@ -464,7 +538,7 @@ export default {
           if(valid){
               this.dialogFormVisible = false
               request
-                .post('http://192.168.3.52:7099/franchisee/account/addRole')
+                .post(host + 'franchisee/account/addRole')
                 .send({
                   des: that.form.des,
                   roleName: that.form.roleName,
@@ -481,42 +555,7 @@ export default {
                         type: 'success',
                         message: '恭喜您！添加角色成功'
                       })
-                      // 
-                       request
-                        .post('http://192.168.3.52:7099/franchisee/account/getRole')
-                        .end(function(err,res){
-                          if(err){
-                            console.log(err)
-                          }else  {
-                            var result = JSON.parse(res.text).list
-                            var newArr = result.map(function(item, index) {
-                                var res = item.auth.split('-')
-                                var fathCode = []
-                                var childrenCode = []
-                                for(var i=0; i < res.length; i++){
-                                  if(res[i] % 100 == 0) {
-                                    fathCode.push(Number(res[i]))
-                                  } else {
-                                    childrenCode.push(Number(res[i]))
-                                  }
-                                }
-                                var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
-                                return obj
-                              })
-                              if (result.length>0 ) {
-                                $('.M-box').pagination({
-                                  pageCount: that.totalPage,
-                                  jump: true,
-                                  coping: true,
-                                  homePage: '首页',
-                                  endPage: '尾页',
-                                  prevContent: '«',
-                                  nextContent: '»'
-                                })
-                            }
-                            that.tableData  = newArr
-                          }
-                        })
+                     that.tableData.push({des: that.form.des,names:[],roleName:that.form.roleName})
                     } else {
                       that.$message({
                         type: 'error',
@@ -538,26 +577,20 @@ export default {
   mounted () {
     var that = this
     request
-     .post('http://192.168.3.52:7099/franchisee/account/getRole')
+     .post(host + 'franchisee/account/getRole')
      .end((err, res) => {
        if (err) {
          console.log(err)
        } else {
          var result = JSON.parse(res.text).list
-         console.log(result)
-         if (result.length>0 ) {
-            $('.M-box').pagination({
-              pageCount: that.totalPage,
-              jump: true,
-              coping: true,
-              homePage: '首页',
-              endPage: '尾页',
-              prevContent: '«',
-              nextContent: '»'
-            })
+         var totalPage = JSON.parse(res.text).totalPage
+         if(totalPage>1){
+           this.pageShow = true
+         }else {
+           this.pageShow = false
          }
+         this.totalItems = JSON.parse(res.text).totalItems
         var newArr = result.map(function(item, index) {
-            console.log(item)
             var res = item.auth.split('-')
             var fathCode = []
             var childrenCode = []
@@ -575,11 +608,90 @@ export default {
          that.initData = that.tableData
        }
      })
+  },
+  watch:{
+    currentPage3:{
+      handler: function(val,oldVal){
+        var that = this
+        if(this.isQuery===false){
+          // 初始化查询
+           request
+            .post(host + 'franchisee/account/getRole?page=' + val)
+            .end((err, res) => {
+              if (err) {
+                console.log(err)
+              } else {
+                var result = JSON.parse(res.text).list
+                var totalPage = JSON.parse(res.text).totalPage
+                if(totalPage>1){
+                  this.pageShow = true
+                }else {
+                  this.pageShow = false
+                }
+                this.totalItems = JSON.parse(res.text).totalItems
+                var newArr = result.map(function(item, index) {
+                    console.log(item)
+                    var res = item.auth.split('-')
+                    var fathCode = []
+                    var childrenCode = []
+                    for(var i=0; i < res.length; i++){
+                      if(res[i] % 100 == 0) {
+                        fathCode.push(Number(res[i]))
+                      } else {
+                        childrenCode.push(Number(res[i]))
+                      }
+                    }
+                    var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+                    return obj
+                  })
+                that.tableData  = newArr
+              }
+            })
+        }else {
+          // 筛选查询
+          request.post(host + 'franchisee/account/queryRole')
+          .send({
+            roleName: this.roleName.trim()
+          })
+          .end(function(error,res){
+            if(error){
+              console.log(error)
+            }else {
+                var result = JSON.parse(res.text).list
+                var totalPage = JSON.parse(res.text).totalPage
+                if(totalPage>1){
+                  that.pageShow = true
+                }else {
+                  that.pageShow = false
+                }
+                that.totalItems = JSON.parse(res.text).totalItems
+                var newArr = result.map(function(item, index) {
+                    var res = item.auth.split('-')
+                    var fathCode = []
+                    var childrenCode = []
+                    for(var i=0; i < res.length; i++){
+                      if(res[i] % 100 == 0) {
+                        fathCode.push(Number(res[i]))
+                      } else {
+                        childrenCode.push(Number(res[i]))
+                      }
+                    }
+                    var obj = Object.assign({},item, {fathCode: fathCode},{childrenCode: childrenCode})
+                    return obj
+                  })
+                that.tableData  = newArr
+            }
+          })
+        }
+      },
+      deep: true
+    }
   }
 }
 </script>
 
 <style scoped>
+.el-pagination{padding-left:0;border-left:0;margin-top: 20px;margin-bottom: 10px;}
 html,
 body,
 h1,
@@ -699,10 +811,8 @@ div.account>h1 button:hover {
 
 #am_search label {
   /* width: 190px; */
-  height: 70px;
-  line-height: 70px;
-  margin-right: 10px;
-  margin-left: 30px;
+  margin-top: 15px;
+    margin-left: 31px;
   float: left;
 }
 
