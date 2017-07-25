@@ -137,3 +137,27 @@ export function IsEmpty (keyVal) {
     return false
   }
 }
+/**
+ * 验证身份证
+ * 身份证号码为15位或者18位，15位时全为数字，18位前17位为数字，最后一位是校验位，可能为数字或字符X
+ * @param {*string} card
+ */
+export function isCardNo (card) {
+  var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+  if (reg.test(card) === false) {
+    return false
+  } else {
+    return true
+  }
+}
+/**
+ * 验证护照
+ */
+export function isPassportNo (card) {
+  var reg = /^1[45][0-9]{7}|G[0-9]{8}|P[0-9]{7}|S[0-9]{7,8}|D[0-9]+$/
+  if (reg.test(card) === false) {
+    return false
+  } else {
+    return true
+  }
+}

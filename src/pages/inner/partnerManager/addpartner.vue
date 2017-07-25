@@ -30,18 +30,15 @@
         <el-form-item label="手机号" prop="tel" style="width: 300px;">
           <el-input v-model="ruleForm.tel" placeholder='请输入手机号'></el-input>
         </el-form-item>
-        <el-form-item label="车辆数" prop="car" style="width: 300px;">
+        <el-form-item label="认购车辆数" prop="car" style="width: 300px;">
           <el-input v-model.number="ruleForm.car" placeholder='请输入车辆数(单位：/辆)'></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email" style="width: 300px;">
           <el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
         </el-form-item>
         <el-form-item label="通讯地址" prop="address" style="width: 300px;">
-          <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
+          <el-input v-model="ruleForm.address" placeholder='不超过100个字符'></el-input>
         </el-form-item >
-        <el-form-item label="备注">
-          <el-input type="textarea"></el-input>
-        </el-form-item>
         <el-form-item>
           <el-button class='addpartner_button' type="primary" v-loading.fullscreen.lock="fullscreenLoading" @click="submitForm('ruleForm')">立即创建</el-button>
           <el-button class='addpartner_button' @click="$router.push({path:'/index/partnerManager'})">取消</el-button>
@@ -183,8 +180,21 @@
       
 <script>
 import request from 'superagent'
+import {isPassportNo,isCardNo} from '../../../../utils/index'
+import {host} from '../../../config/index'
 export default {
   data() {
+    var validateIdCard = function (rule, val, callback) {
+        if(!val){
+          return callback(new Error('证件号不能为空'))
+        }else {
+          if(isPassportNo(val) === true||isCardNo(val) === true){
+            return callback()
+          }else {
+            return callback(new Error('证件号错误'))
+          }
+        }
+      }
     return {
       ruleForm: {
         name: '',
@@ -202,14 +212,13 @@ export default {
           { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
         sex: [
-          { required: true, message: '请选择性别', trigger: 'change' }
+          { message: '请选择性别', trigger: 'change' }
         ],
         IDtype: [
           { required: true, message: '请选择证件类型', trigger: 'change' }
         ],
         IDcard: [
-          { type: 'string', required: true, message: '请输入证件号码', trigger: 'blur' },
-          { min: 15, max: 19, message: '请输入合法的证件号码', trigger: 'blur' }
+          {required: true, validator:validateIdCard,trigger: 'blur' },
         ],
         tel: [
           { type: 'string', required: true, message: '请填写手机号', trigger: 'blur' },
@@ -222,7 +231,7 @@ export default {
           { message: '请填写正确邮箱', trigger: 'blur' }
         ],
         address: [
-          { required: true, message: '请填写通讯地址', trigger: 'blur' }
+          { message: '请填写通讯地址', trigger: 'blur' }
         ]
       },
       fullscreenLoading: false
@@ -232,15 +241,10 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // this.$confirm('确认添加吗?', '提示', {
-          //   confirmButtonText: '确定',
-          //   cancelButtonText: '信息有误',
-          //   type: 'warning'
-          // })
-          //   .then(() => {
+
               var that = this
               request
-                .post('http://192.168.3.52:7099/franchisee/partner/add')
+                .post(host + 'franchisee/partner/add')
                 .send({
                   'name': this.ruleForm.name,
                   'sex': this.ruleForm.sex,
@@ -258,8 +262,18 @@ export default {
                     that.fullscreenLoading = true
                     setTimeout(function () {
                       that.fullscreenLoading = false
+                      var obj = that.ruleForm
                       if (JSON.parse(res.text).code === 0) {
-                        that.$store.state.partnerAdded = true
+                        that.$store.commit('setPartnerList', {
+                  'name': that.ruleForm.name,
+                  'sex': that.ruleForm.sex,
+                  // 'cardType': this.ruleForm.IDtype,
+                  'idCard': that.ruleForm.IDcard,
+                  'phoneNo': that.ruleForm.tel,
+                  'bikeNum': that.ruleForm.car,
+                  'email': that.ruleForm.email,
+                  'address': that.ruleForm.address
+                })
                         that.$router.push('/index/partnerManager')
                         that.$message({
                           type: 'success',

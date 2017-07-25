@@ -130,11 +130,9 @@
         rules: {
           username: [
             { required: true, message: '请输入用户名', trigger: 'blur' },
-            { min: 3, max: 5, message: '用户名为英文数字下划线', trigger: 'blur' }
           ],
           password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 17 个字符', trigger: 'blur' }
+            { required: true, message: '请输入密码', trigger: 'blur' }
           ]
         },
         findFormRule: {

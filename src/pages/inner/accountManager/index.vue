@@ -68,24 +68,6 @@
                 <el-form-item label="姓名" :label-width="formLabelWidth">
                   <el-input v-model="editAccount.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="类别" :label-width="formLabelWidth">
-                  <el-select v-model="editAccount.role" placeholder="请选择类别">
-                    <el-option
-                      label="管理员"
-                      value="管理员">
-                    </el-option>
-                    <el-option
-                      label="合伙人"
-                      value="合伙人">
-                    </el-option>
-                  </el-select>
-                </el-form-item> -->
-                <!-- <el-form-item label="状态" :label-width="formLabelWidth">
-                  <el-radio-group v-model="editAccount.state">
-                    <el-radio v-bind:label="true">开启</el-radio>
-                    <el-radio v-bind:label="false">关闭</el-radio>
-                  </el-radio-group>
-                </el-form-item> -->
               </el-form>
               <div slot="footer" class="dialog-footer editfooter">
                 <el-button class="accountMangerBtn" type="primary" @click="handleEditAccount">确 定</el-button>
@@ -104,7 +86,7 @@
         :current-page.sync="currentPage"
         :page-size="10"
         layout="prev, pager, next, jumper"
-        :total="54">
+        :total="totalItems">
       </el-pagination>
     <div id="account_page">
       <div class="M-box">
@@ -125,6 +107,7 @@ import {getAllAccount} from '../../../api/getAllAccount.api'
 import {modifyAccountState} from '../../../api/modifyAccountState.api'
 import {delAccount} from '../../../api/delAccount.api'
 import {updateAccount} from '../../../api/updateAccount.api'
+import {host} from '../../../config/index'
 import request from 'superagent'
 export default {
   data () {
@@ -136,6 +119,7 @@ export default {
       emptyText: ' ',
       loadingText: '',
       currentPage: 1,
+      totalItems: 1000,
       totalPage:1,
       tableData: [],
       initData: [],
@@ -158,8 +142,37 @@ export default {
   },
   methods: {
     initQuery(){
+      var that = this
+      this.currentPage = 1
       if(this.accountOrUsername.trim().length===0&&this.telOrMail.trim().length===0){
-        this.tableData = this.initData
+          getAllAccount({franchiseeId: '123456',userId: 'admin'}, 1, function(error, res){
+            if(error){
+              console.log(error)
+              setTimeout(function(){
+                that.loading = false
+                that.loadingText = '服务器链接超时'
+              },5000)
+              setTimeout(function(){
+                that.emptyText = '暂无数据'
+              },6000)
+            } else {
+                that.loading = false
+                that.totalPage = JSON.parse(res.text).totalPage || 20
+                var arr = JSON.parse(res.text).list
+                if(arr.length===0) {
+                  that.emptyText = '暂无数据'
+                  that.pageShow = false
+                } else {
+                  that.emptyText = ' '
+                  that.pageShow = true
+                  that.totalItems = JSON.parse(res.text).totalItems
+                }
+                that.$store.state.accountMangerData = that.handleData(arr)
+                that.initData = that.$store.state.accountMangerData
+                that.tableData =  that.$store.state.accountMangerData
+                //that.setPage(arr,that.totalPage)
+            }
+          })
       }
     },
     handleSizeChange(val) {
@@ -348,17 +361,22 @@ export default {
        }
        var that = this
        if(this.accountOrUsername.trim().length>0||this.telOrMail.trim().length>0){
-          request.post('http://192.168.3.52:7099/franchisee/account/queryAccount')
+          request.post(host + 'franchisee/account/queryAccount')
           .send(obj)
           .end(function(error,res){
             if(error){
               console.log(error)
             }else {
-              var res = JSON.parse(res.text)
-              that.tableData =  res
-              that.pageShow = false
-              that.accountOrUsername = ''
-              that.telOrMail = ''
+              var newArr = JSON.parse(res.text).list
+              if(newArr.length===0){
+                that.emptyText = '暂无数据'
+                that.pageShow = false
+              }else {
+                that.emptyText = ''
+                that.pageShow = true
+                that.totalItems = JSON.parse(res.text).totalItems
+              }
+              that.tableData =  newArr
             }
           })
        } else {
@@ -383,13 +401,13 @@ export default {
           that.loading = false
           that.totalPage = JSON.parse(res.text).totalPage || 20
           var arr = JSON.parse(res.text).list
-          console.log(arr.length)
           if(arr.length===0) {
             that.emptyText = '暂无数据'
             that.pageShow = false
           } else {
             that.emptyText = ' '
             that.pageShow = true
+            that.totalItems = JSON.parse(res.text).totalItems
           }
           that.$store.state.accountMangerData = that.handleData(arr)
           that.initData = that.$store.state.accountMangerData
@@ -402,20 +420,48 @@ export default {
     currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          getAllAccount({franchiseeId: '123456',userId: 'admin'}, val, function(error, res){
+          if(this.accountOrUsername.trim().length===0&&this.telOrMail.trim().length===0){
+            getAllAccount({franchiseeId: '123456',userId: 'admin'}, val, function(error, res){
               if(error){
                 console.log(error)
               } else {
                   var arr = JSON.parse(res.text).list
                   if(arr.length===0) {
                     that.emptyText = '暂无数据'
+                    that.pageShow = false
                   } else {
                     that.emptyText = ' '
+                    that.pageShow = true
+                    that.totalItems = JSON.parse(res.text).totalItems
                   }
                   that.$store.state.accountMangerData = that.handleData(arr)
                   that.tableData = that.$store.state.accountMangerData
               }
             })
+          }else {
+             var obj = {
+                name: this.accountOrUsername,
+                phone: this.telOrMail
+              }
+             request.post(host + 'franchisee/account/queryAccount?page=' + val)
+              .send(obj)
+              .end(function(error,res){
+                if(error){
+                  console.log(error)
+                }else {
+                  var newArr = JSON.parse(res.text).list
+                  if(newArr.length===0){
+                    that.emptyText = '暂无数据'
+                    that.pageShow = false
+                  }else {
+                    that.emptyText = ''
+                    that.pageShow = true
+                    that.totalItems = JSON.parse(res.text).totalItems
+                  }
+                  that.tableData =  newArr
+                }
+              })
+          }
         },
         deep: true
       }

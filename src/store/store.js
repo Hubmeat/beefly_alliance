@@ -39,25 +39,18 @@ const mutations = {
         console.log('[[ setAllData is setted ]]')
         state.allData = obj
     },
-    setPartnerList(state, { arr }) {
+    setPartnerList(state, obj) {
         console.log('[[ setPartnerList ]]')
         // console.log(arr.newArr)
-        var arr2 = arr.newArr
-        console.log(arr)
-        var arrDeled = []
-        for (var i = 0; i < arr2.length; i++) {
             var newoObj = {}
-            newoObj.name = arr2[i].name
-            newoObj.sex = arr2[i].sex
-            newoObj.IDcard = arr2[i].idCard
-            newoObj.tel = arr2[i].phoneNo
-            newoObj.email = arr2[i].email
-            newoObj.cars = arr2[i].bikeNum
-            newoObj.partnerId = arr2[i].id
-            arrDeled.push(newoObj)
-        }
-        state.partnerList = arrDeled
-        console.log(arrDeled)
+            newoObj.name = obj.name
+            newoObj.sex = obj.sex
+            newoObj.IDcard = obj.idCard
+            newoObj.tel = obj.phoneNo
+            newoObj.email = obj.email
+            newoObj.cars = obj.bikeNum
+            newoObj.partnerId = obj.id
+            state.partnerList.push(newoObj)
     }
 }
 

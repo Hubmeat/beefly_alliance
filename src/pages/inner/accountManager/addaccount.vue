@@ -141,6 +141,7 @@
 <script>
 import request from 'superagent'
 import {checkUserName, checkMobile, isEmail} from '../../../../utils/index.js'
+import {host} from '../../../config/index'
 export default {
   data () {
     var validateUserId = function (rule, value, callback) {
@@ -223,7 +224,7 @@ export default {
           } else{
             this.ruleForm.role = 1
           } 
-          request.post('http://192.168.3.52:7099/franchisee/account/addAccount')
+          request.post(host + 'franchisee/account/addAccount')
            .send({
               curAcc: {
                 id: 0,
@@ -265,10 +266,10 @@ export default {
                     type: 'success',
                     message: '添加成功'
                   })
-                 this.$store.commit({
-                   type: 'addAcount',
-                   obj: this.ruleForm
-                 })
+                //  this.$store.commit({
+                //    type: 'addAcount',
+                //    obj: this.ruleForm
+                //  })
                  console.log(this.$store.state.accountMangerData)
               }
             }

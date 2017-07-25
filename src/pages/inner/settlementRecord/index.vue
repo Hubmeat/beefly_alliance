@@ -50,16 +50,23 @@
         label="财务备注">
       </el-table-column>
     </el-table>
-	</div>
-
-	<div id="settleRed_page">
-      <div class="M-box">
-      </div>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage3"
+      :page-size="10"
+      layout="prev, pager, next, jumper"
+      :total="totalItems">
+    </el-pagination>
 	</div>
 </div>
 </template>
 
 <style scoped>
+  .el-pagination{    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    margin-top: 20px;}
 	.my_table_class {
 		color: #f60;cursor: pointer;
 	}
@@ -195,6 +202,7 @@
 import $ from 'jquery'
 import request from 'superagent'
 import moment from 'moment'
+import {host} from '../../../config/index'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
 export default {
@@ -202,13 +210,16 @@ export default {
     return {
       tableData: [],
       totalPage: '',
-      loading2: false
+      loading2: false,
+      currentPage3:1,
+      pageShow: false,
+      totalItems:1000
     }
   },
   mounted () {
     this.loading2 = true
     request
-      .post('http://192.168.3.52:7099/franchisee/withdrawal/getAllWithdrawal')
+      .post( host + 'franchisee/withdrawal/getAllWithdrawal')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin'
@@ -219,8 +230,16 @@ export default {
         } else {
           console.log(JSON.parse(res.text).list)
           var newArr = JSON.parse(res.text).list
+          // 页面总数
           var pageNumber = JSON.parse(res.text).totalPage
+          // 总记录数
+          this.totalItems = 1000||JSON.parse(res.text).totalItems
           this.totalPage = pageNumber
+          if(pageNumber>1){
+            this.pageShow = true
+          }else {
+            this.pageShow = false
+          }
 
           // loading 关闭
           this.loading2 = false
@@ -228,26 +247,23 @@ export default {
           var arr2 = this.tableDataDel(newArr)
           this.$store.dispatch('settlementDate_action', { arr2 })
           this.tableData = this.$store.state.settlementDate.arr2
-          $('.M-box').pagination({
-            pageCount: pageNumber,
-            jump: true,
-            coping: true,
-            homePage: '首页',
-            endPage: '尾页',
-            prevContent: '«',
-            nextContent: '»'
-          })
         }
       })
   },
   beforeUpdate () {
     var that = this
-    $('.M-box').click('a', function (e) {
-      // console.log(e)
-      that.pageUpdate(e)
-    })
+    // $('.M-box').click('a', function (e) {
+    //   // console.log(e)
+    //   that.pageUpdate(e)
+    // })
   },
   methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
     tableDataDel (arr) {
       var arrDeled = []
       for (var i = 0; i < arr.length; i++) {
@@ -327,6 +343,42 @@ export default {
             }
           })
       }, 200)
+    }
+  },
+  watch: {
+    currentPage3:{
+      handler: function(val,oldVal){
+        request
+        .post( host + 'franchisee/withdrawal/getAllWithdrawal?page=' + val)
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((err, res) => {
+          if (err) {
+            console.log('err:' + err)
+          } else {
+            console.log(JSON.parse(res.text).list)
+            var newArr = JSON.parse(res.text).list
+            // 页面总数
+            var pageNumber = JSON.parse(res.text).totalPage
+            // 总记录数
+            this.totalItems = 1000||JSON.parse(res.text).totalItems
+            this.totalPage = pageNumber
+            if(pageNumber>1){
+              this.pageShow = true
+            }else {
+              this.pageShow = false
+            }
+            // loading 关闭
+            this.loading2 = false
+            var arr2 = this.tableDataDel(newArr)
+            this.$store.dispatch('settlementDate_action', { arr2 })
+            this.tableData = this.$store.state.settlementDate.arr2
+          }
+        })
+      },
+      deep: true
     }
   }
 }

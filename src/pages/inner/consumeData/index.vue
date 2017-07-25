@@ -5,9 +5,9 @@
       <el-row class="countTitle">
         <span class="countDimension labelAlign" style="margin-right: 0px;">统计维度</span>
         <div class="timeSelectBtn">
-          <el-button class="active" @click="handleChangeType" type="primary">日</el-button>
-          <el-button @click="handleChangeType">周</el-button>
-          <el-button @click="handleChangeType">月</el-button>
+          <el-button v-bind:class="{active: isDay}" @click="handleChangeType" type="primary">日</el-button>
+          <el-button v-bind:class="{active: isWeek}" @click="handleChangeType">周</el-button>
+          <el-button v-bind:class="{active: isMonth}" @click="handleChangeType">月</el-button>
         </div>
         <span class="timePeried labelAlign">数据时间段</span>
         <el-date-picker :format="form.formatType" v-model='form.data1' :type="form.type" placeholder="选择日期"></el-date-picker>
@@ -28,6 +28,9 @@ import moment from 'moment'
 export default {
   data: function () {
     return {
+      isDay: true,
+      isWeek: false,
+      isMonth: false,
       form: {
         data1: '',
         data2: '',
@@ -39,9 +42,20 @@ export default {
   },
   mounted () {
     this.form.data2 = moment().format('YYYY-MM-DD')
-
-    // request
-    //   .post('')
+    var timeType = this.$route.query.type
+    if(timeType === 'day') {
+      this.isDay = true
+      this.isWeek = false
+      this.isMonth = false
+    }else if(timeType === 'week') {
+      this.isDay = false
+      this.isWeek = true
+      this.isMonth = false
+    }else {
+      this.isDay = false
+      this.isWeek = false
+      this.isMonth = true
+    }
   },
   methods: {
     handleChangeType(e) {

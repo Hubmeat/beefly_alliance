@@ -6,25 +6,6 @@
       <h1>{{$store.state.moment}}</h1>
     </h3>
     <div>
-      <!-- <table>
-        <thead>
-          <tr>
-            <th>消费时间</th>
-            <th>消费单数</th>
-            <th>消费盈利</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-bind:key='list.id' v-for="list in lists">
-            <td>{{list.time}}</td>
-            <td>{{list.totalBill}}</td>
-            <td>￥{{list.money}}</td>
-          </tr>
-        </tbody>
-      </table> -->
-      <!-- <div class="datashow" v-show="noDate">
-        <p>暂无数据</p>
-      </div> -->
       <el-table
         :data="lists"
         v-loading="loading2"
@@ -63,7 +44,16 @@
         </el-table-column>
       </el-table>
     </div>
-
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage3"
+      :page-size="100"
+      layout="prev, pager, next, jumper"
+      :total="totalItems"
+      v-show="pageShow"
+      >
+    </el-pagination>
 		<div id="earD_page">
 			<div class="M-box">
 			</div>
@@ -101,34 +91,7 @@ div.queryLists h3 button {
   width: 137px;
 }
 
-/* div.queryLists table {
-  border-collapse: collapse;
-  width: 100%;
-  border-left: 1px solid #eee;
-  border-right: 1px solid #eee;
-}
 
-div.queryLists table tr th {
-  text-align: left;
-  border: 1px solid #eee;
-  height: 40px;
-  font-size: 14px;
-  background: #eee;
-  font-weight: 400;
-  color: #444;
-}
-
-div.queryLists table tr {
-  border-bottom: 1px solid #eee;
-  text-indent: 2em;
-}
-
-div.queryLists table tr td {
-  text-align: left;
-  padding: 10px 0;
-  color: #555;
-  font-size: 14px;
-} */
 
 #earD_page {
   padding: 14px 0px 0px 0px;
@@ -158,6 +121,7 @@ div.queryLists table tr td {
   color: rgba(255,140,0, 0.8);
   border: 1px solid rgba(	255,140,0, 0.8);
 }
+.el-pagination{    margin-left: 0px;padding-left: 0;margin-top: 14px;}
 </style>
 <script>
 import $ from 'jquery'
@@ -171,11 +135,20 @@ export default {
     return {
       lists: [],
       pageTotal: '',
+      totalItems:null,
       noDate: false,
-      loading2: false
+      loading2: false,
+      currentPage3: 1,
+      pageShow: false
     }
   },
   methods: {
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+      },
     handeClick () {
       this.$router.push('/index/consumeData/queryCharts')
     },
@@ -185,6 +158,7 @@ export default {
       if (this.$route.query.type === undefined) {
         return
       } else if (flag === true) {
+        console.log(this.$route.query)
         request
           .post(host + 'franchisee/report/consume/' + this.$route.query.type)
           .send({
@@ -192,28 +166,19 @@ export default {
             'userId': 'admin'
           })
           .end((error, res) => {
-            // console.log('this is entry')
             if (error) {
               console.log('error:', error)
             } else {
-              // console.log(res)
-              // console.log(JSON.parse(res.text).list)
               var arr = JSON.parse(res.text).list
               var pageNumber = JSON.parse(res.text).totalPage
-
+              this.totalItems = pageNumber
+              if(this.totalItems>1) {
+                this.pageShow = true
+              }else {
+                this.pageShow = false
+              }
               // loading关闭
               this.loading2 = false
-              // 设置data分页
-              this.pageTotal = pageNumber
-              $('.M-box').pagination({
-                pageCount: pageNumber,
-                jump: true,
-                coping: true,
-                homePage: '首页',
-                endPage: '尾页',
-                prevContent: '«',
-                nextContent: '»'
-              })
               var newArr = []
               if (this.$route.query.type === 'week') {
                 for (var i = 0; i < arr.length; i++) {
@@ -252,8 +217,9 @@ export default {
     },
     getDateMount () {
       this.loading2 = true
+      var timeType = this.$route.query.type || 'day'
       request
-        .post(host +'franchisee/report/consume/day')
+        .post(host +'franchisee/report/consume/' + timeType)
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -263,25 +229,17 @@ export default {
           if (error) {
             console.log('error:', error)
           } else {
-            // console.log(JSON.parse(res.text))
-            // console.log(JSON.parse(res.text).list)
             var arr = JSON.parse(res.text).list
-
+            console.log(arr)
             // loading关闭
             this.loading2 = false
-
             var pageNumber = JSON.parse(res.text).totalPage
-            // 设置data分页
-            this.pageTotal = pageNumber
-            $('.M-box').pagination({
-              pageCount: pageNumber,
-              jump: true,
-              coping: true,
-              homePage: '首页',
-              endPage: '尾页',
-              prevContent: '«',
-              nextContent: '»'
-            })
+            this.totalItems = pageNumber
+            if(pageNumber<=1){
+              this.pageShow = false
+            }else {
+              this.pageShow = true
+            }
             var newArr = []
             for (var i = 0; i < arr.length; i++) {
               var obj = {}
@@ -307,10 +265,7 @@ export default {
         } else {
           type = 2
         }
-
         this.loading2 = true
-
-        console.log(type)
         var that = this
           request
             .post(host + 'franchisee/report/consume/userDefine')
@@ -328,6 +283,7 @@ export default {
                 // console.log(JSON.parse(res.text))
                 if (JSON.parse(res.text).list.length === 0) {
                   this.lists = ''
+                  that.pageShow = false
                 } else {
                     var arr = JSON.parse(res.text).list
                     var newArr = []
@@ -357,9 +313,6 @@ export default {
       return
     }
   },
-  created () {
-    this.dataUpdate()
-  },
   beforeMount () {
     if (this.$store.state.consumeData === '') {
       this.noDate = true
@@ -376,7 +329,67 @@ export default {
   },
   watch: {
     '$route': 'dataUpdate',
-    '$store.state.timeline': 'time'
+    '$store.state.timeline': 'time',
+    currentPage3: {
+      handler: function(val,oldVal){
+          request
+          .post(host + 'franchisee/report/consume/' + this.$route.query.type + '?page=' + val)
+          .send({
+            'franchiseeId': '123456',
+            'userId': 'admin'
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              var arr = JSON.parse(res.text).list
+              if(arr.length===0) {
+                this.pageShow = true
+              }else {
+                this.pageShow = true
+              }
+              var pageNumber = JSON.parse(res.text).totalPage
+
+              // loading关闭
+              this.loading2 = false
+              // 设置data分页
+              this.pageTotal = pageNumber
+              // 这里需要设置分页总数！！！！！！
+              var newArr = []
+              if (this.$route.query.type === 'week') {
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年第ww周')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }
+              } else if (this.$route.query.type === 'day') {
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年MM月DD号')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }              
+              } else { 
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.time = moment(arr[i].time).format('YYYY年MM月')
+                  obj.totalBill = arr[i].totalBill
+                  obj.money = arr[i].money
+                  newArr.push(obj)
+                }                
+              }
+              // console.log(newArr)
+              this.$store.dispatch('consumeData_action', {newArr})
+              this.lists = this.$store.state.consumeData
+              this.flag = false
+            }
+          })
+      },
+      deep: true
+    }
   }
 }
 </script>

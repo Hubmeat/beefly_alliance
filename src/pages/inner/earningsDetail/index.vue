@@ -4,10 +4,10 @@
 		<div id="earD_header">
       <div class="earD_con">
         <div class="time_earning">
-          <el-button @click='getDailyDate' class="active">今日</el-button>
-          <el-button @click='getWeekDate'>本周</el-button>
-          <el-button @click='getMonthDate'>本月</el-button>
-          <el-button @click='getAllDate'>所有日期</el-button>
+          <el-button @click='getDailyDate' v-bind:class="{active: isDay}">今日</el-button>
+          <el-button @click='getWeekDate' v-bind:class="{active: isWeek}">本周</el-button>
+          <el-button @click='getMonthDate' v-bind:class="{active: isMonth}">本月</el-button>
+          <el-button @click='getAllDate' v-bind:class="{active: AllTime}">所有日期</el-button>
           <el-button @click='handleChangeType'>指定时间段</el-button>
         </div>
         <el-date-picker v-model="timeLine" style="vertical-align: middle; margin-top: 0px;" v-show="show" type="datetimerange" :picker-options="pickerOptions2" placeholder="选择时间范围" align="right">
@@ -68,11 +68,16 @@
         min-width="60">
       </el-table-column>
     </el-table>
-		</div>
-
-		<div id="earD_page">
-			<div class="M-box">
-			</div>
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="currentPage3"
+          :page-size="10"
+          layout="prev, pager, next, jumper"
+          :total="totalItems"
+          v-show="pageShow"
+        >
+      </el-pagination>  
 		</div>
 	</div>
 </template>
@@ -255,6 +260,10 @@
       background: rgba(52,52,67, 0.9);
       color: #fff;
   }
+  div.el-pagination{margin-top: 20px;
+    margin-left: 0;
+    padding-left: 0;
+    margin-bottom: 20px;}
 </style>
 
 <script>
@@ -262,13 +271,21 @@ import $ from 'jquery'
 import request from 'superagent'
 import moment from 'moment'
 // require('../../../assets/lib/js/exportExcel.js')
+import {host} from '../../../config/index'
 require('../../../assets/lib/js/Blob.js')
 import '../../../assets/css/pagination.css'
 require('../../../assets/lib/js/jquery.pagination.js')
 export default {
   data () {
     return {
+       currentPage3: 1,
+      totalItems: null,
+      pageShow: false,
       tableData: [],
+      isDay:false,
+      isWeek:false,
+      isMonth:false,
+      AllTime:false,
       timer: null,
       totalPage: '',
       pickerOptions2: {
@@ -310,10 +327,33 @@ export default {
   },
   mounted () {
     // console.log(this.$route.query)
-    this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
     this.loading2 = true
+    var type = this.$route.query.type
+    if(type === 'getRevenueCurDay') {
+      this.isDay = true
+      this.isWeek = false
+      this.isMonth = false
+      this.AllTime = false
+    }else if(type === 'getRevenueCurWeek'){
+      this.isWeek = true
+      this.isDay = false
+      this.isMonth = false
+      this.AllTime = false
+    }else if(type === 'getRevenueCurMonth'){
+      this.isMonth = true
+      this.isWeek = false
+      this.isDay = false
+      this.AllTime = false
+    }else{
+      this.AllTime = true
+      this.isMonth = false
+      this.isWeek = false
+      this.isDay = false
+      this.AllTime = false
+    }
+    console.log(type)
     request
-      .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurDay')
+      .post(host + 'franchisee/revenue/getRevenueCurDay')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin'
@@ -332,18 +372,10 @@ export default {
           // loading 关闭
           this.loading2 = false
           this.tableData = this.$store.state.earningsDate.arr2
-          $('.M-box').pagination({
-            pageCount: pageNumber,
-            jump: true,
-            coping: true,
-            homePage: '首页',
-            endPage: '尾页',
-            prevContent: '«',
-            nextContent: '»'
-          })
+          this.totalItems  = 1000
+          this.pageShow = true
         }
       })
-
     // 点击切换查看类型
     $('#earD_header button').click('button', function () {
       $('button.active').removeClass('active')
@@ -362,9 +394,15 @@ export default {
     })
   }, 
   beforeMount () {
-    this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
+    //this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
   },
   methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
     handleChangeType (e) {
       // console.log(e.currentTarget.innerText)  
       if (e.currentTarget.innerText === '指定时间段') {
@@ -425,7 +463,7 @@ export default {
               }
             }
             request
-              .post('http://192.168.3.52:7099/franchisee/revenue/exportRevenueData?type=' + newType)
+              .post(host + 'franchisee/revenue/exportRevenueData?type=' + newType)
               .send({
                 'account': {
                   'franchiseeId': '123456',
@@ -447,7 +485,7 @@ export default {
                     this.$message.error('当前查询没有信息，无法导出哦~');
                   } else {
                     const data = this.formatJson(filterVal, newList)
-                    export_json_to_excel(tHeader, data, '列表excel')
+                    export_json_to_excel(tHeader, data, '营收明细列表excel')
                     that.$message({
                       type: 'success',
                       message: '导出成功'
@@ -496,7 +534,7 @@ export default {
       this.$router.push('/index/earningsDetail?type=getRevenueCurMonth')
       this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurMonth')
+        .post(host + 'franchisee/revenue/getRevenueCurMonth')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -530,7 +568,7 @@ export default {
       this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
       this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurDay')
+        .post(host + 'franchisee/revenue/getRevenueCurDay')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -563,7 +601,7 @@ export default {
       this.$router.push('/index/earningsDetail?type=getRevenueCurWeek')
       this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueCurWeek')
+        .post(host + 'franchisee/revenue/getRevenueCurWeek')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin'
@@ -577,7 +615,6 @@ export default {
             var arr2 = this.tableDataDel(newArr)
             // loading关闭
             this.loading2 = false
-
             this.totalPage = pageNumber
             this.$store.dispatch('earningsDate_action', { arr2 })
             this.tableData = this.$store.state.earningsDate.arr2
@@ -617,7 +654,7 @@ export default {
       var type = this.$route.query.type
       this.timer = setTimeout(function () {
         request
-          .post('http://192.168.3.52:7099/franchisee/revenue/' + type + '?page=' + e.target.innerHTML)
+          .post(host + 'franchisee/revenue/' + type + '?page=' + e.target.innerHTML)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -638,13 +675,14 @@ export default {
       }, 200)
     },
     dataUpdate () {
+       this.currentPage3 = 1
       var type = this.$route.query.type
       if (type === 'getRevenueDefine') {
         return
       } else {
         this.loading2 = true
         request
-          .post('http://192.168.3.52:7099/franchisee/revenue/' + type)
+          .post(host + 'franchisee/revenue/' + type)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -656,7 +694,12 @@ export default {
               // console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var pageNumber = JSON.parse(res.text).totalPage
-
+              this.totalItems = JSON.parse(res.text).totalItems
+              if(pageNumber>1){
+                this.pageShow = true
+              }else {
+                this.pageShow = false
+              }
               // loading 关闭
               this.loading2 = false
 
@@ -677,10 +720,9 @@ export default {
       } else {
         var startTime = moment(this.timeLine[0]).format('YYYY-MM-DD HH:MM:SS')
         var endTime = moment(this.timeLine[1]).format('YYYY-MM-DD HH:MM:SS')
-        console.log(startTime, endTime)
         this.loading2 = true
         request
-          .post('http://192.168.3.52:7099/franchisee/revenue/getRevenueDefine')
+          .post(host + 'franchisee/revenue/getRevenueDefine')
           .send({
             "account": {
               'franchiseeId': '123456',
@@ -704,18 +746,11 @@ export default {
               this.tableData = this.$store.state.earningsDate.arr2
               var pageNumber = JSON.parse(res.text).totalPage
               this.totalPage = pageNumber
-              if (pageNumber < 10) {
-                return
+              this.totalItems = JSON.parse(res.text).totalItems
+              if (pageNumber > 1) {
+                this.pageShow =  true
               } else {
-                $('.M-box').pagination({
-                  pageCount: pageNumber,
-                  jump: true,
-                  coping: true,
-                  homePage: '首页',
-                  endPage: '尾页',
-                  prevContent: '«',
-                  nextContent: '»'
-                })
+                this.pageShow = false
               }
             }
           })
@@ -723,13 +758,40 @@ export default {
     }
   },
   created () {
-    this.dataUpdate()
-  },
-  beforeMount () {
-    this.$router.push('/index/earningsDetail?type=getRevenueCurDay')
+    //this.dataUpdate()
   },
   watch: {
-    '$route': 'dataUpdate'
+    '$route': 'dataUpdate',
+    currentPage3: {
+      handler: function(val,oldVal){
+        var type = this.$route.query.type || 'getRevenueCurDay'
+        request
+        .post(host + 'franchisee/revenue/'+ type +'?page=' + val)
+        .send({
+          'franchiseeId': '123456',
+          'userId': 'admin'
+        })
+        .end((err, res) => {
+          if (err) {
+            console.log('err:' + err)
+          } else {
+            // console.log(res)
+            // console.log(JSON.parse(res.text).list)
+            var newArr = JSON.parse(res.text).list
+            var pageNumber = JSON.parse(res.text).totalPage
+            this.totalPage = pageNumber
+            var arr2 = this.tableDataDel(newArr)
+            this.$store.dispatch('earningsDate_action', { arr2 })
+            // loading 关闭
+            this.loading2 = false
+            this.tableData = this.$store.state.earningsDate.arr2
+            this.totalItems  = 1000
+            this.pageShow = true
+          }
+        })
+      },
+      deep: true
+    }
   }
 }
 </script>
