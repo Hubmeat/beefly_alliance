@@ -40,7 +40,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer addfooter">
-            <el-button class="addRoleBtn" type="primary" @click="handleAddRole">确定</el-button>
+            <el-button class="addRoleBtn" type="primary" @click="handleAddRole">立即创建</el-button>
              <el-button class="addRoleBtn" @click="dialogFormVisible = false">取消</el-button>
           </div>
         </el-dialog> 
@@ -349,6 +349,7 @@ export default {
       },
     initRole(){
       this.isQuery = false
+      this.currentPage3 = 1
       if(this.roleName.trim().length===0){
         var that = this
         request
@@ -447,7 +448,7 @@ export default {
         return {code: item}
       })
       request
-        .post('http://192.168.3.52:7099/franchisee/account/updateRole')
+        .post(host + 'franchisee/account/updateRole')
         .send({
           oldRole: {
             id: that.editForm.id
@@ -491,7 +492,7 @@ export default {
         }).then(() => {
           this.loading = true
           request
-            .post('http://192.168.3.52:7099/franchisee/account/delRole')
+            .post(host + 'franchisee/account/delRole')
             .send({
               id: scope.row.id,
               roleType: scope.row.roleType,
@@ -555,7 +556,7 @@ export default {
                         type: 'success',
                         message: '恭喜您！添加角色成功'
                       })
-                     that.tableData.push({des: that.form.des,names:[],roleName:that.form.roleName})
+                     that.tableData.unshift({des: that.form.des,names:[],roleName:that.form.roleName})
                     } else {
                       that.$message({
                         type: 'error',
@@ -649,7 +650,7 @@ export default {
             })
         }else {
           // 筛选查询
-          request.post(host + 'franchisee/account/queryRole')
+          request.post(host + 'franchisee/account/queryRole?page=' + val)
           .send({
             roleName: this.roleName.trim()
           })
@@ -881,7 +882,8 @@ div.account>h1 .addRoleBtn {
 div.account>h1 .addRoleBtn:nth-of-type(1) {
     background: #f87e2b;
     border: none;
-    color: #fff;}
+    color: #fff;
+    margin-left:100px;}
 div.account>h1 .addRoleBtn:nth-of-type(2){background: #fff;color: #444;border: 1px solid rgba(196,196,196,1)}   
 div.account>h1 .addRoleBtn:nth-of-type(2):hover {border: 1px solid rgb(248, 126, 43);color: rgb(248, 126, 43);} 
  button#roleSearchBtn{width: 80px;

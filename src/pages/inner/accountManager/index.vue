@@ -116,7 +116,7 @@ export default {
       accountOrUsername:'',
       telOrMail:'',
       input: '',
-      pageShow: true,
+      pageShow: false,
       emptyText: ' ',
       loadingText: '',
       currentPage: 1,
@@ -158,17 +158,17 @@ export default {
                 that.emptyText = '暂无数据'
               },6000)
             } else {
-                that.loading = false
+                that.loading = true
                 that.totalPage = JSON.parse(res.text).totalPage || 20
                 var arr = JSON.parse(res.text).list
-                if(arr.length===0) {
-                  that.emptyText = '暂无数据'
-                  that.pageShow = false
+                if(that.totalPage>1) {
+                   that.emptyText = ' '
+                   that.pageShow = true
                 } else {
-                  that.emptyText = ' '
-                  that.pageShow = true
-                  that.totalItems = JSON.parse(res.text).totalItems
+                   that.emptyText = '暂无数据'
+                   that.pageShow = false
                 }
+                that.totalItems = JSON.parse(res.text).totalItems
                 that.$store.state.accountMangerData = that.handleData(arr)
                 that.initData = that.$store.state.accountMangerData
                 that.tableData =  that.$store.state.accountMangerData
@@ -390,31 +390,35 @@ export default {
   mounted () {
     var that = this
     this.currentPage = 1
+    that.loading = true
+     that.loadingText = '拼命加载中'
     getAllAccount({franchiseeId: '123456',userId: 'admin'}, 1, function(error, res){
       if(error){
         console.log(error)
         setTimeout(function(){
           that.loading = false
           that.loadingText = '服务器链接超时'
-        },5000)
+        },3000)
         setTimeout(function(){
           that.emptyText = '暂无数据'
-        },6000)
+        },3000)
+        that.pageShow = false
       } else {
-          that.loading = false
+         
           that.totalPage = JSON.parse(res.text).totalPage || 20
           var arr = JSON.parse(res.text).list
-          if(arr.length===0) {
-            that.emptyText = '暂无数据'
-            that.pageShow = false
-          } else {
+          if(that.totalPage>1) {
             that.emptyText = ' '
             that.pageShow = true
-            that.totalItems = JSON.parse(res.text).totalItems
+          } else {
+            that.emptyText = '暂无数据'
+            that.pageShow = false
           }
+          that.totalItems = JSON.parse(res.text).totalItems
           that.$store.state.accountMangerData = that.handleData(arr)
           that.initData = that.$store.state.accountMangerData
           that.tableData =  that.$store.state.accountMangerData
+           that.loading = false
           //that.setPage(arr,that.totalPage)
       }
     })

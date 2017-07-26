@@ -14,6 +14,7 @@
   require('highcharts/modules/exporting')(Highcharts)
   import request from 'superagent'
   import moment from 'moment'
+  import {host} from '../config/index'
   // import Vue from 'vue'
   export default {
     data () {
@@ -27,7 +28,7 @@
     mounted: function () {
       if (this.$store.state.consumeData.length === 0) {
         request
-          .post('http://192.168.3.52:7099/franchisee/report/consume/day')
+          .post(host + 'franchisee/report/consume/day')
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -36,6 +37,7 @@
             // console.log('this is entry')
             if (error) {
               console.log('error:', error)
+              this.noData = true
             } else {
               if (JSON.parse(res.text).list.length === 0) {
                 $('#container').html('')
@@ -183,7 +185,7 @@
           return
         } else if (flag === true) {
           request
-            .post('http://192.168.3.52:7099/franchisee/report/consume/' + this.$route.query.type)
+            .post(host + 'franchisee/report/consume/' + this.$route.query.type)
             .send({
               'franchiseeId': '123456',
               'userId': 'admin'
@@ -234,7 +236,7 @@
             type = 2
           }
             request
-              .post('http://192.168.3.52:7099/franchisee/report/consume/userDefine')
+              .post(host + 'franchisee/report/consume/userDefine')
               .send({
                 'franchiseeId': '123456',
                 'userId': 'admin',
@@ -298,8 +300,8 @@
 
   .my_noDate img {
     display: inline-block;
-    width: 500px;
-    height: 200px;
+    /* width: 500px;
+    height: 200px; */
   }
 
   .my_noDate p {

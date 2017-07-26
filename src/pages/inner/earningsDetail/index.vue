@@ -32,40 +32,48 @@
       :data="tableData"    
       v-loading="loading2"
       element-loading-text="拼命加载中"
+      :empty-text="emptyText"
       style="width: 100%">
       <el-table-column
         prop="bikeCode"
         label="车牌编号"
-        min-width="70">
+        min-width="15%"
+        >
       </el-table-column>
       <el-table-column
         prop="orderDate"
+        min-width="10%"
         label="下单时间">
       </el-table-column>
       <el-table-column
         prop="placeOrderTime"
-        label="骑行时间（公里）"
-        min-width="70">
+        label="骑行时间（时间）"
+        min-width="15%"
+       >
       </el-table-column>
       <el-table-column
         prop="journey"
         label="骑行里程（公里）"
-        min-width="70">
+        min-width="15%"
+        >
       </el-table-column>
       <el-table-column
         prop="money"
         label="订单费用"
-        min-width="60">
+        min-width="15%"
+        >
       </el-table-column>
       <el-table-column
         prop="couponPayfor"
         label="优惠卷支付"
-        min-width="60">
+        min-width="15%"
+       >
       </el-table-column>
       <el-table-column
         prop="actualAmount"
         label="实际收益（元）"
-        min-width="60">
+        min-width="15%"
+       >
       </el-table-column>
     </el-table>
       <el-pagination
@@ -278,6 +286,7 @@ require('../../../assets/lib/js/jquery.pagination.js')
 export default {
   data () {
     return {
+      emptyText: ' ',
        currentPage3: 1,
       totalItems: null,
       pageShow: false,
@@ -360,6 +369,8 @@ export default {
       })
       .end((err, res) => {
         if (err) {
+          this.loading2 = false
+          this.emptyText = '暂无数据'
           console.log('err:' + err)
         } else {
           // console.log(res)
@@ -367,13 +378,19 @@ export default {
           var newArr = JSON.parse(res.text).list
           var pageNumber = JSON.parse(res.text).totalPage
           this.totalPage = pageNumber
+          if(pageNumber>1){
+            this.emptyText = ' '
+            this.pageShow = true
+          }else {
+            this.pageShow = false
+            this.emptyText = ' '
+          }
           var arr2 = this.tableDataDel(newArr)
           this.$store.dispatch('earningsDate_action', { arr2 })
           // loading 关闭
           this.loading2 = false
           this.tableData = this.$store.state.earningsDate.arr2
           this.totalItems  = 1000
-          this.pageShow = true
         }
       })
     // 点击切换查看类型

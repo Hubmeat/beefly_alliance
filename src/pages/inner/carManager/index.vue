@@ -42,7 +42,9 @@
         :data="tableData"
         style="width: 100% font-size:13px; color: #6c6c6c;"
         v-loading="loading2"
-        element-loading-text="拼命加载中">
+        element-loading-text="拼命加载中"
+        :empty-text = 'emptyText'
+        >
         <el-table-column
           min-width="80"
           label="车辆号"
@@ -100,6 +102,7 @@ import { host } from '../../../config/index.js'
 export default {
   data: function () {
     return {
+      emptyText: ' ',
       form: {
         radio: '',
         data1: '',
@@ -154,7 +157,7 @@ export default {
 
         // }
         request
-          .post(host + '/franchisee/bikeManager/queryBikes')
+          .post(host + 'franchisee/bikeManager/queryBikes')
           .send({
             'start': startTime?startTime:null,
             'end': endTime?endTime:null,
@@ -185,10 +188,11 @@ export default {
         obj.boxCode = arr[i].boxCode
         obj.generationsName = arr[i].generationsName
         obj.model = arr[i].model
+        console.log(arr[i].onlineTime)
         if (arr[i].onlineTime == '') {
           obj.onlineTime = ''
         } else {
-          obj.onlineTime = moment(arr[i].onlineTime).format('YYYY-MM-DD HH:MM:SS')
+          obj.onlineTime = moment(arr[i].onlineTime).format('YYYY-MM-DD HH:MM:ss')
         }
         obj.state = arr[i].state
         obj.orderNum = arr[i].orderNum
@@ -213,13 +217,17 @@ export default {
     mountedWay () {
       this.loading2 = true
       request
-        .post(host + '/franchisee/bikeManager/getBikes')
+        .post(host + 'franchisee/bikeManager/getBikes')
         .send({
-          'franchiseeId': '123456',
-          'userId': 'admin'
+          end: this.form.data2,
+          start: this.form.data1,
+          state:[],
+          name:this.terminalNumber
         })
         .end((error, res) => {
           if (error) {
+            this.loading2  = false
+            this.emptyText  = '暂无数据'
             console.log('error:', error)
           } else {
             var data = JSON.parse(res.text).list
@@ -232,6 +240,7 @@ export default {
             if (this.pagetotal > 1) {
               this.pageShow =  true
             } else {
+              this.emptyText = '暂无数据'
               return
             }
           }
@@ -260,7 +269,7 @@ export default {
         }  
         if(this.checkList.length>0){
           request
-            .post(host + '/franchisee/bikeManager/queryBikes?page=' + val)
+            .post(host + 'franchisee/bikeManager/queryBikes?page=' + val)
             .send({
               'start': startTime?startTime:null,
               'end': endTime?endTime:null,
@@ -287,7 +296,7 @@ export default {
             })
         }else{
           request
-            .post(host + '/franchisee/bikeManager/getBikes?page=' + val)
+            .post(host + 'franchisee/bikeManager/getBikes?page=' + val)
             .send({
               'franchiseeId': '123456',
               'userId': 'admin'

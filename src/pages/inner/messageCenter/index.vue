@@ -79,6 +79,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
   require('../../../assets/lib/js/jquery.pagination.js')
   import '../../../assets/css/pagination.css'
    import {checkPositiveNumber} from '../../../../utils/index.js'
+   import {host} from '../../../config/index'
   import moment from 'moment'
   export default {
     data: function () {
@@ -92,7 +93,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
     },
     mounted: function () {
       var that = this
-      request.post('http://192.168.3.52:7099/franchisee/msg/getAllMsg')
+      request.post(host + 'franchisee/msg/getAllMsg')
       .send({
         franchiseeId: '123456',
         userId: 'jjjj'
@@ -160,7 +161,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
       msg_currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          request.post('http://192.168.3.52:7099/franchisee/msg/getAllMsg?page=' + that.msg_currentPage)
+          request.post(host + 'franchisee/msg/getAllMsg?page=' + that.msg_currentPage)
             .send({
               franchiseeId: '123456',
               userId: 'jjjj'
@@ -214,7 +215,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
           if(row.isRead===0){
             this.msgList.push({id:row.id})
             row.isRead=1
-            request.post('http://192.168.3.52:7099/franchisee/msg/read')
+            request.post(host + 'franchisee/msg/read')
               .send({
                 list: this.msgList
               })
@@ -236,7 +237,7 @@ div.hasData{line-height: 60px;text-align: center;height: 60px;color:#9e9090;widt
             return obj
         })
         this.tableData = newArr
-        request.post('http://192.168.3.52:7099/franchisee/msg/read')
+        request.post(host + 'franchisee/msg/read')
           .send({
             list: newArr
           })

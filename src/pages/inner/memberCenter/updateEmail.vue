@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="addaccount_form" v-loading="loading" element-loading-text=" ">
+		<div id="memberCenter_form" v-loading="loading" element-loading-text=" ">
 						<h1 id="addaccount_title">修改邮箱
               <span>
                 <a @click="$router.push('/index/memberCenter')">
@@ -27,7 +27,7 @@
 <style>
 
   @media screen and (min-width:1367px) {
-    #addaccount_form {
+    #memberCenter_form {
       /*  适配好的样式 */
       height: 36%;
       /*overflow-y: scroll; 
@@ -50,7 +50,7 @@
   }
 
   @media screen and (max-width:1367px) {
-    #addaccount_form {
+    #memberCenter_form {
       height: 40%;
       width: 30%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
@@ -167,6 +167,7 @@
 <script>
 import {isEmail} from '../../../../utils/index.js'
 import request from 'superagent'
+import {host} from '../../../config/index'
 export default {
   data () {
     var validateMail = (rule, value, callback) => {
@@ -204,11 +205,13 @@ export default {
       var that = this
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          that.$alert('申请修改成功，已向您的邮箱' + that.ruleForm.maiAccount + '发送验证邮件，请注意查收', '修改邮箱', {
-              confirmButtonText: '我知道了',
-              callback: function (action) {
-                that.loading = true
-                request.post('http://192.168.3.52:7099/franchisee/account/updateEmail4Fran')
+          // that.$alert('申请修改成功，已向您的邮箱' + that.ruleForm.maiAccount + '发送验证邮件，请注意查收', '修改邮箱', {
+          //     confirmButtonText: '我知道了',
+          //     callback: function (action) {
+          //     }
+          //   })
+          that.loading = true
+                request.post(host + 'franchisee/account/updateEmail4Fran')
                 .send({id:1123339, email: that.ruleForm.maiAccount,pwd: that.ruleForm.account_password})
                 .end((err, res) => {
                   if (err) {
@@ -237,8 +240,6 @@ export default {
                     }
                   }
                 })
-              }
-            })
         } else {
           console.log('error submit')
           return false

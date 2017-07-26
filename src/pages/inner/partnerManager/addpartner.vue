@@ -211,28 +211,28 @@ export default {
           { required: true, message: '请输入姓名', trigger: 'blur' },
           { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        sex: [
-          { message: '请选择性别', trigger: 'change' }
-        ],
-        IDtype: [
-          { required: true, message: '请选择证件类型', trigger: 'change' }
-        ],
-        IDcard: [
-          {required: true, validator:validateIdCard,trigger: 'blur' },
-        ],
+        // sex: [
+        //   { message: '请选择性别', trigger: 'change' }
+        // ],
+        // IDtype: [
+        //   { required: true, message: '请选择证件类型', trigger: 'change' }
+        // ],
+        // IDcard: [
+        //   {required: true, validator:validateIdCard,trigger: 'blur' },
+        // ],
         tel: [
           { type: 'string', required: true, message: '请填写手机号', trigger: 'blur' },
           { min: 11, message: '请输入正确的手机号', trigger: 'blur' }
         ],
-        car: [
-          { type: 'number', required: true, message: '请填写车辆数', trigger: 'blur' }
-        ],
-        email: [
-          { message: '请填写正确邮箱', trigger: 'blur' }
-        ],
-        address: [
-          { message: '请填写通讯地址', trigger: 'blur' }
-        ]
+        // car: [
+        //   { type: 'number', required: true, message: '请填写车辆数', trigger: 'blur' }
+        // ],
+        // email: [
+        //   { message: '请填写正确邮箱', trigger: 'blur' }
+        // ],
+        // address: [
+        //   { message: '请填写通讯地址', trigger: 'blur' }
+        // ]
       },
       fullscreenLoading: false
     }
@@ -258,6 +258,10 @@ export default {
                 .end((err, res) => {
                   if (err) {
                     console.log('err:' + err)
+                    this.$message({
+                      type:'error',
+                      message: ' 请求失败，请稍候再试'
+                    })
                   } else {
                     that.fullscreenLoading = true
                     setTimeout(function () {

@@ -5,7 +5,7 @@
         <el-col :span='12' class="mounthIncoming">
           <div class="income_title">
             <span class="income_time mounthtime ">本月营收</span>
-            <span class="income_detail">>></span>
+            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurMonth'})">>></span>
           </div>
           <div class="income_count monthcount">
             ￥18800000.00
@@ -17,7 +17,7 @@
         <el-col :span='12' class="dayIncoming">
           <div class="income_title">
             <span class="income_time daytime ">今日营收</span>
-            <span class="income_detail">>></span>
+            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurDay'})">>></span>
           </div>
           <div class="income_count daycount">
             ￥900000.00
@@ -44,7 +44,7 @@
         <el-col :span='12' class="status">
           <div class="status_title">
             <span>当前动态</span>
-            <span class="arrow">>></span>
+            <span class="arrow" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurDay'})">>></span>
           </div>
           <div class="list">
             <div>
@@ -264,7 +264,10 @@ div.mapTitle {
   background: #fff;
   padding: 5px 10px;
   margin-bottom: 5px;
-  color: #000;
+}
+div.mapTitle span {
+  font-size:16px;
+  font-weight:bold;
 }
 span.earn, span.settle {color:rgba(134,134,134,1);font-weight: bold;margin-left:8px;}
 span.wait{color:rgba(255,102,0,1);font-weight: bold;margin-left:8px;}
@@ -320,6 +323,8 @@ export default {
   components: {
     myCanvas,
     Gamp
+  },
+  methods:{
   }
 }
 </script>

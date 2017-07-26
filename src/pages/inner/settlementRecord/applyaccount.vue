@@ -6,18 +6,32 @@
   
       <ul>
         <li>结算月份：
-          <button v-bind:key="list"
+          <button class="month" v-bind:key="list"
                   v-for="(list, index) in monthLists" 
                   v-bind:class="[(index===0)?'active':'']"
-                  :myCode=list.withdrawalCode>{{list.month}}</button>
+                  :myCode=list.withdrawalCode>{{list.month}}
+          </button>
+          <el-input style="width:120px;background:none;margin-left:32px;"
+            placeholder="暂无未结算月份"
+            v-show="initMonth"
+            :plain="true"
+            :disabled="true">
+          </el-input>
         </li>
-        <li>可结算金额:     &nbsp;&nbsp;&nbsp;{{allMoney[currentIndex]}}元
+        <li>可结算金额:     &nbsp;&nbsp;&nbsp;{{allMoney[currentIndex]}} <b style="font-weight:normal;margin-left:15px;" v-show="initMoneyShow" class="initMoney">0</b>元
           <span>*每月结算一次，结算金额=上个月所有车辆的盈利*80%+以前遗留的未结算金额。</span>
         </li>
         <li>
           申请结算金额：
-          <input v-model.number="crash" type="number" ref="my_val" id="apply_money">
-          <button>确定</button>
+          <input v-show="moneyIn" v-model.number="crash" type="number" ref="my_val" id="apply_money">
+          
+          <el-input style="width:120px;background:none;"
+            placeholder="暂无未结算金额"
+            v-show="initSetMoney"
+            :plain="true"
+            :disabled="true">
+          </el-input>
+          <button v-show="confirm">确定</button>
         </li>
       </ul>
     </div>
@@ -29,7 +43,8 @@
       <el-table 
           v-loading="loading2"
           element-loading-text="拼命加载中"
-          :data="tableData" 
+          :data="tableData"
+          :empty-text="emptyText" 
           style="width: 100%; font-size:13px;">
         <el-table-column prop="order_time" label="下单时间" min-width="200"></el-table-column>
         <el-table-column prop="riding_time" label="骑行时间（分钟）" min-width="150"></el-table-column>
@@ -56,9 +71,17 @@ import request from 'superagent'
 import moment from 'moment'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import {host} from '../../../config/index'
 export default {
   data() {
     return {
+      emptyText:' ',
+      btnShow:true,
+      initMoneyShow: false,
+      initSetMoney:false,
+      moneyIn: true,
+      initMonth: false,
+      confirm: true,
       input: '',
       tableData: [],
       router_show: false,
@@ -103,7 +126,7 @@ export default {
     getDataByTime () {
       this.loading2 = true
       request
-        .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail')
+        .post(host + 'franchisee/withdrawal/getWithdrawalDetail')
         .send({
           'franchiseeId': '123456',
           'userId': 'admin',
@@ -158,7 +181,7 @@ export default {
 
       this.timer = setTimeout(function () {
         request
-          .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail?page=' + e.target.innerHTML)
+          .post(host + 'franchisee/withdrawal/getWithdrawalDetail?page=' + e.target.innerHTML)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin',
@@ -184,7 +207,7 @@ export default {
   mounted() {
     this.loading2 = true
     request
-      .post('http://192.168.3.52:7099/franchisee/withdrawal/getNotWithdrawal')
+      .post(host + 'franchisee/withdrawal/getNotWithdrawal')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin'
@@ -192,22 +215,36 @@ export default {
       .end((err, res) => {
         if (err) {
           console.log('err:' + err)
+          this.loading2 = false
+          this.initMoneyShow = true
+            this.initSetMoney = true
+            this.initMonth = true
+            this.confirm = false
+            this.moneyIn = false
+            this.emptyText = '暂无数据'
         } else {
+           // loading 关闭
+              this.loading2 = false
           var allMonth = JSON.parse(res.text).list
-          for (var i = 0; i < allMonth.length; i++) {
-            var mon = {}
-            mon.month = allMonth[i].month
-            mon.withdrawalCode = allMonth[i].withdrawalCode
-
-            // loading 关闭
-            this.loading2 = false
-
-            this.monthLists.push(mon)
-            this.allMoney.push(allMonth[i].money)
+          console.log(allMonth)
+          if(allMonth.length>0){
+            for (var i = 0; i < allMonth.length; i++) {
+              var mon = {}
+              mon.month = allMonth[i].month
+              mon.withdrawalCode = allMonth[i].withdrawalCode
+              this.monthLists.push(mon)
+              this.allMoney.push(allMonth[i].money)
+            }
+            this.currentCode = JSON.parse(res.text).list[0].withdrawalCode
+            // 根据渲染的未结算月份显示当前月份的详细数据
+            this.getDataByTime()
+          } else {
+            this.initMoneyShow = true
+            this.initSetMoney = true
+            this.initMonth = true
+            this.confirm = false
+            this.moneyIn = false
           }
-          this.currentCode = JSON.parse(res.text).list[0].withdrawalCode
-          // 根据渲染的未结算月份显示当前月份的详细数据
-          this.getDataByTime()
         }
       })
   },
@@ -248,7 +285,7 @@ export default {
           beforeClose: (action, instance, done) => {
             if (action === 'confirm') {
               request
-                .post('http://192.168.3.52:7099/franchisee/withdrawal/applyWithdrawal')
+                .post(host + 'franchisee/withdrawal/applyWithdrawal')
                 .send({
                   'franchiseeId': '123456',
                   'userId': 'admin',
@@ -266,10 +303,8 @@ export default {
                       setTimeout(() => {
                         if (JSON.parse(res.text).code === 0) {
                           done()
-                          setTimeout(() => {
-                            instance.confirmButtonLoading = false
-                            that.$refs.my_val.value = ''
-                          }, 300)
+                          instance.confirmButtonLoading = false
+                          that.$refs.my_val.value = ''
                         } else {
                           that.$message('提交错误')
                         }
@@ -290,6 +325,7 @@ export default {
               type: 'info',
               message: '提现申请已提交, 预计1-2个工作日到账'
             })
+            that.$router.push('/index/settlementRecord')
           } else {
             // that.$message({
             //   type: 'info',
@@ -344,7 +380,6 @@ body {
 
 #apply_account_header {
   width: 100%;
-  height: 194px;
   background: #fff;
   border: 1px solid #e7ecf1;
   overflow: hidden;
@@ -385,19 +420,17 @@ body {
 }
 
 #apply_account_header ul {
-  width: 100%;
   list-style: none;
   padding: 4px 20px 2px 30px;
 }
 
 #apply_account_header ul li {
-  height: 50px;
   line-height: 50px;
   font-size: 16px;
   font-weight: 500;
 }
 
-#apply_account_header ul li:nth-of-type(1) button {
+#apply_account_header ul li:nth-of-type(1) button.month {
   width: 100px;
   height: 35px;
   border: 1px solid #ddd;

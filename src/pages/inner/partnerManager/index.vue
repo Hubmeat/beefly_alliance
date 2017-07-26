@@ -29,7 +29,9 @@
             :data="tableData" 
             style="width: 100% font-size:13px; color: #6c6c6c;"
             v-loading="loading2"
-            element-loading-text="拼命加载中">
+            :element-loading-text="loadText"
+            :empty-text= 'emptyText'
+            >
         <el-table-column prop="name" label="姓名" min-width="80">
         </el-table-column>
         <el-table-column prop="sex" label="性别" min-width="60">
@@ -47,7 +49,7 @@
             <a style="color:#444; margin-right:10px; cursor: pointer;" @click="goDetail(scope.row.partnerId)" title="查看">
               <i class="el-icon-document"></i>
             </a>
-            <a href="javascript:;" @click="openEdit(scope.row, scope.row.partnerId)" style="color:#444; margin-right:10px;" title="编辑">
+            <a href="javascript:;" @click="openEdit(scope.$index,scope.row, scope.row.partnerId)" style="color:#444; margin-right:10px;" title="编辑">
               <i class="el-icon-edit"></i>
             </a>
             <a href="javascript:;" @click='delPartner(scope.row.partnerId, scope.$index)' style="color:#444; margin-right:10px;" title="删除">
@@ -55,8 +57,8 @@
             </a>
             <!--dialog 弹窗开始-->
             <el-dialog title="合伙人信息" :visible.sync="dialogVisible" :modal="true" :modal-append-to-body="false">
-              <el-form :model="editAccount">
-                <el-form-item label="姓名" :label-width="formLabelWidth" style="width: 300px;">
+              <el-form :model="editAccount" :rules="editRule" ref="editRuleForm">
+                <el-form-item label="姓名" prop="name" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" :label-width="formLabelWidth" style="width: 300px;">
@@ -65,7 +67,7 @@
                 <el-form-item label="证件号码" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.IDcard" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="手机号码" :label-width="formLabelWidth" style="width: 300px;">
+                <el-form-item label="手机号码" prop="tel" :label-width="formLabelWidth" style="width: 300px;">
                   <el-input v-model="editAccount.tel" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱" :label-width="formLabelWidth" style="width: 300px;">
@@ -322,6 +324,13 @@
 export default {
   data() {
     return {
+      editRule:{
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        tel: [{required: true,message: '请输入手机号', trigger: 'blur'}]
+      },
+      emptyText: ' ',
+      isQuery: false,
+      loadText: '拼命加载中',
       tableData: [],
       currentPage3: 1,
       totalItems: null,
@@ -394,6 +403,8 @@ export default {
         })
         .end((err, res) => {
           if (err) {
+            this.loading2 = false
+            this.emptyText = '暂无数据'
             console.log('err:' + err)
           } else {
             // console.log(JSON.parse(res.text))
@@ -411,6 +422,7 @@ export default {
             }
             // loading关闭
             this.loading2 = false
+            this.emptyText = ' '
             this.tableData = this.$store.state.partnerList
             this.pagetotal = pageNumber
 
@@ -487,7 +499,8 @@ export default {
       console.log(id)
       this.$router.push('/index/partnerManager/checkpartner/' + id)
     },
-    openEdit(row, id) {
+    openEdit(index,row, id) {
+      console.log(row)
       this.thisOpenId = id
       this.dialogVisible = true
       this.editAccount.name = row.name
@@ -496,6 +509,8 @@ export default {
       this.editAccount.tel = row.tel
       this.editAccount.email = row.email
       this.editAccount.cars = row.cars
+      this.editAccount.index = index
+      console.log(index)
     },
     editConfim(row, id) {
       var that = this
@@ -542,6 +557,7 @@ export default {
       }, 500)
     },
     searchByInput () {
+      this.isQuery = true
       if (this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === '') {
         this.$message({
           message: '请输入查询信息',
@@ -582,9 +598,11 @@ export default {
       }
     },
     inputChange () {
-      if (this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === '') {
+      if(this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === ''){
+        this.isQuery =  false
+        this.currentPage3 = 1
         this.mountedWay()
-      } else {
+      }else {
         return
       }
     }
@@ -593,7 +611,7 @@ export default {
     '$store.state.partnerList': 'partnerUpdate',
     currentPage3: {
       handler: function(val,oldVal){
-         if (this.searchDate1 === '' && this.searchDate2 === '' && this.search_Number === ''){
+         if (this.isQuery===false){
              request
               .post(host + 'franchisee/franchiseeManager/getPartners?page=' + val)
               .send({

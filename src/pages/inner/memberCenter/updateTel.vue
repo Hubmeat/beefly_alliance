@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div id="addaccount_form" v-loading="loading" element-loading-text="拼命加载中">
+		<div id="memberCenter_form" v-loading="loading" element-loading-text="拼命加载中">
 						<h1 id="addaccount_title">修改手机号
               <span>
                 <a @click="$router.push('/index/memberCenter')">
@@ -38,7 +38,7 @@
 <style scoped>
 
   @media screen and (min-width:1367px) {
-    #addaccount_form {
+    #memberCenter_form {
       /*  适配好的样式 */
       height: 40%;
       /*overflow-y: scroll; 
@@ -60,7 +60,7 @@
   }
 
   @media screen and (max-width:1367px) {
-    #addaccount_form {
+    #memberCenter_form {
       height: 40%;
       width: 40%;
       box-shadow: 0 5px 15px rgba(0,0,0,.5);
@@ -135,6 +135,7 @@
 import {checkMobile, IsEmpty} from '../../../../utils/index.js'
 import $ from 'jquery'
 import request from 'superagent'
+import {host} from '../../../config/index'
 export default {
   data () {
     var validateTel = (rule, value, callback) => {
@@ -212,7 +213,7 @@ export default {
               type: 'success'
             })
           },1000)
-          request.post('http://192.168.3.52:7099/franchisee/userCenter/getVerCode')
+          request.post(host + 'franchisee/userCenter/getVerCode')
             .send({
               mobileNo: this.ruleForm.tel
             })
@@ -236,7 +237,7 @@ export default {
           })
         .then(() => {
           that.loading = true
-          request.post('http://192.168.3.52:7099/franchisee/account/updatePhone4Fran')
+          request.post(host + 'franchisee/account/updatePhone4Fran')
               .send({
                 	id:1123339,
                   phoneNo: that.ruleForm.tel,

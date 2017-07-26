@@ -34,7 +34,7 @@
 								<el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
 							</el-form-item>
 							<el-form-item label="备注">
-								<el-input type="textarea" v-model="ruleForm.textarea" placeholder="不超过200个字符"></el-input>
+								<el-input type="textarea" style="width:340px" v-model="ruleForm.textarea" placeholder="不超过200个字符"></el-input>
 							</el-form-item>
 							<el-form-item>
 								<el-button class='addaccount_button' type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -71,13 +71,13 @@
 @media screen and (max-width:1367px) {
   #addaccount_form {
     min-height: 30%;
-    width: 45%;
+    width: 62%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     position: fixed;
     display: block;
     top: 54%;
     left: 53%;
-    margin-left: -28%;
+    margin-left: -38%;
     margin-top: -24%;
     padding: 90px 80px 0px 50px;
     margin-right: 20px;
@@ -89,7 +89,8 @@
 
 	.addaccount_button:nth-of-type(1) {
 		background: #f87e2b;
-		border: none;
+    border: none;
+    margin-left: 93px;
 	}
 
 	.addaccount_button:nth-of-type(1):hover {
@@ -201,10 +202,10 @@ export default {
         ],
         role:[{ validator: validateRole, trigger: 'change', required: true}],
         name: [
-          {required: true, message: '请输入姓名', trigger: 'blur' },
-        ],
-        phoneNo: [{ validator: validatePhoneNo, trigger: 'blur' }],
-        email: [{ validator: validateEmail, trigger: 'blur' }]
+          {message: '请输入姓名', trigger: 'blur' },
+        ]
+        // phoneNo: [{ validator: validatePhoneNo, trigger: 'blur' }],
+        // email: [{ validator: validateEmail, trigger: 'blur' }]
       }
     }
   },
