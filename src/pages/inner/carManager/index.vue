@@ -105,7 +105,6 @@ export default {
         data1: '',
         data2: ''
       },
-
       pageShow: false,
       currentPage3:1,
       tableData: [],
