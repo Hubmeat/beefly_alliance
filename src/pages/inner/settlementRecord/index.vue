@@ -10,8 +10,8 @@
 			<button @click="$router.push({path:'/index/applyaccount'})">申请结算</button>
 			<span></span>
 			<h3>
-				<p>合计已结算金额：</p><span>20000</span><span>元</span>
-				<p>合计已结算金额：</p><span>90000</span><span>元</span>
+				<p>本月已获收益分成：</p><span>20000</span><span>元</span>
+				<p>累计已结算金额：</p><span>90000</span><span>元</span>
 			</h3>
 		</div>	
 	</div>
@@ -22,7 +22,9 @@
       v-loading="loading2"
       element-loading-text="拼命加载中"
       style="width: 100%"
-			@cell-click='goDetail'>
+			@cell-click='goDetail'
+      :empty-text="emptyText"
+      >
       <el-table-column
         prop="settled_time"
         label="结算月份"
@@ -56,7 +58,9 @@
       :current-page.sync="currentPage3"
       :page-size="10"
       layout="prev, pager, next, jumper"
-      :total="totalItems">
+      :total="totalItems"
+      v-show="pageShow"
+      >
     </el-pagination>
 	</div>
 </div>
@@ -213,7 +217,8 @@ export default {
       loading2: false,
       currentPage3:1,
       pageShow: false,
-      totalItems:1000
+      totalItems:1,
+      emptyText: ' '
     }
   },
   mounted () {
@@ -227,20 +232,23 @@ export default {
       .end((err, res) => {
         if (err) {
           console.log('err:' + err)
+          this.loading2 = false
+          this.emptyText = '暂无数据'
+          this.pageShow = false
         } else {
           console.log(JSON.parse(res.text).list)
           var newArr = JSON.parse(res.text).list
           // 页面总数
           var pageNumber = JSON.parse(res.text).totalPage
           // 总记录数
-          this.totalItems = 1000||JSON.parse(res.text).totalItems
+          this.totalItems = JSON.parse(res.text).totalItems
           this.totalPage = pageNumber
           if(pageNumber>1){
             this.pageShow = true
           }else {
             this.pageShow = false
           }
-
+          this.emptyText = '  '
           // loading 关闭
           this.loading2 = false
 
@@ -270,7 +278,7 @@ export default {
         var obj = {}
         obj.settled_time = arr[i].month
         obj.amount = arr[i].money
-        obj.apply_time = moment(arr[i].applyEndTime).format('YYYY-MM-DD')
+        obj.apply_time = moment(arr[i].applyTime).format('YYYY-MM-DD')
 				obj.myId = arr[i].withdrawalCode
 				obj.myAdmin = arr[i].id
         if (arr[i].state === 1) {
@@ -322,7 +330,7 @@ export default {
       var type = this.$route.query.type
       this.timer = setTimeout(function () {
         request
-          .post('http://192.168.3.52:7099/franchisee/withdrawal/getAllWithdrawal?page=' + e.target.innerHTML)
+          .post(host + 'franchisee/withdrawal/getAllWithdrawal?page=' + e.target.innerHTML)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin'
@@ -363,7 +371,7 @@ export default {
             // 页面总数
             var pageNumber = JSON.parse(res.text).totalPage
             // 总记录数
-            this.totalItems = 1000||JSON.parse(res.text).totalItems
+            this.totalItems = JSON.parse(res.text).totalItems
             this.totalPage = pageNumber
             if(pageNumber>1){
               this.pageShow = true

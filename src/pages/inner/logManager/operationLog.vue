@@ -65,7 +65,8 @@
               </div>
            </el-row>
            <el-form-item class="keywords">
-             <span class="keywords">关键字:</span>
+             <span class="keywords" style="margin-left: 20px;
+    margin-right: 15px;">关键字</span>
              <el-input v-model="form_join.keyword" placeholder="用户名/姓名"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">
@@ -186,7 +187,7 @@
         var that = this
         this.tabTitle = event.target.innerText
          if(this.tabTitle === '平台') {
-          request.post('http://192.168.3.52:7099/franchisee/log/getAllOperationLog')
+          request.post(host + 'franchisee/log/getAllOperationLog')
           .send({
             franchiseeId: '123456',
             userId: 'jjjj'
@@ -251,7 +252,7 @@
             }
           })
         }else {
-          request.post('http://192.168.3.52:7099/franchisee/log/getOperationLog')
+          request.post(host + 'franchisee/log/getOperationLog')
           .send({
             franchiseeId: '123456',
             userId: 'jjjj'
@@ -319,7 +320,7 @@
     mounted: function () {
       var that = this
       if(this.tabTitle === '加盟商') {
-         request.post('http://192.168.3.52:7099/franchisee/log/getOperationLog')
+         request.post(host + 'franchisee/log/getOperationLog')
         .send({
           franchiseeId: '123456',
           userId: 'jjjj'
@@ -387,7 +388,7 @@
       plat_currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          request.post('http://192.168.3.52:7099/franchisee/log/getAllOperationLog?page=' + that.plat_currentPage)
+          request.post(host + 'franchisee/log/getAllOperationLog?page=' + that.plat_currentPage)
             .send({
               franchiseeId: '123456',
               userId: 'jjjj'
@@ -405,7 +406,7 @@
       join_currentPage: {
         handler: function (val, oldVal) {
           var that = this
-          request.post('http://192.168.3.52:7099/franchisee/log/getOperationLog?page=' + that.join_currentPage)
+          request.post(host + 'franchisee/log/getOperationLog?page=' + that.join_currentPage)
             .send({
               franchiseeId: '123456',
               userId: 'jjjj'

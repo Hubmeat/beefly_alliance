@@ -28,13 +28,13 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
-            '/franchisee': {
-                target: 'http://192.168.3.52:7099',
-                changeOrigin: true,
-                pathRewrite: {
-                    '^/franchisee': '/'
-                }
-            }
+            // '/franchisee': {
+            //     target: 'http://192.168.3.52:7099',
+            //     changeOrigin: true,
+            //     pathRewrite: {
+            //         '^/franchisee': '/'
+            //     }
+            // }
         },
         // CSS Sourcemaps off by default because relative paths are "buggy"
         // with this option, according to the CSS-Loader README

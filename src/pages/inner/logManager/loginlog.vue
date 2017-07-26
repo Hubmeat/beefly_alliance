@@ -68,7 +68,7 @@
               </div>
            </el-row>
            <el-form-item class="keywords">
-             <span class="keywords">关键字:</span>
+             <span class="keywords" style="margin-left:0;margin-right: 15px;">关键字</span>
              <el-input v-model="form_join.keyword" placeholder="用户名/姓名"></el-input>
            </el-form-item>
            <el-form-item class="operatortime" label="操作日期">

@@ -59,6 +59,7 @@ import request from 'superagent'
 import moment from 'moment'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import {host} from '../../../config/index'
 export default {
   data () {
     return {
@@ -95,7 +96,7 @@ export default {
     // console.log(data1)
     this.loading2 = true
     request
-      .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail')
+      .post(host + 'franchisee/withdrawal/getWithdrawalDetail')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin',
@@ -179,7 +180,7 @@ export default {
       var data1 = this.$route.params.id.split('&')[0]
       this.timer = setTimeout(function () {
         request
-          .post('http://192.168.3.52:7099/franchisee/withdrawal/getWithdrawalDetail?page=' + e.target.innerHTML)
+          .post(host + 'franchisee/withdrawal/getWithdrawalDetail?page=' + e.target.innerHTML)
           .send({
             'franchiseeId': '123456',
             'userId': 'admin',

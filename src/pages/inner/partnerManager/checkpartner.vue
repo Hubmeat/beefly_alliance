@@ -161,6 +161,7 @@
 </style>
 <script>
 import request from 'superagent'
+import {host} from '../../../config/index'
 export default {
   data () {
     return {
@@ -179,7 +180,7 @@ export default {
 	mounted () {
 		console.log(this.$route)
 		request
-			.post('http://192.168.3.52:7099/franchisee/partner/getPartnerDetail')
+			.post(host + 'franchisee/partner/getPartnerDetail')
 			.send({
 				'franchiseeId': '123456',
 				'userId': 'admin',
@@ -202,6 +203,7 @@ export default {
 					this.form.cars = arr.bikeNum
 					this.form.email = arr.email
 					this.form.address = arr.address
+					this.form.IDcard = arr.idCard
 				}
 			})
 	},

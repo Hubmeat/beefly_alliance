@@ -36,6 +36,7 @@
         .end((err, res) => {
           if (err) {
             console.log('err:' + err)
+            this.noData = true
           } else {
             if (res.text === '') {
               $('#container').html('')
@@ -202,8 +203,8 @@
 
   .my_noDate img {
     display: inline-block;
-    width: 500px;
-    height: 200px;
+    /* width: 500px;
+    height: 200px; */
   }
 
   .my_noDate p {

@@ -175,7 +175,7 @@ export default {
         .then(() => {
           that.loading = true
           setTimeout(() => {
-            request.post('http://192.168.3.52:7099/franchisee/userCenter/modifyPwd')
+            request.post(host + 'franchisee/userCenter/modifyPwd')
               .send({id: 1123339, oldPwd: this.ruleForm.pass, newPwd: this.ruleForm.checkPass})
               .end((err, res) => {
                 if (err) {

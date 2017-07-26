@@ -300,6 +300,7 @@ import { siblings } from '../../../../utils/index.js'
 import moment from 'moment'
 import request from 'superagent'
 var map, auto, placeSearch, heatmap, driving, citysearch
+import {host} from '../../../config/index'
 // 输入提示
 var autoOptions = {
   input: 'tipinput'
@@ -356,7 +357,7 @@ export default {
     this.$router.push({ query: { type:  'curHour'}})
     // 加载实时热力图
     request
-      .post('http://192.168.3.52:7099/franchisee/report/hot/curHour')
+      .post(host + 'franchisee/report/hot/curHour')
       .send({
         'franchiseeId': '123456',
         'userId': 'admin'
@@ -607,7 +608,7 @@ export default {
         startTime = moment(this.value4[0]).format('YYYY-MM-DD HH:MM:SS')
         endTime = moment(this.value4[1]).format('YYYY-MM-DD HH:MM:SS')
         request
-          .post('http://192.168.3.52:7099/franchisee/report/hot/defineTime')
+          .post(host + 'franchisee/report/hot/defineTime')
           .send({
             "account": {
               'franchiseeId': '123456',
@@ -645,7 +646,7 @@ export default {
     },
     requestWay (type) {
       request
-        .post('http://192.168.3.52:7099/franchisee/report/hot/' + type)
+        .post(host + 'franchisee/report/hot/' + type)
         .send({
           "account": {
             'franchiseeId': '123456',

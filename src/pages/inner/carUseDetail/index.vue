@@ -134,6 +134,7 @@ import moment from 'moment'
 import request from 'superagent'
 require('../../../assets/lib/js/jquery.pagination.js')
 import '../../../assets/css/pagination.css'
+import {host} from '../../../config/index'
 export default {
   data: function () {
     return {
@@ -160,7 +161,7 @@ export default {
   methods: {
     getBikeEarnings (page) {
       request
-        .post('http://192.168.3.52:7099/franchisee/bikeManager/bikeRevenueRecord?page=' + page)
+        .post(host + 'franchisee/bikeManager/bikeRevenueRecord?page=' + page)
         .send({
           'franchiseeId': '123456',
           'userId': 'admin',

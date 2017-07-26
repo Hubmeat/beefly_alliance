@@ -10,6 +10,7 @@
         :data="lists"
         v-loading="loading2"
         element-loading-text="拼命加载中"
+        :empty-text="emptyText"
         style="width: 100%">
         <el-table-column
           prop="time"
@@ -134,6 +135,7 @@ export default {
   data () {
     return {
       lists: [],
+      emptyText: ' ',
       pageTotal: '',
       totalItems:null,
       noDate: false,
@@ -228,6 +230,8 @@ export default {
           // console.log('this is entry')
           if (error) {
             console.log('error:', error)
+            this.loading2 = false
+            this.emptyText = ' 暂无数据'
           } else {
             var arr = JSON.parse(res.text).list
             console.log(arr)
@@ -235,10 +239,11 @@ export default {
             this.loading2 = false
             var pageNumber = JSON.parse(res.text).totalPage
             this.totalItems = pageNumber
-            if(pageNumber<=1){
-              this.pageShow = false
-            }else {
+            if(pageNumber>1){
               this.pageShow = true
+            }else {
+              this.pageShow = false
+              this.emptyText = ' 暂无数据'
             }
             var newArr = []
             for (var i = 0; i < arr.length; i++) {

@@ -29,7 +29,7 @@ const mutations = {
         state.settlementDate = arr
     },
     addAcount(state, {obj}) {
-        state.accountMangerData.push(obj)
+        state.accountMangerData.unshift(obj)
     },
     setTimeLine(state, { obj }) {
         console.log('[[ timeline is setted ]]')
