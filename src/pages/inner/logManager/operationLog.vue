@@ -150,6 +150,7 @@
   import '../../../assets/css/pagination.css'
   import moment from 'moment'
   import {siblings, checkPositiveNumber} from '../../../../utils/index.js'
+  import {host} from '../../../config/index'
   export default {
     data: function () {
       return {

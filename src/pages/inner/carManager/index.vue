@@ -84,7 +84,7 @@
       :current-page.sync="currentPage3"
       :page-size="10"
       layout="prev, pager, next, jumper"
-      :total="1000">
+      :total="totalItems">
     </el-pagination>
     <div id="carManager_page">
       <div class="M-box"></div>
@@ -108,7 +108,8 @@ export default {
         data1: '',
         data2: ''
       },
-
+      isQuery:false,
+      totalItems:1,
       pageShow: false,
       currentPage3:1,
       tableData: [],
@@ -135,29 +136,13 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
     },
-    searchByTimeline () {
-      if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.checkList === '') {
-        this.$message({
-          message: '请输入查询条件',
-          type: 'warning'
-        })
-      } else {
-        this.loading2 = true
-        var startTime, endTime
-        if (this.form.data1 === '' || this.form.data2 === '') {
-          startTime = null
-          endTime = null
-        } else {
-          startTime = moment(this.form.data1).format('YYYY-MM-DD')
-          endTime = moment(this.form.data2).format('YYYY-MM-DD')
-        }
-
-      // 根据用户选择不同状态进行数据的筛选
+    handleList () {
         var radio = this.checkList
-        // if () {
-
-        // }
-        request
+        var startTime,endTime
+      // 根据用户选择不同状态进行数据的筛选
+        this.isQuery = true
+        if(this.checkList.length>0){
+          request
           .post(host + 'franchisee/bikeManager/queryBikes')
           .send({
             'start': startTime?startTime:null,
@@ -173,12 +158,100 @@ export default {
               var data = (JSON.parse(res.text)).list
               var newData = this.tableDataDel(data)
               this.pagetotal = (JSON.parse(res.text)).totalPage
+              if(this.pagetotal>1){
+                this.pageShow = true
+              }else {
+                this.pageShow = false
+                this.emptyText = ' 暂无数据'
+              }
+              this.totalItems =  (JSON.parse(res.text)).totalItems
               // loading 关闭
               this.loading2 = false
               this.tableData = newData
               this.currentPage3 = 1
             }
           })
+        }else {
+          this.isQuery = false
+          this.currentPage3 = 1
+          request
+            .post(host + 'franchisee/bikeManager/getBikes')
+            .send({
+              end: this.form.data2,
+              start: this.form.data1,
+              state:[],
+              name:this.terminalNumber
+            })
+            .end((error, res) => {
+              if (error) {
+                this.loading2  = false
+                this.emptyText  = '暂无数据'
+                console.log('error:', error)
+              } else {
+                var data = JSON.parse(res.text).list
+                var newData = this.tableDataDel(data)
+                this.pagetotal = (JSON.parse(res.text)).totalPage
+                this.tableData = newData
+                this.totalItems = (JSON.parse(res.text)).totalItems
+                // loading 关闭
+                this.loading2 = false
+                if (this.pagetotal > 1) {
+                  this.pageShow =  true
+                } else {
+                  this.emptyText = '暂无数据'
+                  return
+                }
+              }
+            })   
+        }
+        
+    },
+    searchByTimeline () {
+      if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.checkList.length===0) {
+        this.$message({
+          message: '请输入查询条件',
+          type: 'warning'
+        })
+      } else {
+        this.isQuery = true
+        var startTime, endTime
+        if (this.form.data1 === '' || this.form.data2 === '') {
+          startTime = null
+          endTime = null
+        } else {
+          startTime = moment(this.form.data1).format('YYYY-MM-DD')
+          endTime = moment(this.form.data2).format('YYYY-MM-DD')
+        }
+         request
+          .post(host + 'franchisee/bikeManager/queryBikes')
+          .send({
+            end: this.form.data2.trim().length>0?this.form.data2:null,
+            start: this.form.data1.trim().length>0?this.form.data1:null,
+            state:this.checkList.length>0?this.checkList:null,
+            name:this.terminalNumber
+          })
+          .end((error, res) => {
+            if (error) {
+              this.loading2  = false
+              this.emptyText  = '暂无数据'
+              console.log('error:', error)
+            } else {
+              var data = JSON.parse(res.text).list
+              var newData = this.tableDataDel(data)
+              this.pagetotal = (JSON.parse(res.text)).totalPage
+              this.tableData = newData
+              this.totalItems = (JSON.parse(res.text)).totalItems
+              // loading 关闭
+              this.loading2 = false
+              if (this.pagetotal > 1) {
+                this.pageShow =  true
+              } else {
+                this.emptyText = '暂无数据'
+                this.pageShow = false
+                return
+              }
+            }
+          })  
       }
     },
     tableDataDel (arr) {
@@ -209,9 +282,46 @@ export default {
       return arrDeled
     },
     inputChange () {
-      if (this.form.data1 === '' && this.form.data2 === '' && this.terminalNumber === '') {
+      if (this.form.data1 === '' && this.form.data2 === '' && this.terminalNumber === ''&&this.checkList.length===0) {
+        this.isQuery = false
         this.mountedWay()
       } else {
+        this.isQuery = true
+        var startTime = null
+         var endTime = null
+          if (this.form.data1 === '' || this.form.data2 === '') {
+            startTime = null
+            endTime = null
+          } else {
+            startTime = moment(this.form.data1).format('YYYY-MM-DD')
+            endTime = moment(this.form.data2).format('YYYY-MM-DD')
+          }
+         request
+            .post(host + 'franchisee/bikeManager/queryBikes?page=' + val)
+            .send({
+              'start': startTime,
+              'end': endTime,
+              'state': this.checkList.length>0?this.checkList:null,
+              'name': this.terminalNumber?this.terminalNumber:null
+            })
+            .end((error, res) => {
+              if (error) {
+                console.log('error:', error)
+              } else {
+                console.log(JSON.parse(res.text).list)
+                var data = (JSON.parse(res.text)).list
+                var newData = this.tableDataDel(data)
+                this.pagetotal = (JSON.parse(res.text)).totalPage
+                // loading 关闭
+                this.loading2 = false
+                this.tableData = newData
+                if (this.pagetotal > 1) {
+                  this.pageShow = true
+                } else {
+                  return
+                }
+              }
+            })
         return
       }
     },
@@ -235,7 +345,7 @@ export default {
             var newData = this.tableDataDel(data)
             this.pagetotal = (JSON.parse(res.text)).totalPage
             this.tableData = newData
-
+            this.totalItems = (JSON.parse(res.text)).totalItems
             // loading 关闭
             this.loading2 = false
             if (this.pagetotal > 1) {
@@ -249,15 +359,9 @@ export default {
     }
   },
   watch: {
-    'checkList': 'searchByTimeline',
+    'checkList': 'handleList',
      currentPage3: {
       handler: function (val,oldVal){
-        if (this.terminalNumber === '' && this.form.data1 === '' && this.form.data2 === '' && this.checkList === '') {
-          this.$message({
-            message: '请输入查询条件',
-            type: 'warning'
-          })
-       } else {
          var startTime = null
          var endTime = null
           if (this.form.data1 === '' || this.form.data2 === '') {
@@ -267,13 +371,12 @@ export default {
             startTime = moment(this.form.data1).format('YYYY-MM-DD')
             endTime = moment(this.form.data2).format('YYYY-MM-DD')
           }
-        }  
-        if(this.checkList.length>0){
+        if(this.isQuery===true){
           request
             .post(host + 'franchisee/bikeManager/queryBikes?page=' + val)
             .send({
-              'start': startTime?startTime:null,
-              'end': endTime?endTime:null,
+              'start': startTime,
+              'end': endTime,
               'state': this.checkList?this.checkList:null,
               'name': this.terminalNumber?this.terminalNumber:null
             })

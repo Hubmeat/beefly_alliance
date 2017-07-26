@@ -37,24 +37,24 @@
       <el-table-column
         prop="bikeCode"
         label="车牌编号"
-        min-width="15%"
+        min-width="20%"
         >
       </el-table-column>
       <el-table-column
         prop="orderDate"
-        min-width="10%"
+        min-width="15%"
         label="下单时间">
       </el-table-column>
       <el-table-column
         prop="placeOrderTime"
         label="骑行时间（时间）"
-        min-width="15%"
+        min-width="10%"
        >
       </el-table-column>
       <el-table-column
         prop="journey"
         label="骑行里程（公里）"
-        min-width="15%"
+        min-width="10%"
         >
       </el-table-column>
       <el-table-column
@@ -335,7 +335,6 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.$route.query)
     this.loading2 = true
     var type = this.$route.query.type
     if(type === 'getRevenueCurDay') {
@@ -360,7 +359,6 @@ export default {
       this.isDay = false
       this.AllTime = false
     }
-    console.log(type)
     request
       .post(host + 'franchisee/revenue/getRevenueCurDay')
       .send({
@@ -373,8 +371,6 @@ export default {
           this.emptyText = '暂无数据'
           console.log('err:' + err)
         } else {
-          // console.log(res)
-          // console.log(JSON.parse(res.text).list)
           var newArr = JSON.parse(res.text).list
           var pageNumber = JSON.parse(res.text).totalPage
           this.totalPage = pageNumber
@@ -406,7 +402,6 @@ export default {
   beforeUpdate () {
     var that = this
     $('.M-box').click('a', function (e) {
-      // console.log(e)
       that.pageUpdate(e)
     })
   }, 
@@ -415,13 +410,12 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      
     },
     handleChangeType (e) {
-      // console.log(e.currentTarget.innerText)  
       if (e.currentTarget.innerText === '指定时间段') {
         this.$router.push('/index/earningsDetail?type=getRevenueDefine')    
         this.show = true
@@ -438,7 +432,7 @@ export default {
         type: 'warning'
       })
       .then(() => {
-        console.log('this is entry')
+       
         require.ensure([], () => {
           this.$loading({customClass: 'loading_class'})
           var that = this
@@ -493,8 +487,6 @@ export default {
                 if (err) {
                   console.log('err:' + err)
                 } else {
-                  console.log(res)
-                  console.log(JSON.parse(res.text))
                   // 数据处理
                   var list = JSON.parse(res.text)
                   var newList = this.tableDataDel(list)
@@ -540,8 +532,6 @@ export default {
         obj.actualAmount = arr[i].actualAmount
         arrDeled.push(obj)
       }
-
-      console.log('arrDeled:', arrDeled)
       return arrDeled
     },
     getAllDate () {
@@ -560,7 +550,6 @@ export default {
           if (err) {
             console.log('err:' + err)
           } else {
-            console.log(res)
             var newArr = JSON.parse(res.text).list
             var pageNumber = JSON.parse(res.text).totalPage
             var arr2 = this.tableDataDel(newArr)
@@ -649,7 +638,6 @@ export default {
     },
     pageUpdate (e) {
       var that = this
-      console.log(this.pagetotal)
       clearTimeout(this.timer)
       this.loading2 = true
       if (e.target.tagName === 'A' || e.target.tagName === 'SPAN') {
@@ -660,7 +648,6 @@ export default {
         } else if (e.target.innerHTML === '«') {
           e.target.innerHTML = Number($('.M-box span.active')[0].innerHTML) - 1
         } else if (e.target.innerHTML === '»') {
-          console.log($('.M-box span.active')[0].innerHTML)
           e.target.innerHTML = Number($('.M-box span.active')[0].innerHTML) + 1
         } else if (e.target.innerHTML === '...') {
           return
@@ -680,7 +667,6 @@ export default {
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = that.tableDataDel(pagedata)
               // loading关闭
@@ -708,7 +694,6 @@ export default {
             if (error) {
               console.log('error:', error)
             } else {
-              // console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var pageNumber = JSON.parse(res.text).totalPage
               this.totalItems = JSON.parse(res.text).totalItems
@@ -752,7 +737,6 @@ export default {
             if (error) {
               console.log('error:', error)
             } else {
-              console.log(JSON.parse(res.text))
               var pagedata = (JSON.parse(res.text)).list
               var arr2 = this.tableDataDel(pagedata)
               this.$store.dispatch('earningsDate_action', { arr2 })
@@ -792,8 +776,6 @@ export default {
           if (err) {
             console.log('err:' + err)
           } else {
-            // console.log(res)
-            // console.log(JSON.parse(res.text).list)
             var newArr = JSON.parse(res.text).list
             var pageNumber = JSON.parse(res.text).totalPage
             this.totalPage = pageNumber
